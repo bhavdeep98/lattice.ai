@@ -55,6 +55,37 @@ Lattice Aspects act as the "Final Inspector" - they automatically apply security
 - **Security Aspect**: Enforces encryption, secure defaults, and access controls
 - **Cost Aspect**: Validates resource sizes and prevents cost overruns
 - **Tagging Aspect**: Ensures consistent resource tagging and organization
+- **Threat Modeling Aspect**: Generates security threat analysis at synth-time
+
+### 🔒 Automated Threat Modeling
+
+Lattice automatically generates comprehensive threat models for your AWS architectures:
+
+```typescript
+applyLatticeAspects(this, {
+  environment: 'prod',
+  projectName: 'MyApp',
+  owner: 'DevTeam',
+  threatModel: {
+    enabled: true,
+    formats: ['md', 'json'],
+    projectName: 'Customer API'
+  }
+});
+```
+
+**Features:**
+- **Workload Detection**: Automatically identifies serverless-api, data-pipeline, genai-rag patterns
+- **STRIDE Analysis**: Complete threat coverage across all 6 categories
+- **AWS-Specific**: Contextual mitigations using AWS services
+- **Dual Output**: Human-readable reports + machine-readable JSON
+- **CI/CD Ready**: Deterministic output for security automation
+
+**Outputs:**
+- `cdk.out/THREAT_MODEL.md` - Security report for humans
+- `cdk.out/threat-model.json` - Data for automation/CI gates
+
+See [docs/threat-modeling.md](docs/threat-modeling.md) for complete documentation.
 
 ## 📦 Available Modules
 
