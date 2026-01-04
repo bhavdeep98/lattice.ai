@@ -29,17 +29,18 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       containerImage,
       functionCode,
       runtime = 'nodejs18.x',
+      vpc,
     } = props;
 
     switch (type) {
       case 'vm':
-        this.output = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData);
+        this.output = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData, vpc);
         break;
       case 'container':
-        this.output = this.createContainerCompute(name, environment, size, autoScaling, network, identity, containerImage);
+        this.output = this.createContainerCompute(name, environment, size, autoScaling, network, identity, containerImage, vpc);
         break;
       case 'serverless':
-        this.output = this.createServerlessCompute(name, environment, size, network, identity, functionCode, runtime);
+        this.output = this.createServerlessCompute(name, environment, size, network, identity, functionCode, runtime, vpc);
         break;
       default:
         throw new Error(`Unsupported compute type: ${type}`);
@@ -53,9 +54,10 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     autoScaling: boolean,
     network: any,
     identity?: any,
-    userData?: string
+    userData?: string,
+    existingVpc?: ec2.IVpc
   ): ComputeOutput {
-    const vpc = ec2.Vpc.fromLookup(this, 'Vpc', {
+    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
 
@@ -129,9 +131,10 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     autoScaling: boolean,
     network: any,
     identity?: any,
-    containerImage?: string
+    containerImage?: string,
+    existingVpc?: ec2.IVpc
   ): ComputeOutput {
-    const vpc = ec2.Vpc.fromLookup(this, 'Vpc', {
+    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
 
@@ -194,9 +197,10 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     network: any,
     identity?: any,
     functionCode?: string,
-    runtime?: string
+    runtime?: string,
+    existingVpc?: ec2.IVpc
   ): ComputeOutput {
-    const vpc = ec2.Vpc.fromLookup(this, 'Vpc', {
+    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
 

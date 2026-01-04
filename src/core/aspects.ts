@@ -18,14 +18,17 @@ export class SecurityAspect implements IAspect {
   visit(node: IConstruct): void {
     // Enforce S3 bucket encryption
     if (node instanceof s3.Bucket) {
-      if (!(node as any).encryption) {
+      const cfnBucket = node.node.defaultChild as s3.CfnBucket;
+      if (cfnBucket && !cfnBucket.bucketEncryption) {
         throw new Error(`S3 bucket ${node.node.id} must have encryption enabled`);
       }
     }
 
     // Enforce RDS encryption
     if (node instanceof rds.DatabaseInstance) {
-      if (!(node as any).storageEncrypted) {
+      // Check the underlying CloudFormation resource
+      const cfnDb = node.node.defaultChild as rds.CfnDBInstance;
+      if (cfnDb && !cfnDb.storageEncrypted) {
         throw new Error(`RDS instance ${node.node.id} must have storage encryption enabled`);
       }
     }
@@ -161,8 +164,20 @@ export class MonitoringAspect implements IAspect {
  * This is the main entry point for enabling guardrails
  */
 export function applyLatticeAspects(stack: Stack, config: LatticeAspectsConfig): void {
-  // Apply aspects in order of importance
-  Aspects.of(stack).add(new TaggingAspect(config));
+  // 1. Apply Tags (Cascading)
+  const { environment, projectName, owner, additionalTags } = config;
+  Tags.of(stack).add('Environment', environment);
+  Tags.of(stack).add('Project', projectName);
+  Tags.of(stack).add('Owner', owner);
+  Tags.of(stack).add('ManagedBy', 'Lattice');
+
+  if (additionalTags) {
+    Object.entries(additionalTags).forEach(([key, value]) => {
+      Tags.of(stack).add(key, value);
+    });
+  }
+
+  // 2. Apply Aspects
   Aspects.of(stack).add(new SecurityAspect(config));
   Aspects.of(stack).add(new CostAspect(config));
   Aspects.of(stack).add(new MonitoringAspect(config));
@@ -189,15 +204,15 @@ export function applyLatticeAspects(stack: Stack, config: LatticeAspectsConfig):
           const formats = config.threatModel?.formats ?? ["md"];
           if (formats.includes("md")) {
             fs.writeFileSync(
-              path.join(outDir, "THREAT_MODEL.md"), 
-              renderThreatModelMd(model), 
+              path.join(outDir, "THREAT_MODEL.md"),
+              renderThreatModelMd(model),
               "utf8"
             );
           }
           if (formats.includes("json")) {
             fs.writeFileSync(
-              path.join(outDir, "threat-model.json"), 
-              renderThreatModelJson(model), 
+              path.join(outDir, "threat-model.json"),
+              renderThreatModelJson(model),
               "utf8"
             );
           }

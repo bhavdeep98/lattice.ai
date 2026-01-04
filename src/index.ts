@@ -1,13 +1,16 @@
 // Core exports
-export * from './core/aspects';
 export * from './core/types';
+export * from './core/aspects';
+export * from './core/manifest';
+export * from './core/lattice-stack';
 
-// Module exports
-export * from './modules/network';
-export * from './modules/storage';
-export * from './modules/identity';
-export * from './modules/database';
-export * from './modules/compute';
+export * from './modules/network/lattice-network';
+export * from './modules/storage/lattice-bucket';
+export * from './modules/identity/lattice-identity';
+export * from './modules/database/lattice-database';
+export * from './modules/compute/lattice-compute';
+export * from './modules/website/lattice-website';
+export * from './modules/queue/lattice-queue';
 
 // Utility exports
 export * from './utils/tags';

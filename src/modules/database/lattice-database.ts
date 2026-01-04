@@ -29,10 +29,11 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       performanceInsights = true,
       monitoring = true,
       useGraviton = true,
+      vpc: existingVpc,
     } = props;
 
-    // Get VPC from network configuration
-    const vpc = ec2.Vpc.fromLookup(this, 'Vpc', {
+    // Get VPC from props or network configuration
+    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
 
