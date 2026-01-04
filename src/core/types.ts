@@ -19,6 +19,12 @@ export interface LatticeAspectsConfig {
     enforceBackups?: boolean;
   };
   enableMonitoring?: boolean;
+  threatModel?: {
+    enabled: boolean;
+    outputDir?: string;        // default: cdk.out
+    formats?: ("md" | "json")[]; // default: ["md"]
+    projectName?: string;      // optional title
+  };
 }
 
 export interface BaseResourceProps {

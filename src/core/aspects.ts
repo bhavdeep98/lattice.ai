@@ -4,7 +4,10 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as fs from 'fs';
+import * as path from 'path';
 import { LatticeAspectsConfig } from './types';
+import { ThreatFactsCollector, ThreatModelAspect, buildThreatModel, renderThreatModelMd, renderThreatModelJson } from '../threat-model';
 /**
  * Security Aspect - The "Compliance Guard"
  * Automatically enforces security best practices
@@ -163,4 +166,48 @@ export function applyLatticeAspects(stack: Stack, config: LatticeAspectsConfig):
   Aspects.of(stack).add(new SecurityAspect(config));
   Aspects.of(stack).add(new CostAspect(config));
   Aspects.of(stack).add(new MonitoringAspect(config));
+
+  // Add threat modeling if enabled
+  if (config.threatModel?.enabled) {
+    const collector = new ThreatFactsCollector();
+    Aspects.of(stack).add(new ThreatModelAspect(collector));
+
+    // Hook after synthesis to generate threat model files
+    stack.node.addValidation({
+      validate: () => {
+        try {
+          const model = buildThreatModel(collector, {
+            projectName: config.threatModel?.projectName ?? config.projectName,
+            latticeVersion: "1.0.0" // TODO: get from package.json
+          });
+
+          const outDir = config.threatModel?.outputDir ?? "cdk.out";
+          if (!fs.existsSync(outDir)) {
+            fs.mkdirSync(outDir, { recursive: true });
+          }
+
+          const formats = config.threatModel?.formats ?? ["md"];
+          if (formats.includes("md")) {
+            fs.writeFileSync(
+              path.join(outDir, "THREAT_MODEL.md"), 
+              renderThreatModelMd(model), 
+              "utf8"
+            );
+          }
+          if (formats.includes("json")) {
+            fs.writeFileSync(
+              path.join(outDir, "threat-model.json"), 
+              renderThreatModelJson(model), 
+              "utf8"
+            );
+          }
+
+          console.log(`✅ Threat model generated in ${outDir}/`);
+        } catch (e) {
+          return [`Threat model generation failed: ${(e as Error).message}`];
+        }
+        return [];
+      }
+    });
+  }
 }
