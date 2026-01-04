@@ -76,6 +76,7 @@ cdk.out/
 !website/*.js
 !jest.config.js
 !.eslintrc.js
+!scripts/*.js
 *.d.ts
 lib/
 
