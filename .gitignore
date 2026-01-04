@@ -73,6 +73,9 @@ cdk.out/
 
 # Compiled JavaScript files
 *.js
+!website/*.js
+!jest.config.js
+!.eslintrc.js
 *.d.ts
 lib/
 
@@ -82,6 +85,9 @@ lib/
 *.swp
 *.swo
 *~
+
+# Kiro configuration and specs
+.kiro/
 
 # OS generated files
 .DS_Store

@@ -18,6 +18,7 @@ export interface LatticeDatabaseProps extends BaseResourceProps {
   deletionProtection?: boolean;
   performanceInsights?: boolean;
   monitoring?: boolean;
+  useGraviton?: boolean;
 }
 
 export interface LatticeDatabaseConstruct {

@@ -18,6 +18,7 @@ export interface LatticeAspectsConfig {
     enforceVersioning?: boolean;
     enforceBackups?: boolean;
   };
+  enableMonitoring?: boolean;
 }
 
 export interface BaseResourceProps {

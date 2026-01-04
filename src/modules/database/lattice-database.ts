@@ -28,6 +28,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       deletionProtection = environment === 'prod',
       performanceInsights = true,
       monitoring = true,
+      useGraviton = true,
     } = props;
 
     // Get VPC from network configuration
@@ -41,7 +42,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       vpc,
       subnetGroupName: `${name}-${environment}-subnet-group`,
       vpcSubnets: {
-        subnets: network.subnetIds.map(subnetId => 
+        subnets: network.subnetIds.map(subnetId =>
           ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
         ),
       },
@@ -63,7 +64,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     );
 
     // Add existing security groups if provided
-    const securityGroups = [this.securityGroup];
+    const securityGroups: ec2.ISecurityGroup[] = [this.securityGroup];
     if (network.securityGroupIds) {
       network.securityGroupIds.forEach(sgId => {
         securityGroups.push(
@@ -86,7 +87,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     this.database = new rds.DatabaseInstance(this, 'Database', {
       instanceIdentifier: `${name}-${environment}`,
       engine: this.getRdsEngine(engine),
-      instanceType: this.getInstanceType(size),
+      instanceType: this.getInstanceType(size, useGraviton && this.supportsGraviton(engine)),
       credentials: rds.Credentials.fromSecret(credentials),
       vpc,
       subnetGroup,
@@ -111,6 +112,10 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       port: this.database.instanceEndpoint.port,
       securityGroupId: this.securityGroup.securityGroupId,
     };
+  }
+
+  private supportsGraviton(engine: DatabaseEngine): boolean {
+    return ['postgres', 'mysql', 'mariadb'].includes(engine);
   }
 
   private getDatabasePort(engine: DatabaseEngine): number {
@@ -151,7 +156,17 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     }
   }
 
-  private getInstanceType(size: DatabaseSize): ec2.InstanceType {
+  private getInstanceType(size: DatabaseSize, useGraviton: boolean): ec2.InstanceType {
+    if (useGraviton) {
+      const gravitonTypes = {
+        small: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),
+        medium: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.SMALL),
+        large: ec2.InstanceType.of(ec2.InstanceClass.M6G, ec2.InstanceSize.LARGE),
+        xlarge: ec2.InstanceType.of(ec2.InstanceClass.M6G, ec2.InstanceSize.XLARGE),
+      };
+      return gravitonTypes[size];
+    }
+
     const instanceTypes = {
       small: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
       medium: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),

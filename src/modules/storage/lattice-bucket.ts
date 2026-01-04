@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import { RemovalPolicy } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -34,13 +34,13 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       bucketName: `${name}-${environment}`,
       encryption: encryption ? s3.BucketEncryption.S3_MANAGED : s3.BucketEncryption.UNENCRYPTED,
       versioned: versioning,
-      blockPublicAccess: publicRead ? 
+      blockPublicAccess: publicRead ?
         new s3.BlockPublicAccess({
           blockPublicAcls: false,
           blockPublicPolicy: false,
           ignorePublicAcls: false,
           restrictPublicBuckets: false,
-        }) : 
+        }) :
         s3.BlockPublicAccess.BLOCK_ALL,
       publicReadAccess: publicRead,
       removalPolicy: environment === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
@@ -52,7 +52,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
     if (cors) {
       this.bucket.addCorsRule({
         allowedOrigins: cors.allowedOrigins,
-        allowedMethods: cors.allowedMethods.map(method => 
+        allowedMethods: cors.allowedMethods.map(method =>
           s3.HttpMethods[method.toUpperCase() as keyof typeof s3.HttpMethods]
         ),
         allowedHeaders: cors.allowedHeaders || ['*'],
@@ -69,7 +69,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
           enabled: true,
           transitions: [{
             storageClass: s3.StorageClass.GLACIER,
-            transitionAfter: s3.Duration.days(lifecycle.archiveAfterDays),
+            transitionAfter: Duration.days(lifecycle.archiveAfterDays),
           }],
         });
       }
@@ -78,7 +78,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
         lifecycleRules.push({
           id: 'DeleteRule',
           enabled: true,
-          expiration: s3.Duration.days(lifecycle.deleteAfterDays),
+          expiration: Duration.days(lifecycle.deleteAfterDays),
         });
       }
 
@@ -89,8 +89,8 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
     if (notifications) {
       if (notifications.lambdaArn) {
         const lambdaFunction = lambda.Function.fromFunctionArn(
-          this, 
-          'NotificationLambda', 
+          this,
+          'NotificationLambda',
           notifications.lambdaArn
         );
         this.bucket.addEventNotification(
@@ -101,8 +101,8 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
 
       if (notifications.sqsArn) {
         const queue = sqs.Queue.fromQueueArn(
-          this, 
-          'NotificationQueue', 
+          this,
+          'NotificationQueue',
           notifications.sqsArn
         );
         this.bucket.addEventNotification(
@@ -113,8 +113,8 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
 
       if (notifications.snsArn) {
         const topic = sns.Topic.fromTopicArn(
-          this, 
-          'NotificationTopic', 
+          this,
+          'NotificationTopic',
           notifications.snsArn
         );
         this.bucket.addEventNotification(

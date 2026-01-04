@@ -75,7 +75,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     const instanceType = this.getEc2InstanceType(size);
     const machineImage = ec2.MachineImage.latestAmazonLinux2();
 
-    let role: iam.Role | undefined;
+    let role: iam.IRole | undefined;
     if (identity) {
       role = iam.Role.fromRoleArn(this, 'VmRole', identity.roleArn);
     }
@@ -92,7 +92,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
         maxCapacity: 10,
         desiredCapacity: 2,
         vpcSubnets: {
-          subnets: network.subnetIds.map((subnetId: string) => 
+          subnets: network.subnetIds.map((subnetId: string) =>
             ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
           ),
         },
@@ -110,7 +110,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
         role,
         userData: userData ? ec2.UserData.custom(userData) : undefined,
         vpcSubnets: {
-          subnets: network.subnetIds.map((subnetId: string) => 
+          subnets: network.subnetIds.map((subnetId: string) =>
             ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
           ),
         },
@@ -147,8 +147,8 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     });
 
     const container = taskDefinition.addContainer('Container', {
-      image: containerImage ? 
-        ecs.ContainerImage.fromRegistry(containerImage) : 
+      image: containerImage ?
+        ecs.ContainerImage.fromRegistry(containerImage) :
         ecs.ContainerImage.fromRegistry('nginx:latest'),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: `${name}-${environment}`,
@@ -165,7 +165,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       taskDefinition,
       desiredCount: autoScaling ? 2 : 1,
       vpcSubnets: {
-        subnets: network.subnetIds.map((subnetId: string) => 
+        subnets: network.subnetIds.map((subnetId: string) =>
           ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
         ),
       },
@@ -204,8 +204,8 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       functionName: `${name}-${environment}`,
       runtime: this.getLambdaRuntime(runtime || 'nodejs18.x'),
       handler: 'index.handler',
-      code: functionCode ? 
-        lambda.Code.fromInline(functionCode) : 
+      code: functionCode ?
+        lambda.Code.fromInline(functionCode) :
         lambda.Code.fromInline(`
           exports.handler = async (event) => {
             return {
@@ -219,7 +219,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       role: identity ? iam.Role.fromRoleArn(this, 'LambdaRole', identity.roleArn) : undefined,
       vpc,
       vpcSubnets: {
-        subnets: network.subnetIds.map((subnetId: string) => 
+        subnets: network.subnetIds.map((subnetId: string) =>
           ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
         ),
       },

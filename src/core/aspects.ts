@@ -3,26 +3,26 @@ import { IConstruct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import { LatticeAspectsConfig } from './types';
-
 /**
  * Security Aspect - The "Compliance Guard"
  * Automatically enforces security best practices
  */
 export class SecurityAspect implements IAspect {
-  constructor(private config: LatticeAspectsConfig) {}
+  constructor(private config: LatticeAspectsConfig) { }
 
   visit(node: IConstruct): void {
     // Enforce S3 bucket encryption
     if (node instanceof s3.Bucket) {
-      if (!node.encryption) {
+      if (!(node as any).encryption) {
         throw new Error(`S3 bucket ${node.node.id} must have encryption enabled`);
       }
     }
 
     // Enforce RDS encryption
     if (node instanceof rds.DatabaseInstance) {
-      if (!node.storageEncrypted) {
+      if (!(node as any).storageEncrypted) {
         throw new Error(`RDS instance ${node.node.id} must have storage encryption enabled`);
       }
     }
@@ -30,10 +30,10 @@ export class SecurityAspect implements IAspect {
     // Enforce security group rules
     if (node instanceof ec2.SecurityGroup) {
       // Add default security validations
-      const rules = node.node.children.filter(child => 
+      const rules = node.node.children.filter(child =>
         child.constructor.name.includes('SecurityGroupRule')
       );
-      
+
       // Check for overly permissive rules
       rules.forEach(rule => {
         // Implementation would check for 0.0.0.0/0 rules, etc.
@@ -47,29 +47,29 @@ export class SecurityAspect implements IAspect {
  * Prevents cost overruns by validating resource sizes
  */
 export class CostAspect implements IAspect {
-  constructor(private config: LatticeAspectsConfig) {}
+  constructor(private config: LatticeAspectsConfig) { }
 
   visit(node: IConstruct): void {
     const { environment, costLimits } = this.config;
 
     // Validate EC2 instance sizes
     if (node instanceof ec2.Instance) {
-      const instanceType = node.instanceType.toString();
-      
-      if (environment === 'dev' && instanceType.includes('large')) {
+      const instanceType = (node as any).instanceType?.toString();
+
+      if (environment === 'dev' && instanceType && instanceType.includes('large')) {
         throw new Error(`Large instances not allowed in dev environment: ${instanceType}`);
       }
-      
-      if (costLimits?.maxInstanceSize && instanceType.includes(costLimits.maxInstanceSize)) {
+
+      if (costLimits?.maxInstanceSize && instanceType && instanceType.includes(costLimits.maxInstanceSize)) {
         // Validate against cost limits
       }
     }
 
     // Validate RDS instance sizes
     if (node instanceof rds.DatabaseInstance) {
-      const instanceClass = node.instanceType.toString();
-      
-      if (environment === 'dev' && instanceClass.includes('large')) {
+      const instanceClass = (node as any).instanceType?.toString();
+
+      if (environment === 'dev' && instanceClass && instanceClass.includes('large')) {
         throw new Error(`Large RDS instances not allowed in dev environment: ${instanceClass}`);
       }
     }
@@ -81,7 +81,7 @@ export class CostAspect implements IAspect {
  * Ensures consistent resource tagging
  */
 export class TaggingAspect implements IAspect {
-  constructor(private config: LatticeAspectsConfig) {}
+  constructor(private config: LatticeAspectsConfig) { }
 
   visit(node: IConstruct): void {
     const { environment, projectName, owner, additionalTags } = this.config;
@@ -103,6 +103,57 @@ export class TaggingAspect implements IAspect {
 }
 
 /**
+ * Monitoring Aspect - The "Observability Guard"
+ * Automatically creates dashboards for resources
+ */
+export class MonitoringAspect implements IAspect {
+  private dashboard: cloudwatch.Dashboard | undefined;
+
+  constructor(private config: LatticeAspectsConfig) { }
+
+  visit(node: IConstruct): void {
+    if (!this.config.enableMonitoring) return;
+
+    // Create dashboard if it doesn't exist (only once per stack)
+    if (!this.dashboard && node instanceof Stack) {
+      this.dashboard = new cloudwatch.Dashboard(node, 'LatticeDashboard', {
+        dashboardName: `${this.config.projectName}-${this.config.environment}-dashboard`,
+      });
+    }
+
+    if (!this.dashboard) return;
+
+    // Add RDS metrics
+    if (node instanceof rds.DatabaseInstance) {
+      const cpuWidget = new cloudwatch.GraphWidget({
+        title: `DB CPU Utilization (${node.node.id})`,
+        left: [node.metricCPUUtilization()],
+      });
+      const connectionsWidget = new cloudwatch.GraphWidget({
+        title: `DB Connections (${node.node.id})`,
+        left: [node.metricDatabaseConnections()],
+      });
+      this.dashboard.addWidgets(cpuWidget, connectionsWidget);
+    }
+
+    // Add S3 metrics
+    if (node instanceof s3.Bucket) {
+      const requestsWidget = new cloudwatch.GraphWidget({
+        title: `S3 Requests (${node.node.id})`,
+        left: [
+          new cloudwatch.Metric({
+            namespace: 'AWS/S3',
+            metricName: 'AllRequests',
+            dimensionsMap: { BucketName: node.bucketName },
+          }),
+        ],
+      });
+      this.dashboard.addWidgets(requestsWidget);
+    }
+  }
+}
+
+/**
  * Apply all Lattice aspects to a stack
  * This is the main entry point for enabling guardrails
  */
@@ -111,4 +162,5 @@ export function applyLatticeAspects(stack: Stack, config: LatticeAspectsConfig):
   Aspects.of(stack).add(new TaggingAspect(config));
   Aspects.of(stack).add(new SecurityAspect(config));
   Aspects.of(stack).add(new CostAspect(config));
+  Aspects.of(stack).add(new MonitoringAspect(config));
 }
