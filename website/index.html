@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lattice AWS CDK - Contract-First Infrastructure</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Lattice</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#docs" class="nav-cta">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Contract-First
+                    <span class="gradient-text">AWS Infrastructure</span>
+                </h1>
+                <p class="hero-subtitle">
+                    AI generates simple JSON intents. Lattice handles the complex AWS implementation 
+                    with built-in guardrails for security, cost control, and governance.
+                </p>
+                <div class="hero-actions">
+                    <a href="#how-it-works" class="btn btn-primary">See How It Works</a>
+                    <a href="#docs" class="btn btn-secondary">Documentation</a>
+                </div>
+            </div>
+            <div class="hero-code">
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="code-title">AI Intent → AWS Infrastructure</span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code><span class="comment">// AI generates this simple JSON</span>
+<span class="keyword">const</span> <span class="variable">intent</span> = {
+  <span class="property">cidr</span>: <span class="string">'10.0.0.0/16'</span>,
+  <span class="property">environment</span>: <span class="string">'prod'</span>,
+  <span class="property">highAvailability</span>: <span class="boolean">true</span>
+};
+
+<span class="comment">// Lattice handles the rest</span>
+<span class="keyword">const</span> <span class="variable">network</span> = <span class="keyword">new</span> <span class="class">LatticeNetwork</span>(<span class="variable">intent</span>);
+<span class="comment">// ✅ Automatically secured & tagged!</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How Lattice Works</h2>
+            <p class="section-subtitle">Three layers that transform AI intents into production-ready AWS infrastructure</p>
+        </div>
+
+        <!-- Layer 1: AI Intent -->
+        <div class="layer-section" data-layer="1">
+            <div class="container">
+                <div class="layer-content">
+                    <div class="layer-info">
+                        <div class="layer-number">01</div>
+                        <h3 class="layer-title">AI Intent Layer</h3>
+                        <p class="layer-description">
+                            AI systems generate simple, declarative JSON that describes what you want to build. 
+                            No complex AWS syntax or configuration required.
+                        </p>
+                        <div class="layer-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🤖</span>
+                                <span>AI-Friendly Interfaces</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">📝</span>
+                                <span>Simple JSON Schema</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">⚡</span>
+                                <span>Zero AWS Knowledge Required</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layer-visual">
+                        <div class="visual-card intent-card">
+                            <div class="card-header">AI Intent</div>
+                            <div class="card-content">
+                                <div class="intent-block">
+                                    <span class="intent-label">Network</span>
+                                    <span class="intent-value">High Availability VPC</span>
+                                </div>
+                                <div class="intent-block">
+                                    <span class="intent-label">Storage</span>
+                                    <span class="intent-value">Encrypted S3 Bucket</span>
+                                </div>
+                                <div class="intent-block">
+                                    <span class="intent-label">Database</span>
+                                    <span class="intent-value">PostgreSQL with Backups</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layer 2: Lattice Framework -->
+        <div class="layer-section" data-layer="2">
+            <div class="container">
+                <div class="layer-content reverse">
+                    <div class="layer-visual">
+                        <div class="visual-card framework-card">
+                            <div class="card-header">Lattice Framework</div>
+                            <div class="card-content">
+                                <div class="framework-modules">
+                                    <div class="module-item">
+                                        <span class="module-icon">🌐</span>
+                                        <span>Network Module</span>
+                                    </div>
+                                    <div class="module-item">
+                                        <span class="module-icon">🗄️</span>
+                                        <span>Storage Module</span>
+                                    </div>
+                                    <div class="module-item">
+                                        <span class="module-icon">🔐</span>
+                                        <span>Identity Module</span>
+                                    </div>
+                                    <div class="module-item">
+                                        <span class="module-icon">🗃️</span>
+                                        <span>Database Module</span>
+                                    </div>
+                                    <div class="module-item">
+                                        <span class="module-icon">⚙️</span>
+                                        <span>Compute Module</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layer-info">
+                        <div class="layer-number">02</div>
+                        <h3 class="layer-title">Lattice Framework</h3>
+                        <p class="layer-description">
+                            The framework translates simple intents into complex AWS CDK constructs. 
+                            Each module handles a specific domain with best practices built-in.
+                        </p>
+                        <div class="layer-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🏗️</span>
+                                <span>5 Core Modules</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔧</span>
+                                <span>AWS CDK Native</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">📚</span>
+                                <span>Best Practices Built-in</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layer 3: Guardrails -->
+        <div class="layer-section" data-layer="3">
+            <div class="container">
+                <div class="layer-content">
+                    <div class="layer-info">
+                        <div class="layer-number">03</div>
+                        <h3 class="layer-title">Guardrails Layer</h3>
+                        <p class="layer-description">
+                            Lattice Aspects act as the "Final Inspector" - automatically applying security, 
+                            cost controls, and governance policies to ALL resources.
+                        </p>
+                        <div class="layer-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🛡️</span>
+                                <span>Security Enforcement</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">💰</span>
+                                <span>Cost Controls</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🏷️</span>
+                                <span>Auto Tagging</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layer-visual">
+                        <div class="visual-card guardrails-card">
+                            <div class="card-header">Guardrails</div>
+                            <div class="card-content">
+                                <div class="guardrail-item">
+                                    <div class="guardrail-icon security">🛡️</div>
+                                    <div class="guardrail-info">
+                                        <span class="guardrail-name">Security Aspect</span>
+                                        <span class="guardrail-desc">Encryption, Access Controls</span>
+                                    </div>
+                                    <div class="guardrail-status">✅</div>
+                                </div>
+                                <div class="guardrail-item">
+                                    <div class="guardrail-icon cost">💰</div>
+                                    <div class="guardrail-info">
+                                        <span class="guardrail-name">Cost Aspect</span>
+                                        <span class="guardrail-desc">Size Validation</span>
+                                    </div>
+                                    <div class="guardrail-status">✅</div>
+                                </div>
+                                <div class="guardrail-item">
+                                    <div class="guardrail-icon tagging">🏷️</div>
+                                    <div class="guardrail-info">
+                                        <span class="guardrail-name">Tagging Aspect</span>
+                                        <span class="guardrail-desc">Resource Organization</span>
+                                    </div>
+                                    <div class="guardrail-status">✅</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-section">
+            <div class="container">
+                <div class="result-content">
+                    <h3 class="result-title">Result: Production-Ready AWS Infrastructure</h3>
+                    <p class="result-description">
+                        Secure, cost-controlled, and properly tagged AWS resources that follow best practices
+                    </p>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-icon">🔒</span>
+                            <span class="result-text">Encrypted by Default</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-icon">💸</span>
+                            <span class="result-text">Cost Optimized</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-icon">🏷️</span>
+                            <span class="result-text">Properly Tagged</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-icon">⚡</span>
+                            <span class="result-text">High Performance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Lattice?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">AI-First Design</h3>
+                    <p class="feature-description">
+                        Simple JSON interfaces designed specifically for AI code generation systems
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="feature-title">Built-in Security</h3>
+                    <p class="feature-description">
+                        Automatic encryption, access controls, and security best practices
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3 class="feature-title">Cost Control</h3>
+                    <p class="feature-description">
+                        Environment-based resource sizing and cost optimization guardrails
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">AWS Native</h3>
+                    <p class="feature-description">
+                        Built on AWS CDK for type safety and seamless AWS integration
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Build Better Infrastructure?</h2>
+                <p class="cta-description">
+                    Start using Lattice today and let AI generate your AWS infrastructure with built-in best practices
+                </p>
+                <div class="cta-actions">
+                    <a href="#docs" class="btn btn-primary btn-large">Get Started</a>
+                    <a href="#github" class="btn btn-secondary btn-large">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">Lattice</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#docs">Documentation</a>
+                    <a href="#github">GitHub</a>
+                    <a href="#examples">Examples</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Lattice AWS CDK. Apache 2.0 License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "name": "lattice-aws-cdk",
+  "version": "0.1.0",
+  "description": "Contract-First AWS Infrastructure with CDK - AI generates simple JSON intents, Lattice handles complex AWS implementation",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy",
+    "synth": "cdk synth",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "aws",
+    "cdk",
+    "infrastructure",
+    "contract-first",
+    "ai",
+    "typescript"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.0.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.120.0",
+    "constructs": "^10.3.0"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.120.0",
+    "constructs": "^10.3.0"
+  }
+}
