@@ -1,0 +1,98 @@
+name: Security Scan
+
+on:
+  schedule:
+    # Run security scan daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - dependencies
+          - infrastructure
+
+jobs:
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Dependency Security Scan
+        if: github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == 'dependencies'
+        run: |
+          echo "🔍 Scanning dependencies for vulnerabilities..."
+          npm audit --audit-level=moderate
+          echo "✅ Dependency scan completed"
+
+      - name: 🏗️ Build for Infrastructure Scan
+        if: github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == 'infrastructure'
+        run: |
+          npm run build
+          npm run synth
+
+      - name: 🔒 Infrastructure Security Scan
+        if: github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == 'infrastructure'
+        run: |
+          echo "🔒 Scanning infrastructure for security issues..."
+          
+          if [ -f "cdk.out/threat-model.json" ]; then
+            CRITICAL_THREATS=$(jq '[.threats[] | select(.risk == "Critical")] | length' cdk.out/threat-model.json)
+            HIGH_THREATS=$(jq '[.threats[] | select(.risk == "High")] | length' cdk.out/threat-model.json)
+            
+            echo "📊 Security Scan Results:"
+            echo "  🔴 Critical Threats: $CRITICAL_THREATS"
+            echo "  🟠 High Risk Threats: $HIGH_THREATS"
+            
+            if [ "$CRITICAL_THREATS" -gt 0 ]; then
+              echo "⚠️ Critical security issues found:"
+              jq '.threats[] | select(.risk == "Critical") | {id, title, scenario}' cdk.out/threat-model.json
+            fi
+            
+            # Create security report
+            echo "# Security Scan Report" > security-report.md
+            echo "" >> security-report.md
+            echo "**Scan Date:** $(date)" >> security-report.md
+            echo "**Critical Threats:** $CRITICAL_THREATS" >> security-report.md
+            echo "**High Risk Threats:** $HIGH_THREATS" >> security-report.md
+            echo "" >> security-report.md
+            
+            if [ "$CRITICAL_THREATS" -gt 0 ]; then
+              echo "## Critical Threats" >> security-report.md
+              jq -r '.threats[] | select(.risk == "Critical") | "- **\(.id)**: \(.title)"' cdk.out/threat-model.json >> security-report.md
+            fi
+          else
+            echo "⚠️ No threat model found - infrastructure scan skipped"
+          fi
+
+      - name: 📤 Upload Security Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report-${{ github.run_id }}
+          path: |
+            security-report.md
+            cdk.out/threat-model.json
+          retention-days: 90
+
+      - name: 📊 Security Summary
+        run: |
+          echo "🔒 Security scan completed"
+          echo "📋 Report available in artifacts"

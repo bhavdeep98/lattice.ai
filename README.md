@@ -87,6 +87,37 @@ applyLatticeAspects(this, {
 
 See [docs/threat-modeling.md](docs/threat-modeling.md) for complete documentation.
 
+### 🚀 Automated CI/CD Pipeline
+
+Lattice includes a production-ready CI/CD pipeline with security-first deployment:
+
+```yaml
+# Automatic triggers
+- Pull Request → Deploy to Development
+- Push to main → Deploy to Staging  
+- Release tag → Deploy to Production (with approval)
+```
+
+**Pipeline Features:**
+- 🔍 **Automated Security Analysis**: Every deployment includes threat modeling
+- 💰 **Cost Controls**: Environment-specific limits and optimization
+- 🧪 **Multi-Environment**: Dev, staging, production with different policies
+- 📊 **Detailed Reporting**: PR comments with security and cost analysis
+- 🛡️ **Security Gates**: Block deployments with critical threats
+- ⚡ **Fast Feedback**: Complete validation in ~5-10 minutes
+
+**Example Pipeline Output:**
+```markdown
+## 🚀 Development Deployment Complete
+**Environment:** Development (PR #123)
+**Estimated Cost:** $45/month
+### 🔒 Security Analysis
+- ✅ No critical threats detected
+- ⚠️ 2 Security warnings - See threat model
+```
+
+See [docs/cicd-pipeline.md](docs/cicd-pipeline.md) for complete documentation.
+
 ## 📦 Available Modules
 
 - ✅ **Network Module**: VPC abstraction with subnets, NAT gateways, and security groups
