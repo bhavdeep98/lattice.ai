@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="nav">
@@ -32,8 +34,8 @@
                     <span class="gradient-text">AWS Infrastructure</span>
                 </h1>
                 <p class="hero-subtitle">
-                    AI generates simple JSON intents. Lattice handles the complex AWS implementation 
-                    with built-in guardrails for security, cost control, and governance.
+                    AI generates simple JSON intents. Lattice handles the complex AWS implementation
+                    with built-in <strong>Well-Architected</strong> guardrails for security, cost, and sustainability.
                 </p>
                 <div class="hero-actions">
                     <a href="#how-it-works" class="btn btn-primary">See How It Works</a>
@@ -71,7 +73,8 @@
     <section id="how-it-works" class="how-it-works">
         <div class="container">
             <h2 class="section-title">How Lattice Works</h2>
-            <p class="section-subtitle">Three layers that transform AI intents into production-ready AWS infrastructure</p>
+            <p class="section-subtitle">Three layers that transform AI intents into production-ready AWS infrastructure
+            </p>
         </div>
 
         <!-- Layer 1: AI Intent -->
@@ -82,7 +85,7 @@
                         <div class="layer-number">01</div>
                         <h3 class="layer-title">AI Intent Layer</h3>
                         <p class="layer-description">
-                            AI systems generate simple, declarative JSON that describes what you want to build. 
+                            AI systems generate simple, declarative JSON that describes what you want to build.
                             No complex AWS syntax or configuration required.
                         </p>
                         <div class="layer-features">
@@ -160,7 +163,7 @@
                         <div class="layer-number">02</div>
                         <h3 class="layer-title">Lattice Framework</h3>
                         <p class="layer-description">
-                            The framework translates simple intents into complex AWS CDK constructs. 
+                            The framework translates simple intents into complex AWS CDK constructs.
                             Each module handles a specific domain with best practices built-in.
                         </p>
                         <div class="layer-features">
@@ -190,7 +193,7 @@
                         <div class="layer-number">03</div>
                         <h3 class="layer-title">Guardrails Layer</h3>
                         <p class="layer-description">
-                            Lattice Aspects act as the "Final Inspector" - automatically applying security, 
+                            Lattice Aspects act as the "Final Inspector" - automatically applying security,
                             cost controls, and governance policies to ALL resources.
                         </p>
                         <div class="layer-features">
@@ -233,6 +236,30 @@
                                     <div class="guardrail-info">
                                         <span class="guardrail-name">Tagging Aspect</span>
                                         <span class="guardrail-desc">Resource Organization</span>
+                                    </div>
+                                    <div class="guardrail-status">✅</div>
+                                </div>
+                                <div class="guardrail-item">
+                                    <div class="guardrail-icon tagging">🏷️</div>
+                                    <div class="guardrail-info">
+                                        <span class="guardrail-name">Tagging Aspect</span>
+                                        <span class="guardrail-desc">Resource Organization</span>
+                                    </div>
+                                    <div class="guardrail-status">✅</div>
+                                </div>
+                                <div class="guardrail-item">
+                                    <div class="guardrail-icon sustainability">🌱</div>
+                                    <div class="guardrail-info">
+                                        <span class="guardrail-name">Sustainability</span>
+                                        <span class="guardrail-desc">Graviton Optimization</span>
+                                    </div>
+                                    <div class="guardrail-status">✅</div>
+                                </div>
+                                <div class="guardrail-item">
+                                    <div class="guardrail-icon observability">📊</div>
+                                    <div class="guardrail-info">
+                                        <span class="guardrail-name">Observability</span>
+                                        <span class="guardrail-desc">Auto-Dashboards</span>
                                     </div>
                                     <div class="guardrail-status">✅</div>
                                 </div>
@@ -307,6 +334,21 @@
                         Built on AWS CDK for type safety and seamless AWS integration
                     </p>
                 </div>
+                <!-- New Features -->
+                <div class="feature-card">
+                    <div class="feature-icon">🌱</div>
+                    <h3 class="feature-title">Sustainability</h3>
+                    <p class="feature-description">
+                        Default to ARM (Graviton) chips for better performance and lower carbon footprint
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Observability</h3>
+                    <p class="feature-description">
+                        Auto-generated CloudWatch dashboards for instant visibility
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -349,4 +391,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
