@@ -43,8 +43,8 @@ You need a commercial license if you:
 ### Contact
 
 For commercial licensing inquiries:
-- Email: [your-email@example.com]
-- Website: [your-website.com]
+- Email: bhavdeepsachdeva@gmail.com
+- Website: https://bhavdeep98.github.io
 
 ### Legal
 
