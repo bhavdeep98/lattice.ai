@@ -27,12 +27,12 @@ export function validateCidr(cidr: string): boolean {
 
 export function validateResourceName(name: string): boolean {
   // AWS resource naming constraints
-  return /^[a-zA-Z0-9\-_]+$/.test(name) && name.length >= 1 && name.length <= 63;
+  return /^[a-zA-Z0-9-_]+$/.test(name) && name.length >= 1 && name.length <= 63;
 }
 
 export function validateBucketName(name: string): boolean {
   // S3 bucket naming rules
-  const bucketRegex = /^[a-z0-9][a-z0-9\-]*[a-z0-9]$/;
+  const bucketRegex = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
   return bucketRegex.test(name) && 
          name.length >= 3 && 
          name.length <= 63 && 

@@ -116,6 +116,13 @@ export class DataPipelineStack extends Stack {
         })
       )
     });
+
+    // Log pipeline resources
+    console.log(`📊 Data pipeline created:`);
+    console.log(`   Raw data: ${rawDataBucket.bucketName}`);
+    console.log(`   Processed data: ${processedDataBucket.bucketName}`);
+    console.log(`   ETL job: ${glueJob.ref}`);
+    console.log(`   Orchestrator: ${stateMachine.stateMachineArn}`);
   }
 }
 

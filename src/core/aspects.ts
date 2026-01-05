@@ -42,7 +42,14 @@ export class SecurityAspect implements IAspect {
 
       // Check for overly permissive rules
       rules.forEach(rule => {
-        // Implementation would check for 0.0.0.0/0 rules, etc.
+        // Check for overly permissive CIDR blocks
+        const ruleNode = rule.node;
+        if (ruleNode.tryFindChild('CidrIp')) {
+          const cidrIp = (ruleNode.tryFindChild('CidrIp') as any)?.value;
+          if (cidrIp === '0.0.0.0/0') {
+            console.warn(`⚠️ Security warning: Rule ${rule.node.id} allows access from anywhere (0.0.0.0/0)`);
+          }
+        }
       });
     }
   }
@@ -118,7 +125,7 @@ export class MonitoringAspect implements IAspect {
   constructor(private config: LatticeAspectsConfig) { }
 
   visit(node: IConstruct): void {
-    if (!this.config.enableMonitoring) return;
+    if (!this.config.enableMonitoring) {return;}
 
     // Create dashboard if it doesn't exist (only once per stack)
     if (!this.dashboard && node instanceof Stack) {
@@ -127,7 +134,7 @@ export class MonitoringAspect implements IAspect {
       });
     }
 
-    if (!this.dashboard) return;
+    if (!this.dashboard) {return;}
 
     // Add RDS metrics
     if (node instanceof rds.DatabaseInstance) {

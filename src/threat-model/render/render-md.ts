@@ -27,10 +27,10 @@ export function renderThreatModelMd(model: ThreatModelDoc): string {
   
   sections.push(`This threat model identifies **${model.threats.length} potential threats** across the architecture:`);
   sections.push('');
-  if (criticalThreats > 0) sections.push(`- 🔴 **${criticalThreats} Critical** risk threats`);
-  if (highThreats > 0) sections.push(`- 🟠 **${highThreats} High** risk threats`);
-  if (mediumThreats > 0) sections.push(`- 🟡 **${mediumThreats} Medium** risk threats`);
-  if (lowThreats > 0) sections.push(`- 🟢 **${lowThreats} Low** risk threats`);
+  if (criticalThreats > 0) {sections.push(`- 🔴 **${criticalThreats} Critical** risk threats`);}
+  if (highThreats > 0) {sections.push(`- 🟠 **${highThreats} High** risk threats`);}
+  if (mediumThreats > 0) {sections.push(`- 🟡 **${mediumThreats} Medium** risk threats`);}
+  if (lowThreats > 0) {sections.push(`- 🟢 **${lowThreats} Low** risk threats`);}
   sections.push('');
 
   // Architecture Overview
@@ -46,7 +46,7 @@ export function renderThreatModelMd(model: ThreatModelDoc): string {
   sections.push('### Resource Inventory');
   sections.push('');
   const serviceGroups = model.inventory.reduce((acc, resource) => {
-    if (!acc[resource.service]) acc[resource.service] = [];
+    if (!acc[resource.service]) {acc[resource.service] = [];}
     acc[resource.service].push(resource);
     return acc;
   }, {} as Record<string, typeof model.inventory>);
@@ -87,7 +87,7 @@ export function renderThreatModelMd(model: ThreatModelDoc): string {
   
   strideCategories.forEach(stride => {
     const strideThreats = model.threats.filter(t => t.stride === stride);
-    if (strideThreats.length === 0) return;
+    if (strideThreats.length === 0) {return;}
 
     sections.push(`### ${stride}`);
     sections.push('');

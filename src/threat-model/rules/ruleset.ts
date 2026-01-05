@@ -90,13 +90,13 @@ function calculateRisk(
   impact: "Low" | "Medium" | "High"
 ): "Low" | "Medium" | "High" | "Critical" {
   // Simple deterministic matrix
-  if (likelihood === "High" && impact === "High") return "Critical";
+  if (likelihood === "High" && impact === "High") {return "Critical";}
   if ((likelihood === "High" && impact === "Medium") || 
-      (likelihood === "Medium" && impact === "High")) return "High";
-  if (likelihood === "Medium" && impact === "Medium") return "High";
+      (likelihood === "Medium" && impact === "High")) {return "High";}
+  if (likelihood === "Medium" && impact === "Medium") {return "High";}
   if ((likelihood === "High" && impact === "Low") ||
       (likelihood === "Low" && impact === "High") ||
       (likelihood === "Medium" && impact === "Low") ||
-      (likelihood === "Low" && impact === "Medium")) return "Medium";
+      (likelihood === "Low" && impact === "Medium")) {return "Medium";}
   return "Low";
 }

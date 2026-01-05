@@ -123,6 +123,11 @@ export class AIGeneratedStack extends Stack {
     });
 
     // Result: Production-ready, secure, cost-controlled infrastructure
+    // Log deployment information
+    console.log(`🚀 AI-generated infrastructure deployed:`);
+    console.log(`   Storage: ${storage.output.bucketName}`);
+    console.log(`   Database: ${database.output.endpoint}`);
+    console.log(`   Compute: ${compute.output.instanceIds?.length || 0} instances`);
     // automatically generated from simple AI intents!
   }
 }

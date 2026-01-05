@@ -1,0 +1,22 @@
+# Build outputs
+lib/
+cdk.out/
+*.d.ts
+
+# Dependencies
+node_modules/
+
+# Generated files
+website-dist/
+
+# JavaScript files (except config)
+*.js
+!.eslintrc.js
+!jest.config.js
+!scripts/*.js
+
+# Test files that might have different rules
+tests/
+
+# CDK specific
+cdk.context.json

@@ -32,6 +32,12 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       vpc,
     } = props;
 
+    // Validate compute type
+    const validTypes: ComputeType[] = ['vm', 'container', 'serverless'];
+    if (!validTypes.includes(type)) {
+      throw new Error(`Unsupported compute type: ${type}. Valid types: ${validTypes.join(', ')}`);
+    }
+
     switch (type) {
       case 'vm':
         this.output = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData, vpc);
@@ -102,6 +108,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
 
       return {
         instanceIds: [], // ASG manages instances dynamically
+        clusterArn: asg.autoScalingGroupArn,
       };
     } else {
       const instance = new ec2.Instance(this, 'Instance', {

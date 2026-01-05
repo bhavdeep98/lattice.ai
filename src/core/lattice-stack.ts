@@ -15,6 +15,12 @@ import { NetworkOutput, DatabaseOutput, ComputeOutput } from './types';
  * Consumes a LatticeManifest and builds the complete infrastructure.
  */
 export class LatticeStack extends Stack {
+    public readonly outputs: {
+        network?: NetworkOutput;
+        database?: DatabaseOutput;
+        compute?: ComputeOutput;
+    } = {};
+
     constructor(scope: Construct, id: string, manifest: LatticeManifest, props?: StackProps) {
         super(scope, id, props);
 
@@ -47,6 +53,7 @@ export class LatticeStack extends Stack {
                 cidr: '10.0.0.0/16',
             });
             networkOutput = networkInstance.output;
+            this.outputs.network = networkOutput;
         }
 
         // 3. Database
@@ -63,9 +70,11 @@ export class LatticeStack extends Stack {
                 vpc: networkInstance.getVpc(),
             });
             dbOutput = db.output;
+            this.outputs.database = dbOutput;
         }
 
         // 4. API / Compute
+        let computeOutput: ComputeOutput | undefined;
         if (capabilities.api && networkOutput && networkInstance) {
             // Inject dependency: DB connection string if available
             const envVars = capabilities.api.functionCode || capabilities.api.userData
@@ -77,7 +86,7 @@ export class LatticeStack extends Stack {
                 // But for the 'Intent' model, we assume the code handles retrieving secrets
             }
 
-            new LatticeCompute(this, 'Api', {
+            const compute = new LatticeCompute(this, 'Api', {
                 ...capabilities.api,
                 environment,
                 network: {
@@ -88,6 +97,8 @@ export class LatticeStack extends Stack {
                 vpc: networkInstance.getVpc(),
                 // Identity (Roles) would be handled here or auto-created
             });
+            computeOutput = compute.output;
+            this.outputs.compute = computeOutput;
         }
 
         // 5. Website

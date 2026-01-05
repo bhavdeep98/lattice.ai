@@ -28,7 +28,7 @@ export function inferWorkloadType(facts: ThreatFactsCollector): string {
     has("AWS::KinesisFirehose::DeliveryStream") ||
     has("AWS::DataPipeline::Pipeline");
   
-  if (pipelineSignals) return "data-pipeline";
+  if (pipelineSignals) {return "data-pipeline";}
 
   // Serverless API
   if (has("AWS::ApiGateway::RestApi") || 

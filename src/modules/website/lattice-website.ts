@@ -40,7 +40,7 @@ export class LatticeWebsite extends Construct implements LatticeWebsiteConstruct
         });
 
         // 2. Create CloudFront Distribution
-        const distribution = new cloudfront.Distribution(this, 'Distribution', {
+        const distributionConfig: cloudfront.DistributionProps = {
             comment: `Lattice Website: ${name} (${environment})`,
             defaultBehavior: {
                 origin: origins.S3BucketOrigin.withOriginAccessControl(bucket),
@@ -59,9 +59,20 @@ export class LatticeWebsite extends Construct implements LatticeWebsiteConstruct
                     responsePagePath: `/${errorPage}`,
                 },
             ],
-            // (Optional) Domain mapping would go here if domainName is provided
-            // ignoring complex Route53 setup for simplicity in this iteration
-        });
+        };
+
+        // Add custom domain if provided
+        if (domainName) {
+            // Note: In a real implementation, you'd need to:
+            // 1. Create/import SSL certificate
+            // 2. Set up Route53 hosted zone
+            // 3. Configure domain aliases
+            console.log(`⚠️ Custom domain ${domainName} specified but not implemented. Using CloudFront domain.`);
+            // distributionConfig.domainNames = [domainName];
+            // distributionConfig.certificate = certificate;
+        }
+
+        const distribution = new cloudfront.Distribution(this, 'Distribution', distributionConfig);
 
         // 3. Deploy Content
         new s3deploy.BucketDeployment(this, 'DeployContent', {
@@ -76,7 +87,7 @@ export class LatticeWebsite extends Construct implements LatticeWebsiteConstruct
             bucketName: bucket.bucketName,
             distributionId: distribution.distributionId,
             domainName: distribution.distributionDomainName,
-            websiteUrl: `https://${distribution.distributionDomainName}`,
+            websiteUrl: domainName ? `https://${domainName}` : `https://${distribution.distributionDomainName}`,
         };
 
         new CfnOutput(this, 'WebsiteUrl', { value: this.output.websiteUrl });

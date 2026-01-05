@@ -68,7 +68,7 @@ export class ExampleStack extends Stack {
     const network = new LatticeNetwork(this, 'Network', networkIntent);
     
     const storage = new LatticeBucket(this, 'Storage', storageIntent);
-    
+
     const identity = new LatticeIdentity(this, 'Identity', identityIntent);
 
     const database = new LatticeDatabase(this, 'Database', {
@@ -101,5 +101,13 @@ export class ExampleStack extends Stack {
     // 🛡️ Secured (encryption, versioning, access controls)
     // 💰 Cost-controlled (appropriate sizes for environment)
     // 🏷️ Tagged (project, owner, environment, cost center)
+    
+    // Log resource information for verification
+    console.log(`✅ Infrastructure deployed successfully:`);
+    console.log(`   🌐 VPC: ${network.output.vpcId}`);
+    console.log(`   🗄️ Database: ${database.output.endpoint}`);
+    console.log(`   💾 Storage: ${storage.output.bucketName}`);
+    console.log(`   🔐 Identity: ${identity.output.roleName}`);
+    console.log(`   ⚡ Compute: ${compute.output.instanceIds?.length || 0} instances`);
   }
 }

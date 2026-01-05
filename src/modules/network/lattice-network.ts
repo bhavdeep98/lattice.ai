@@ -26,10 +26,18 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
       enableVpcFlowLogs = true,
     } = props;
 
+    // Validate subnet configuration
+    if (publicSubnets < 1 || publicSubnets > 6) {
+      throw new Error(`Public subnets must be between 1 and 6, got: ${publicSubnets}`);
+    }
+    if (privateSubnets < 1 || privateSubnets > 6) {
+      throw new Error(`Private subnets must be between 1 and 6, got: ${privateSubnets}`);
+    }
+
     // Create VPC with best practices
     this.vpc = new ec2.Vpc(this, 'Vpc', {
       ipAddresses: ec2.IpAddresses.cidr(cidr),
-      maxAzs: highAvailability ? 3 : 2,
+      maxAzs: highAvailability ? Math.max(publicSubnets, privateSubnets) : 2,
       subnetConfiguration: [
         {
           cidrMask: 24,

@@ -138,16 +138,16 @@ export class ThreatFactsCollector {
       
       switch (type) {
         case "AWS::S3::Bucket":
-          if (cfnProps.BucketName) props.bucketName = cfnProps.BucketName;
-          if (cfnProps.PublicAccessBlockConfiguration) props.publicAccess = "blocked";
+          if (cfnProps.BucketName) {props.bucketName = cfnProps.BucketName;}
+          if (cfnProps.PublicAccessBlockConfiguration) {props.publicAccess = "blocked";}
           break;
         case "AWS::Lambda::Function":
-          if (cfnProps.Runtime) props.runtime = cfnProps.Runtime;
-          if (cfnProps.MemorySize) props.memorySize = cfnProps.MemorySize;
+          if (cfnProps.Runtime) {props.runtime = cfnProps.Runtime;}
+          if (cfnProps.MemorySize) {props.memorySize = cfnProps.MemorySize;}
           break;
         case "AWS::DynamoDB::Table":
-          if (cfnProps.TableName) props.tableName = cfnProps.TableName;
-          if (cfnProps.BillingMode) props.billingMode = cfnProps.BillingMode;
+          if (cfnProps.TableName) {props.tableName = cfnProps.TableName;}
+          if (cfnProps.BillingMode) {props.billingMode = cfnProps.BillingMode;}
           break;
       }
     } catch (e) {
@@ -179,11 +179,11 @@ export class ThreatFactsCollector {
     try {
       const props = (res as any).cfnProperties || {};
       const encryption = props.BucketEncryption?.ServerSideEncryptionConfiguration?.[0];
-      if (!encryption) return "none";
+      if (!encryption) {return "none";}
       
       const algorithm = encryption.ServerSideEncryptionByDefault?.SSEAlgorithm;
-      if (algorithm === "aws:kms") return "kms";
-      if (algorithm === "AES256") return "aws-managed";
+      if (algorithm === "aws:kms") {return "kms";}
+      if (algorithm === "AES256") {return "aws-managed";}
       return "unknown";
     } catch {
       return "unknown";
@@ -194,9 +194,9 @@ export class ThreatFactsCollector {
     try {
       const props = (res as any).cfnProperties || {};
       const encryption = props.SSESpecification;
-      if (!encryption || !encryption.SSEEnabled) return "none";
+      if (!encryption || !encryption.SSEEnabled) {return "none";}
       
-      if (encryption.KMSMasterKeyId) return "kms";
+      if (encryption.KMSMasterKeyId) {return "kms";}
       return "aws-managed";
     } catch {
       return "unknown";
