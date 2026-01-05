@@ -153,4 +153,6 @@ We welcome contributions! Please see our Contributing Guide for details.
 
 ## 📄 License
 
-Apache 2.0 - see LICENSE file for details.
+Business Source License 1.1 - see LICENSE file for details.
+
+For commercial licensing inquiries, please contact [your-email@example.com].

@@ -8,6 +8,10 @@ import { IdentityOutput } from '../../core/types';
  */
 export class LatticeIdentity extends Construct implements LatticeIdentityConstruct {
   public readonly output: IdentityOutput;
+  
+  // Escape hatch: Direct access to underlying AWS CDK construct
+  public readonly instance: iam.Role;
+  
   private readonly role: iam.Role;
 
   constructor(scope: Construct, id: string, props: LatticeIdentityProps) {
@@ -50,6 +54,9 @@ export class LatticeIdentity extends Construct implements LatticeIdentityConstru
       });
       this.role.attachInlinePolicy(customPolicy);
     }
+
+    // Expose underlying construct for escape hatch scenarios
+    this.instance = this.role;
 
     // Set output
     this.output = {

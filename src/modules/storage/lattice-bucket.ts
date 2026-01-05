@@ -5,15 +5,26 @@ import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import { LatticeBucketProps, LatticeBucketConstruct } from './types';
 import { StorageOutput } from '../../core/types';
+import { createStatefulnessPolicy } from '../../core/statefulness';
+import { LatticeObservabilityManager } from '../../core/observability';
 
 /**
  * LatticeBucket - S3 bucket abstraction with security and lifecycle best practices
  */
 export class LatticeBucket extends Construct implements LatticeBucketConstruct {
   public readonly output: StorageOutput;
+  
+  // Escape hatch: Direct access to underlying AWS CDK construct
+  public readonly instance: s3.Bucket;
+  
+  // Observability: Alarms and dashboards for monitoring
+  public readonly alarms: cloudwatch.Alarm[] = [];
+  
   private readonly bucket: s3.Bucket;
+  private readonly observabilityManager?: LatticeObservabilityManager;
 
   constructor(scope: Construct, id: string, props: LatticeBucketProps) {
     super(scope, id);
@@ -29,10 +40,28 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       notifications,
     } = props;
 
-    // Create S3 bucket with security best practices
+    // Create statefulness policy for proper operations management
+    const statefulnessPolicy = createStatefulnessPolicy({
+      environment,
+      forceRetain: props.forceRetain,
+      enableBackups: props.enableBackups,
+      backupRetentionDays: props.backupRetentionDays,
+    });
+
+    // Create observability manager if monitoring is enabled
+    if (props.enableObservability !== false) {
+      this.observabilityManager = LatticeObservabilityManager.create(this, 'Observability', {
+        environment,
+        enableAlarms: props.enableAlarms,
+        enableDashboards: props.enableDashboards,
+        notificationTopic: props.notificationTopic,
+      });
+    }
+
+    // Create S3 bucket with security and operations best practices
     this.bucket = new s3.Bucket(this, 'Bucket', {
       bucketName: `${name}-${environment}`,
-      encryption: encryption ? s3.BucketEncryption.S3_MANAGED : s3.BucketEncryption.UNENCRYPTED,
+      encryption: encryption ? s3.BucketEncryption.S3_MANAGED : undefined,
       versioned: versioning,
       blockPublicAccess: publicRead ?
         new s3.BlockPublicAccess({
@@ -43,10 +72,17 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
         }) :
         s3.BlockPublicAccess.BLOCK_ALL,
       publicReadAccess: publicRead,
-      removalPolicy: environment === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
-      autoDeleteObjects: environment !== 'prod',
+      // CRITICAL: Use statefulness policy to prevent accidental data loss
+      removalPolicy: statefulnessPolicy.getRemovalPolicy(),
+      autoDeleteObjects: statefulnessPolicy.shouldAutoDeleteObjects(),
       enforceSSL: true,
     });
+
+    // Expose underlying construct for escape hatch scenarios
+    this.instance = this.bucket;
+
+    // Add observability after bucket creation
+    this.addObservability(name);
 
     // Configure CORS if specified
     if (cors) {
@@ -157,5 +193,27 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
    */
   public grantReadWrite(grantee: any): void {
     this.bucket.grantReadWrite(grantee);
+  }
+
+  /**
+   * Add observability (alarms and dashboards) for the S3 bucket
+   */
+  private addObservability(bucketName: string): void {
+    if (!this.observabilityManager) {
+      return;
+    }
+
+    // Use the static bucket name to avoid token resolution issues
+    // The actual bucket name will be used in the metric dimensions
+    const observability = this.observabilityManager.addStorageObservability(
+      bucketName,
+      {
+        bucketName,
+        actualBucketName: this.bucket.bucketName, // Pass the actual bucket name for metrics
+      }
+    );
+
+    // Store alarms for external access
+    this.alarms.push(...observability.alarms);
   }
 }

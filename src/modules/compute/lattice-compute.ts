@@ -5,14 +5,24 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import { LatticeComputeProps, LatticeComputeConstruct, ComputeType, ComputeSize } from './types';
 import { ComputeOutput } from '../../core/types';
+import { LatticeObservabilityManager } from '../../core/observability';
 
 /**
  * LatticeCompute - Multi-type compute abstraction (EC2, ECS, Lambda)
  */
 export class LatticeCompute extends Construct implements LatticeComputeConstruct {
   public readonly output: ComputeOutput;
+  
+  // Escape hatch: Direct access to underlying AWS CDK constructs
+  // The actual type depends on the compute type (EC2, ECS, Lambda)
+  public readonly instance: ec2.Instance | autoscaling.AutoScalingGroup | ecs.FargateService | lambda.Function | undefined;
+  
+  // Observability: Alarms and dashboards for monitoring
+  public readonly alarms: cloudwatch.Alarm[] = [];
+  private readonly observabilityManager?: LatticeObservabilityManager;
 
   constructor(scope: Construct, id: string, props: LatticeComputeProps) {
     super(scope, id);
@@ -38,19 +48,90 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       throw new Error(`Unsupported compute type: ${type}. Valid types: ${validTypes.join(', ')}`);
     }
 
+    // Create observability manager if monitoring is enabled
+    if (props.enableObservability !== false) {
+      this.observabilityManager = LatticeObservabilityManager.create(this, 'Observability', {
+        environment,
+        enableAlarms: props.enableAlarms,
+        enableDashboards: props.enableDashboards,
+        notificationTopic: props.notificationTopic,
+      });
+    }
+
     switch (type) {
       case 'vm':
-        this.output = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData, vpc);
+        const vmResult = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData, vpc);
+        this.output = vmResult.output;
+        this.instance = vmResult.instance;
         break;
       case 'container':
-        this.output = this.createContainerCompute(name, environment, size, autoScaling, network, identity, containerImage, vpc);
+        const containerResult = this.createContainerCompute(name, environment, size, autoScaling, network, identity, containerImage, vpc);
+        this.output = containerResult.output;
+        this.instance = containerResult.instance;
         break;
       case 'serverless':
-        this.output = this.createServerlessCompute(name, environment, size, network, identity, functionCode, runtime, vpc);
+        const serverlessResult = this.createServerlessCompute(name, environment, size, network, identity, functionCode, runtime, vpc);
+        this.output = serverlessResult.output;
+        this.instance = serverlessResult.instance;
         break;
       default:
         throw new Error(`Unsupported compute type: ${type}`);
     }
+
+    // Add observability after resource creation
+    this.addObservability(type, name);
+  }
+
+  /**
+   * Add observability (alarms and dashboards) for the compute resource
+   */
+  private addObservability(type: ComputeType, resourceName: string): void {
+    if (!this.observabilityManager || !this.instance) {
+      return;
+    }
+
+    let staticResourceId: string;
+    let actualResourceId: string;
+    let resourceType: 'ec2' | 'ecs' | 'lambda';
+
+    // Determine resource ID and type for monitoring
+    if (type === 'vm') {
+      if (this.instance instanceof ec2.Instance) {
+        staticResourceId = `${resourceName}-instance`;
+        actualResourceId = this.instance.instanceId;
+        resourceType = 'ec2';
+      } else if (this.instance instanceof autoscaling.AutoScalingGroup) {
+        staticResourceId = `${resourceName}-asg`;
+        actualResourceId = this.instance.autoScalingGroupName;
+        resourceType = 'ec2'; // ASG uses EC2 metrics
+      } else {
+        return;
+      }
+    } else if (type === 'container' && this.instance instanceof ecs.FargateService) {
+      staticResourceId = `${resourceName}-service`;
+      actualResourceId = this.instance.serviceName;
+      resourceType = 'ecs';
+    } else if (type === 'serverless' && this.instance instanceof lambda.Function) {
+      staticResourceId = `${resourceName}-function`;
+      actualResourceId = this.instance.functionName;
+      resourceType = 'lambda';
+    } else {
+      return;
+    }
+
+    // Create observability resources using static ID for alarm names
+    const observability = this.observabilityManager.addComputeObservability(
+      staticResourceId,
+      resourceType,
+      {
+        resourceName,
+        computeType: type,
+        actualResourceId, // Pass actual resource ID for metrics
+      }
+    );
+
+    // Store alarms for external access
+    this.alarms.push(...observability.alarms);
   }
 
   private createVmCompute(
@@ -62,7 +143,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     identity?: any,
     userData?: string,
     existingVpc?: ec2.IVpc
-  ): ComputeOutput {
+  ): { output: ComputeOutput; instance: ec2.Instance | autoscaling.AutoScalingGroup } {
     const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
@@ -100,15 +181,16 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
         maxCapacity: 10,
         desiredCapacity: 2,
         vpcSubnets: {
-          subnets: network.subnetIds.map((subnetId: string) =>
-            ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
-          ),
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
       });
 
       return {
-        instanceIds: [], // ASG manages instances dynamically
-        clusterArn: asg.autoScalingGroupArn,
+        output: {
+          instanceIds: [], // ASG manages instances dynamically
+          clusterArn: asg.autoScalingGroupArn,
+        },
+        instance: asg,
       };
     } else {
       const instance = new ec2.Instance(this, 'Instance', {
@@ -119,14 +201,15 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
         role,
         userData: userData ? ec2.UserData.custom(userData) : undefined,
         vpcSubnets: {
-          subnets: network.subnetIds.map((subnetId: string) =>
-            ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
-          ),
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
       });
 
       return {
-        instanceIds: [instance.instanceId],
+        output: {
+          instanceIds: [instance.instanceId],
+        },
+        instance: instance,
       };
     }
   }
@@ -140,7 +223,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     identity?: any,
     containerImage?: string,
     existingVpc?: ec2.IVpc
-  ): ComputeOutput {
+  ): { output: ComputeOutput; instance: ecs.FargateService } {
     const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
@@ -175,9 +258,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       taskDefinition,
       desiredCount: autoScaling ? 2 : 1,
       vpcSubnets: {
-        subnets: network.subnetIds.map((subnetId: string) =>
-          ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
-        ),
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
     });
 
@@ -193,7 +274,10 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     }
 
     return {
-      clusterArn: cluster.clusterArn,
+      output: {
+        clusterArn: cluster.clusterArn,
+      },
+      instance: service,
     };
   }
 
@@ -206,7 +290,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     functionCode?: string,
     runtime?: string,
     existingVpc?: ec2.IVpc
-  ): ComputeOutput {
+  ): { output: ComputeOutput; instance: lambda.Function } {
     const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
@@ -230,14 +314,15 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       role: identity ? iam.Role.fromRoleArn(this, 'LambdaRole', identity.roleArn) : undefined,
       vpc,
       vpcSubnets: {
-        subnets: network.subnetIds.map((subnetId: string) =>
-          ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
-        ),
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
     });
 
     return {
-      functionArn: lambdaFunction.functionArn,
+      output: {
+        functionArn: lambdaFunction.functionArn,
+      },
+      instance: lambdaFunction,
     };
   }
 

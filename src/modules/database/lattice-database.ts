@@ -3,16 +3,29 @@ import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import { LatticeDatabaseProps, LatticeDatabaseConstruct, DatabaseEngine, DatabaseSize } from './types';
 import { DatabaseOutput } from '../../core/types';
+import { createStatefulnessPolicy } from '../../core/statefulness';
+import { LatticeBackupManager } from '../../core/backup-manager';
+import { LatticeObservabilityManager } from '../../core/observability';
 
 /**
  * LatticeDatabase - RDS abstraction with security and high availability best practices
  */
 export class LatticeDatabase extends Construct implements LatticeDatabaseConstruct {
   public readonly output: DatabaseOutput;
+  
+  // Escape hatch: Direct access to underlying AWS CDK constructs
+  public readonly instance: rds.DatabaseInstance;
+  public readonly securityGroup: ec2.SecurityGroup;
+  
+  // Observability: Alarms and dashboards for monitoring
+  public readonly alarms: cloudwatch.Alarm[] = [];
+  
   private readonly database: rds.DatabaseInstance;
-  private readonly securityGroup: ec2.SecurityGroup;
+  private readonly backupManager?: LatticeBackupManager;
+  private readonly observabilityManager?: LatticeObservabilityManager;
 
   constructor(scope: Construct, id: string, props: LatticeDatabaseProps) {
     super(scope, id);
@@ -32,28 +45,44 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       vpc: existingVpc,
     } = props;
 
+    // Create statefulness policy for proper operations management
+    const statefulnessPolicy = createStatefulnessPolicy({
+      environment,
+      forceRetain: props.forceRetain,
+      enableBackups: props.enableBackups,
+      backupRetentionDays: props.backupRetentionDays,
+    });
+
+    // Create observability manager if monitoring is enabled
+    if (props.enableObservability !== false) {
+      this.observabilityManager = LatticeObservabilityManager.create(this, 'Observability', {
+        environment,
+        enableAlarms: props.enableAlarms,
+        enableDashboards: props.enableDashboards,
+        notificationTopic: props.notificationTopic,
+      });
+    }
+
+    // Create backup manager if backups are enabled
+    if (statefulnessPolicy.shouldEnableBackups()) {
+      this.backupManager = new LatticeBackupManager(this, 'BackupManager', {
+        policy: statefulnessPolicy,
+        backupVaultName: `${name}-${environment}-db-backup-vault`,
+        enableCrossRegionBackup: statefulnessPolicy.shouldEnableCrossRegionBackups(),
+        enableComplianceReporting: environment === 'prod',
+      });
+    }
+
     // Get VPC from props or network configuration
     const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: network.vpcId,
     });
 
-    // Create database subnet group
-    const subnetGroup = new rds.SubnetGroup(this, 'SubnetGroup', {
-      description: `Subnet group for ${name} database`,
-      vpc,
-      subnetGroupName: `${name}-${environment}-subnet-group`,
-      vpcSubnets: {
-        subnets: network.subnetIds.map(subnetId =>
-          ec2.Subnet.fromSubnetId(this, `Subnet-${subnetId}`, subnetId)
-        ),
-      },
-    });
-
     // Create security group for database
-    this.securityGroup = new ec2.SecurityGroup(this, 'DatabaseSecurityGroup', {
+    this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc,
       description: `Security group for ${name} database`,
-      allowAllOutbound: false,
+      securityGroupName: `${name}-${environment}-db-sg`,
     });
 
     // Add ingress rules for database port
@@ -63,6 +92,16 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       ec2.Port.tcp(port),
       `Allow ${engine} access from VPC`
     );
+
+    // Create database subnet group
+    const subnetGroup = new rds.SubnetGroup(this, 'SubnetGroup', {
+      description: `Subnet group for ${name} database`,
+      vpc,
+      subnetGroupName: `${name}-${environment}-subnet-group`,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+      },
+    });
 
     // Add existing security groups if provided
     const securityGroups: ec2.ISecurityGroup[] = [this.securityGroup];
@@ -84,7 +123,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       },
     });
 
-    // Create RDS instance
+    // Create RDS instance with comprehensive backup and operations configuration
     this.database = new rds.DatabaseInstance(this, 'Database', {
       instanceIdentifier: `${name}-${environment}`,
       engine: this.getRdsEngine(engine),
@@ -95,17 +134,39 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       securityGroups,
       multiAz: highAvailability,
       storageEncrypted: true,
-      backupRetention: Duration.days(backupRetention),
-      deletionProtection,
+      // CRITICAL: Use statefulness policy for backup retention
+      backupRetention: Duration.days(Math.max(
+        backupRetention,
+        statefulnessPolicy.getBackupRetentionDays()
+      )),
+      // CRITICAL: Use statefulness policy for deletion protection
+      deletionProtection: statefulnessPolicy.shouldEnableDeletionProtection(),
       enablePerformanceInsights: performanceInsights,
       monitoringInterval: monitoring ? Duration.seconds(60) : undefined,
-      removalPolicy: environment === 'prod' ? RemovalPolicy.SNAPSHOT : RemovalPolicy.DESTROY,
+      // CRITICAL: Use database-specific removal policy (SNAPSHOT for better recovery)
+      removalPolicy: statefulnessPolicy.getDatabaseRemovalPolicy(),
       allocatedStorage: this.getStorageSize(size),
       maxAllocatedStorage: this.getMaxStorageSize(size),
       allowMajorVersionUpgrade: false,
       autoMinorVersionUpgrade: true,
       parameterGroup: this.createParameterGroup(engine),
+      // Enable point-in-time recovery for production
+      deleteAutomatedBackups: !statefulnessPolicy.shouldEnablePointInTimeRecovery(),
     });
+
+    // Expose underlying constructs for escape hatch scenarios
+    this.instance = this.database;
+
+    // Add database to backup plan if backup manager exists
+    if (this.backupManager) {
+      this.backupManager.addResource(
+        this.database.instanceArn,
+        `rds-${engine}`
+      );
+    }
+
+    // Add observability after database creation
+    this.addObservability(name, engine);
 
     // Set output
     this.output = {
@@ -113,6 +174,29 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       port: this.database.instanceEndpoint.port,
       securityGroupId: this.securityGroup.securityGroupId,
     };
+  }
+
+  /**
+   * Add observability (alarms and dashboards) for the database
+   */
+  private addObservability(databaseName: string, engine: DatabaseEngine): void {
+    if (!this.observabilityManager) {
+      return;
+    }
+
+    // Create observability resources using static name for alarm naming
+    const observability = this.observabilityManager.addDatabaseObservability(
+      databaseName,
+      engine,
+      {
+        databaseName,
+        engine,
+        actualInstanceId: this.database.instanceIdentifier, // Pass actual instance ID for metrics
+      }
+    );
+
+    // Store alarms for external access
+    this.alarms.push(...observability.alarms);
   }
 
   private supportsGraviton(engine: DatabaseEngine): boolean {
