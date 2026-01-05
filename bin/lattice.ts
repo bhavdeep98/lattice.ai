@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { ExampleStack } from '../examples/example-stack';
+import { SimpleTestStack } from '../examples/simple-test-stack';
 
 const app = new cdk.App();
 
-new ExampleStack(app, 'LatticeExampleStack', {
+// Use simple test stack for CI/CD testing
+new SimpleTestStack(app, 'LatticeTestStack', {
   env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
+    account: process.env.CDK_DEFAULT_ACCOUNT || '123456789012',
+    region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
   },
 });

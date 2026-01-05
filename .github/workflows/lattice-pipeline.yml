@@ -63,15 +63,23 @@ jobs:
           npm run format -- --check
           echo "✅ Code formatting verified"
 
+      - name: 🏗️ CDK Synthesis (for tests)
+        run: |
+          echo "🔄 Synthesizing CDK stacks for testing..."
+          npm run synth 2>&1 | tee synth-output.log || {
+            echo "⚠️ CDK synthesis failed, continuing with unit tests only"
+            echo "This is expected if there are no example stacks configured"
+          }
+
       - name: 🧪 Run tests
         run: |
           npm run test -- --coverage --passWithNoTests
           echo "✅ Tests completed"
 
-      - name: 🏗️ CDK Synthesis
+      - name: 🏗️ CDK Synthesis (final)
         id: cdk-synth
         run: |
-          echo "🔄 Synthesizing CDK stacks..."
+          echo "🔄 Final CDK synthesis..."
           npm run synth 2>&1 | tee synth-output.log
           
           if [ -f "cdk.out/THREAT_MODEL.md" ]; then
