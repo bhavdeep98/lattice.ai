@@ -84,67 +84,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Parallax effect for hero section
-    const hero = document.querySelector('.hero');
-    const heroCode = document.querySelector('.hero-code');
-    
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
-        
-        if (heroCode && scrolled < hero.offsetHeight) {
-            heroCode.style.transform = `translateY(${rate}px)`;
-        }
-    });
-
-    // Code typing animation
-    const codeContent = document.querySelector('.code-content pre code');
-    if (codeContent) {
-        const originalText = codeContent.innerHTML;
-        codeContent.innerHTML = '';
-        
-        let i = 0;
-        const typeWriter = () => {
-            if (i < originalText.length) {
-                codeContent.innerHTML += originalText.charAt(i);
-                i++;
-                setTimeout(typeWriter, 20);
-            }
-        };
-        
-        // Start typing animation after a delay
-        setTimeout(typeWriter, 1000);
-    }
-
-    // Layer progression animation
+    // Layer progression animation - simplified
     const layerProgressObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const layerNumber = entry.target.dataset.layer;
-                
-                // Add progressive reveal effect
-                setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0) scale(1)';
-                }, layerNumber * 200);
-                
-                // Animate visual cards with different effects based on layer
-                const visualCard = entry.target.querySelector('.visual-card');
-                if (visualCard) {
-                    setTimeout(() => {
-                        switch(layerNumber) {
-                            case '1':
-                                visualCard.style.animation = 'slideInLeft 0.8s ease forwards';
-                                break;
-                            case '2':
-                                visualCard.style.animation = 'slideInRight 0.8s ease forwards';
-                                break;
-                            case '3':
-                                visualCard.style.animation = 'scaleIn 0.8s ease forwards';
-                                break;
-                        }
-                    }, layerNumber * 300);
-                }
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
     }, {
@@ -156,20 +101,20 @@ document.addEventListener('DOMContentLoaded', function() {
     layerSections.forEach(section => {
         layerProgressObserver.observe(section);
         section.style.opacity = '0';
-        section.style.transform = 'translateY(50px) scale(0.95)';
-        section.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'all 0.6s ease';
     });
 
     // Interactive hover effects for visual cards
     const visualCards = document.querySelectorAll('.visual-card');
     visualCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
-            card.style.transform = 'scale(1.05) rotateY(5deg)';
-            card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.2)';
+            card.style.transform = 'scale(1.02)';
+            card.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
         });
         
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'scale(1) rotateY(0deg)';
+            card.style.transform = 'scale(1)';
             card.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
         });
     });
@@ -282,3 +227,164 @@ style.textContent = `
     .feature-card:nth-child(4) { animation-delay: 0.4s; }
 `;
 document.head.appendChild(style);
+
+// Contact form handling
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.querySelector('.demo-request-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                company: formData.get('company'),
+                plan: formData.get('plan'),
+                message: formData.get('message')
+            };
+            
+            // Show loading state
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            
+            // Simulate form submission (replace with actual endpoint)
+            setTimeout(() => {
+                // Create mailto link with form data
+                const subject = encodeURIComponent(`Lattice Demo Request - ${data.plan} Plan`);
+                const body = encodeURIComponent(`
+Name: ${data.name}
+Email: ${data.email}
+Company: ${data.company}
+Interested Plan: ${data.plan}
+
+Message:
+${data.message}
+
+---
+This is an automated message from the Lattice website contact form.
+                `);
+                
+                const mailtoLink = `mailto:bhavdeepsachdeva@gmail.com?subject=${subject}&body=${body}`;
+                
+                // Open email client
+                window.location.href = mailtoLink;
+                
+                // Show success message
+                showFormMessage('Thank you! Your demo request has been sent. We\'ll get back to you within 24 hours.', 'success');
+                
+                // Reset form
+                contactForm.reset();
+                
+                // Reset button
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+                
+            }, 1000);
+        });
+    }
+    
+    function showFormMessage(message, type) {
+        // Remove existing message
+        const existingMessage = document.querySelector('.form-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        // Create new message
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `form-message form-message-${type}`;
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-weight: 500;
+            ${type === 'success' 
+                ? 'background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);'
+                : 'background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);'
+            }
+        `;
+        
+        // Insert message after form
+        contactForm.parentNode.insertBefore(messageDiv, contactForm.nextSibling);
+        
+        // Remove message after 5 seconds
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5000);
+    }
+});
+
+// Pricing card animations
+document.addEventListener('DOMContentLoaded', function() {
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    
+    const pricingObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 150);
+            }
+        });
+    }, { threshold: 0.2 });
+    
+    pricingCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease';
+        pricingObserver.observe(card);
+    });
+});
+
+// Testimonial animations
+document.addEventListener('DOMContentLoaded', function() {
+    const testimonialCards = document.querySelectorAll('.testimonial-card');
+    
+    const testimonialObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateX(0)';
+                }, index * 200);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    testimonialCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-30px)';
+        card.style.transition = 'all 0.6s ease';
+        testimonialObserver.observe(card);
+    });
+});
+
+// FAQ animations
+document.addEventListener('DOMContentLoaded', function() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    const faqObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    faqItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'all 0.5s ease';
+        faqObserver.observe(item);
+    });
+});

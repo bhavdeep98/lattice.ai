@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lattice Demo - SaaS Startup Infrastructure</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .demo {
+            padding: 100px 0 50px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-subtitle {
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .scenario-card {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .scenario-title {
+            color: #92400e;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .scenario-description {
+            color: #92400e;
+            line-height: 1.6;
+        }
+        
+        .demo-flow {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .flow-step {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .step-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .step-number {
+            background: #007AFF;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        .step-content {
+            padding: 1.5rem;
+        }
+        
+        .user-input {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+            color: #0369a1;
+        }
+        
+        .lattice-output {
+            background: #1a1a1a;
+            color: #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .benefit-icon {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .threat-model-preview {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .threat-model-preview h4 {
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+        
+        .threat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #dc2626;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cost-comparison {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .comparison-column {
+            text-align: center;
+        }
+        
+        .comparison-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .without-lattice {
+            color: #dc2626;
+        }
+        
+        .with-lattice {
+            color: #10b981;
+        }
+        
+        .comparison-metric {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-flow {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Lattice</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="playground.html">Simple Demo</a>
+                <a href="#demo">Real Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="demo-container">
+            <div class="demo-header">
+                <h1 class="demo-title">Real-World Lattice Demo</h1>
+                <p class="demo-subtitle">
+                    See how Lattice transforms a startup's infrastructure journey from idea to production
+                </p>
+                
+                <div class="scenario-card">
+                    <h3 class="scenario-title">📋 Customer Scenario: "TaskFlow" SaaS Startup</h3>
+                    <div class="scenario-description">
+                        <p><strong>Company:</strong> 3-person team building a project management SaaS</p>
+                        <p><strong>Challenge:</strong> Need production-ready infrastructure in 2 weeks for investor demo</p>
+                        <p><strong>Constraints:</strong> No DevOps engineer, $500/month AWS budget, must be secure & scalable</p>
+                        <p><strong>Requirements:</strong> Web app, API, database, file uploads, user authentication</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-flow">
+                <!-- Step 1: User Requirements -->
+                <div class="flow-step">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        Customer Describes Needs
+                    </div>
+                    <div class="step-content">
+                        <div class="user-input">
+                            "We need a web application where users can create projects, upload files, and collaborate. 
+                            We need user authentication, a REST API, and secure file storage. 
+                            It needs to handle 1000 users initially but scale to 10,000+. 
+                            We're launching in 2 weeks and have a $500/month budget."
+                        </div>
+                        
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">👂</span>
+                                <span>Lattice consultant understands business needs</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">💡</span>
+                                <span>Recommends serverless architecture for cost efficiency</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">📋</span>
+                                <span>Creates technical specification in 30 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Lattice Manifest -->
+                <div class="flow-step">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        Lattice Generates Manifest
+                    </div>
+                    <div class="step-content">
+                        <div class="lattice-output">const manifest: LatticeManifest = {
+  appName: 'taskflow-saas',
+  environment: 'prod',
+  threatModel: { enabled: true },
+  capabilities: {
+    website: {
+      name: 'taskflow-web',
+      domainName: 'app.taskflow.com'
+    },
+    api: {
+      name: 'taskflow-api',
+      type: 'serverless',
+      authentication: 'cognito'
+    },
+    database: {
+      name: 'taskflow-db',
+      engine: 'postgres',
+      size: 'small'
+    },
+    storage: {
+      name: 'taskflow-files',
+      encryption: true,
+      publicRead: false
+    }
+  }
+};</div>
+                        
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🤖</span>
+                                <span>AI-friendly JSON structure</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🛡️</span>
+                                <span>Security best practices built-in</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">💰</span>
+                                <span>Cost-optimized for startup budget</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Infrastructure Generation -->
+                <div class="flow-step">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        Infrastructure Generated
+                    </div>
+                    <div class="step-content">
+                        <div class="lattice-output">// Lattice generates 47 AWS resources:
+✅ CloudFront Distribution + S3 Website
+✅ API Gateway + Lambda Functions  
+✅ RDS PostgreSQL + Security Groups
+✅ S3 Bucket + IAM Policies
+✅ Cognito User Pool + Identity Pool
+✅ VPC + Subnets + NAT Gateways
+✅ CloudWatch Alarms + Dashboards
+✅ AWS Backup + Lifecycle Policies</div>
+                        
+                        <div class="threat-model-preview">
+                            <h4>🔒 Automatic Threat Model Generated</h4>
+                            <div class="threat-item">⚠️ API Gateway lacks rate limiting</div>
+                            <div class="threat-item">⚠️ S3 bucket needs CORS configuration</div>
+                            <div class="threat-item">✅ Database encrypted at rest</div>
+                            <div class="threat-item">✅ All traffic uses HTTPS</div>
+                        </div>
+                        
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">⚡</span>
+                                <span>47 AWS resources configured in 5 minutes</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🔍</span>
+                                <span>Automatic security analysis</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">📊</span>
+                                <span>Monitoring & alerting included</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Deployment & Monitoring -->
+                <div class="flow-step">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        Deploy & Monitor
+                    </div>
+                    <div class="step-content">
+                        <div class="lattice-output">$ npm run deploy
+✅ Stack deployed in 12 minutes
+✅ 4 CloudWatch dashboards created:
+   - Developer: API errors, response times
+   - SRE: Infrastructure health
+   - CTO: Business metrics
+   - Security: Access patterns
+✅ 15 alarms configured
+✅ Backup strategy: Daily snapshots</div>
+                        
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🚀</span>
+                                <span>Production-ready in 12 minutes</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">👥</span>
+                                <span>Role-based dashboards for team</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🔔</span>
+                                <span>Proactive alerting prevents downtime</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">💾</span>
+                                <span>Automatic backups & disaster recovery</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Comparison -->
+            <div class="cost-comparison">
+                <h2 style="text-align: center; margin-bottom: 2rem;">💰 The Real Impact</h2>
+                <div class="comparison-grid">
+                    <div class="comparison-column">
+                        <h3 class="comparison-title without-lattice">Without Lattice</h3>
+                        <div class="comparison-metric">
+                            <div class="metric-value without-lattice">3 months</div>
+                            <div class="metric-label">Time to production</div>
+                        </div>
+                        <div class="comparison-metric">
+                            <div class="metric-value without-lattice">$150k</div>
+                            <div class="metric-label">DevOps engineer salary</div>
+                        </div>
+                        <div class="comparison-metric">
+                            <div class="metric-value without-lattice">$1,200</div>
+                            <div class="metric-label">Monthly AWS costs</div>
+                        </div>
+                        <div class="comparison-metric">
+                            <div class="metric-value without-lattice">High</div>
+                            <div class="metric-label">Security risk</div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-column">
+                        <h3 class="comparison-title with-lattice">With Lattice</h3>
+                        <div class="comparison-metric">
+                            <div class="metric-value with-lattice">2 weeks</div>
+                            <div class="metric-label">Time to production</div>
+                        </div>
+                        <div class="comparison-metric">
+                            <div class="metric-value with-lattice">$299</div>
+                            <div class="metric-label">Lattice subscription</div>
+                        </div>
+                        <div class="comparison-metric">
+                            <div class="metric-value with-lattice">$450</div>
+                            <div class="metric-label">Monthly AWS costs</div>
+                        </div>
+                        <div class="comparison-metric">
+                            <div class="metric-value with-lattice">Minimal</div>
+                            <div class="metric-label">Security risk</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: #ecfdf5; border-radius: 8px;">
+                    <h3 style="color: #047857; margin-bottom: 1rem;">Total Savings: $149,451 in Year 1</h3>
+                    <p style="color: #047857;">Plus 10x faster time to market and enterprise-grade security from day one</p>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div style="text-align: center; margin-top: 3rem;">
+                <h2 style="margin-bottom: 1rem;">Ready to Transform Your Infrastructure?</h2>
+                <p style="color: #666; margin-bottom: 2rem;">
+                    Join hundreds of startups who chose Lattice over hiring DevOps engineers
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="mailto:bhavdeepsachdeva@gmail.com?subject=Lattice Demo Request" class="btn btn-primary btn-large">
+                        Schedule Demo Call
+                    </a>
+                    <a href="playground.html" class="btn btn-secondary btn-large">
+                        Try Simple Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
