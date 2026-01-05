@@ -6,6 +6,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
   plugins: ['@typescript-eslint'],
   rules: {
@@ -28,13 +29,4 @@ module.exports = {
     jest: true,
     es2020: true,
   },
-  ignorePatterns: [
-    'lib/',
-    'cdk.out/',
-    'node_modules/',
-    '*.js',
-    '!.eslintrc.js',
-    '!jest.config.js',
-    '!scripts/*.js',
-  ],
 };

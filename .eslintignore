@@ -8,15 +8,13 @@ node_modules/
 
 # Generated files
 website-dist/
+coverage/
 
-# JavaScript files (except config)
+# CDK specific
+cdk.context.json
+
+# Only ignore specific JS files, not all
 *.js
 !.eslintrc.js
 !jest.config.js
 !scripts/*.js
-
-# Test files that might have different rules
-tests/
-
-# CDK specific
-cdk.context.json
