@@ -10,10 +10,13 @@ export class SimpleTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    // Get environment from context, default to 'dev'
+    const environment = this.node.tryGetContext('environment') || 'dev';
+
     // Simple S3 bucket - no VPC dependencies
     new LatticeBucket(this, 'TestBucket', {
       name: 'lattice-test-bucket',
-      environment: 'dev',
+      environment,
       encryption: true,
       versioning: true,
       publicRead: false
@@ -22,7 +25,7 @@ export class SimpleTestStack extends Stack {
     // Another bucket for testing patterns
     new LatticeBucket(this, 'DataBucket', {
       name: 'lattice-data-bucket',
-      environment: 'dev',
+      environment,
       encryption: true,
       lifecycle: {
         archiveAfterDays: 30,

@@ -109,7 +109,8 @@ export class LatticeObservabilityDashboard extends Construct {
   private generateDashboardName(role: ObservabilityRole): string {
     const prefix = this.config.dashboardPrefix || 'Lattice';
     const roleTitle = role.charAt(0).toUpperCase() + role.slice(1);
-    return `${prefix}-${this.config.environment}-${roleTitle}`;
+    const timestamp = Date.now().toString().slice(-6); // Last 6 digits for uniqueness
+    return `${prefix}-${this.config.environment}-${roleTitle}-${timestamp}`;
   }
 
   private createCloudWatchWidget(widget: DashboardWidget): cloudwatch.IWidget {
