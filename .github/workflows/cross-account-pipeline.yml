@@ -615,6 +615,26 @@ jobs:
           
           echo "✅ Successfully assumed staging account role"
 
+      - name: 🏗️ Ensure CDK Bootstrap
+        run: |
+          echo "🏗️ Checking CDK bootstrap status in staging account..."
+          
+          if aws cloudformation describe-stacks --stack-name CDKToolkit --region ${{ env.AWS_DEFAULT_REGION }} >/dev/null 2>&1; then
+            echo "✅ CDK already bootstrapped in staging account"
+            
+            # Check bootstrap version
+            BOOTSTRAP_VERSION=$(aws cloudformation describe-stacks \
+              --stack-name CDKToolkit \
+              --query 'Stacks[0].Parameters[?ParameterKey==`BootstrapVersion`].ParameterValue' \
+              --output text 2>/dev/null || echo "unknown")
+            echo "📦 Bootstrap version: $BOOTSTRAP_VERSION"
+          else
+            echo "🔄 Bootstrapping CDK in staging account..."
+            npx cdk bootstrap aws://${{ env.STAGING_ACCOUNT_ID }}/${{ env.AWS_DEFAULT_REGION }} \
+              --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess
+            echo "✅ CDK bootstrap completed in staging account"
+          fi
+
       - name: 🚀 Deploy to Staging Account
         run: |
           echo "🚀 Deploying to staging account..."

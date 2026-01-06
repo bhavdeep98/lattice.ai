@@ -31,6 +31,12 @@ Updated workflow to use 1-hour sessions (3600 seconds) for role chaining:
 - ✅ No more "DurationSeconds exceeds the 1 hour session limit" errors
 - ✅ Deployment roles still support 2-hour direct sessions (7200 seconds)
 
+### 4. Bootstrapped CDK Environment
+CDK requires bootstrapping to deploy stacks. This creates the necessary S3 buckets and IAM roles:
+- ✅ CDK bootstrapped in account `618351925005` region `us-east-1`
+- ✅ Bootstrap includes deployment roles and asset storage
+- ✅ Workflow includes bootstrap verification step
+
 All roles have:
 - ✅ Trust relationship with `LatticeGitHubActions-CrossAccount`
 - ✅ PowerUserAccess policy attached
@@ -53,6 +59,7 @@ All roles have:
 3. **Trust Relationships**: Configured proper role assumption chain
 4. **Permissions**: Attached PowerUserAccess to all deployment roles
 5. **Session Duration**: Fixed role chaining limit - AWS restricts chained role sessions to 1 hour maximum
+6. **CDK Bootstrap**: Bootstrapped CDK environment for stack deployment
 
 ## Role Assumption Chain
 ```
