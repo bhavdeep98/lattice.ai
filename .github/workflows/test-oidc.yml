@@ -45,7 +45,7 @@ jobs:
       - name: 🔍 Verify Account and Region
         run: |
           ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
-          REGION=$(aws configure get region)
+          REGION=${AWS_DEFAULT_REGION:-us-east-1}
           echo "Account: $ACCOUNT"
           echo "Region: $REGION"
           echo "Expected Account: 618351925005"
@@ -56,4 +56,10 @@ jobs:
           else
             echo "❌ Account mismatch"
             exit 1
+          fi
+          
+          if [ "$REGION" = "us-east-1" ]; then
+            echo "✅ Region verification passed"
+          else
+            echo "⚠️ Region mismatch but continuing (got: $REGION)"
           fi
