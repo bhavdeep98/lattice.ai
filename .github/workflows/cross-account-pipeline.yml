@@ -12,19 +12,19 @@ on:
 env:
   NODE_VERSION: '18'
   AWS_DEFAULT_REGION: us-east-1
-  # Cross-Account Configuration - Replace with your actual account IDs
-  TOOLING_ACCOUNT_ID: '123456789012'  # Tooling/CI-CD account
-  DEV_ACCOUNT_ID: '123456789013'      # Development account
-  STAGING_ACCOUNT_ID: '123456789014'  # Staging account
-  PROD_ACCOUNT_ID: '123456789015'     # Production account
-  SECURITY_ACCOUNT_ID: '123456789016' # Security account
-  SHARED_SERVICES_ACCOUNT_ID: '123456789017' # Shared services account
+  # Cross-Account Configuration - Using actual account IDs
+  TOOLING_ACCOUNT_ID: '618351925005'  # Tooling/CI-CD account (your main account)
+  DEV_ACCOUNT_ID: '618351925005'      # Development account (same as tooling for now)
+  STAGING_ACCOUNT_ID: '618351925005'  # Staging account (same as tooling for now)
+  PROD_ACCOUNT_ID: '618351925005'     # Production account (same as tooling for now)
+  SECURITY_ACCOUNT_ID: '618351925005' # Security account (same as tooling for now)
+  SHARED_SERVICES_ACCOUNT_ID: '618351925005' # Shared services account (same as tooling for now)
   
   # GitHub Actions role in tooling account
-  GITHUB_ROLE_ARN: 'arn:aws:iam::123456789012:role/LatticeGitHubActions-CrossAccount'
+  GITHUB_ROLE_ARN: 'arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount'
   
   # Organization ID for additional security
-  AWS_ORGANIZATION_ID: 'o-1234567890'
+  AWS_ORGANIZATION_ID: 'o-example123456'  # Replace with your actual organization ID if you have one
 
 # Global permissions for OIDC
 permissions:

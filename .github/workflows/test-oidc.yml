@@ -1,0 +1,59 @@
+name: Test OIDC Setup
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-oidc:
+    name: 🔍 Test OIDC Authentication
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Debug GitHub Context
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Run ID: ${{ github.run_id }}"
+
+      - name: 🔐 Configure AWS Credentials (Test)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount
+          role-session-name: test-oidc-${{ github.run_id }}
+          aws-region: us-east-1
+          role-duration-seconds: 900
+
+      - name: ✅ Test AWS Access
+        run: |
+          echo "🔍 Testing AWS access..."
+          aws sts get-caller-identity
+          echo "✅ OIDC authentication successful!"
+
+      - name: 🔍 Verify Account and Region
+        run: |
+          ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+          REGION=$(aws configure get region)
+          echo "Account: $ACCOUNT"
+          echo "Region: $REGION"
+          echo "Expected Account: 618351925005"
+          echo "Expected Region: us-east-1"
+          
+          if [ "$ACCOUNT" = "618351925005" ]; then
+            echo "✅ Account verification passed"
+          else
+            echo "❌ Account mismatch"
+            exit 1
+          fi
