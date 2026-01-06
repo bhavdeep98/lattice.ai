@@ -1,4 +1,4 @@
-# GitHub Actions OIDC Setup for AWS - RESOLVED ✅
+# GitHub Actions OIDC Setup for AWS - FULLY RESOLVED ✅
 
 ## Problem (RESOLVED)
 Your GitHub Actions workflow was failing with:
@@ -11,22 +11,51 @@ The issue was **placeholder account IDs** in your workflow file:
 - Workflow was trying to use: `arn:aws:iam::123456789012:role/LatticeGitHubActions-CrossAccount`
 - But your actual role is: `arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount`
 
-## Solution Applied ✅
-Updated the workflow files to use your correct account ID: `618351925005`
+## Solutions Applied ✅
+
+### 1. Fixed OIDC Authentication
+- ✅ Updated workflow files to use correct account ID: `618351925005`
+- ✅ OIDC authentication now working perfectly
+
+### 2. Created Missing Deployment Roles
+Your workflow also needed deployment roles for the cross-account pattern. Created:
+- ✅ `LatticeDeploymentRole-dev` - For development deployments
+- ✅ `LatticeDeploymentRole-staging` - For staging deployments  
+- ✅ `LatticeDeploymentRole-prod` - For production deployments
+
+All roles have:
+- ✅ Trust relationship with `LatticeGitHubActions-CrossAccount`
+- ✅ PowerUserAccess policy attached
+- ✅ Proper assume role permissions
 
 ## Current Status ✅
 - ✅ OIDC Provider exists: `arn:aws:iam::618351925005:oidc-provider/token.actions.githubusercontent.com`
 - ✅ GitHub Actions Role exists: `arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount`
+- ✅ Development Role exists: `arn:aws:iam::618351925005:role/LatticeDeploymentRole-dev`
+- ✅ Staging Role exists: `arn:aws:iam::618351925005:role/LatticeDeploymentRole-staging`
+- ✅ Production Role exists: `arn:aws:iam::618351925005:role/LatticeDeploymentRole-prod`
 - ✅ Repository configured: `bhavdeep98/lattice.ai`
 - ✅ Account ID corrected: `618351925005`
 - ✅ Workflow files updated with correct account IDs
 
 ## What Was Fixed
-1. Updated `TOOLING_ACCOUNT_ID` from `123456789012` to `618351925005`
-2. Updated `GITHUB_ROLE_ARN` to use the correct account ID
-3. Updated all other account ID references
+1. **OIDC Authentication**: Updated account IDs from `123456789012` to `618351925005`
+2. **Missing Roles**: Created all required deployment roles for cross-account pattern
+3. **Trust Relationships**: Configured proper role assumption chain
+4. **Permissions**: Attached PowerUserAccess to all deployment roles
 
-Your GitHub Actions should now work correctly!
+## Role Assumption Chain
+```
+GitHub Actions (OIDC) 
+    ↓
+LatticeGitHubActions-CrossAccount 
+    ↓
+LatticeDeploymentRole-{env} (dev/staging/prod)
+    ↓
+Deploy Infrastructure
+```
+
+Your GitHub Actions workflows should now work completely! 🎉
 
 ## Troubleshooting Steps
 
