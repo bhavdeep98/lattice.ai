@@ -236,7 +236,7 @@ jobs:
           ASSUME_ROLE_OUTPUT=$(aws sts assume-role \
             --role-arn "$ROLE_ARN" \
             --role-session-name "$SESSION_NAME" \
-            --duration-seconds 7200 \
+            --duration-seconds 3600 \
             --output json)
           
           if [ $? -eq 0 ]; then
@@ -602,7 +602,7 @@ jobs:
           ASSUME_ROLE_OUTPUT=$(aws sts assume-role \
             --role-arn "$ROLE_ARN" \
             --role-session-name "$SESSION_NAME" \
-            --duration-seconds 7200 \
+            --duration-seconds 3600 \
             --output json)
           
           ACCESS_KEY=$(echo "$ASSUME_ROLE_OUTPUT" | jq -r '.Credentials.AccessKeyId')
@@ -703,7 +703,7 @@ jobs:
           ASSUME_ROLE_OUTPUT=$(aws sts assume-role \
             --role-arn "$ROLE_ARN" \
             --role-session-name "$SESSION_NAME" \
-            --duration-seconds 7200 \
+            --duration-seconds 3600 \
             --output json)
           
           ACCESS_KEY=$(echo "$ASSUME_ROLE_OUTPUT" | jq -r '.Credentials.AccessKeyId')

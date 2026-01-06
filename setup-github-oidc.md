@@ -24,15 +24,18 @@ Your workflow also needed deployment roles for the cross-account pattern. Create
 - ✅ `LatticeDeploymentRole-prod` - For production deployments
 
 ### 3. Fixed Session Duration Limits
-Updated all deployment roles to allow 2-hour sessions (7200 seconds) to match workflow requirements:
-- ✅ All roles now support extended deployment sessions
-- ✅ No more "DurationSeconds exceeds MaxSessionDuration" errors
+AWS has a hard limit: **role chaining sessions cannot exceed 1 hour**, regardless of the role's MaxSessionDuration setting.
+
+Updated workflow to use 1-hour sessions (3600 seconds) for role chaining:
+- ✅ All role assumptions now use 3600 seconds maximum
+- ✅ No more "DurationSeconds exceeds the 1 hour session limit" errors
+- ✅ Deployment roles still support 2-hour direct sessions (7200 seconds)
 
 All roles have:
 - ✅ Trust relationship with `LatticeGitHubActions-CrossAccount`
 - ✅ PowerUserAccess policy attached
 - ✅ Proper assume role permissions
-- ✅ Extended session duration (2 hours)
+- ✅ Correct session duration for role chaining (1 hour max)
 
 ## Current Status ✅
 - ✅ OIDC Provider exists: `arn:aws:iam::618351925005:oidc-provider/token.actions.githubusercontent.com`
@@ -49,7 +52,7 @@ All roles have:
 2. **Missing Roles**: Created all required deployment roles for cross-account pattern
 3. **Trust Relationships**: Configured proper role assumption chain
 4. **Permissions**: Attached PowerUserAccess to all deployment roles
-5. **Session Duration**: Extended all roles to support 2-hour sessions (7200 seconds)
+5. **Session Duration**: Fixed role chaining limit - AWS restricts chained role sessions to 1 hour maximum
 
 ## Role Assumption Chain
 ```
