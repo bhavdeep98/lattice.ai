@@ -152,7 +152,8 @@ export class LatticeObservabilityManager extends Construct {
    */
   public static createNotificationTopic(scope: Construct, id: string, topicName?: string): sns.Topic {
     return new sns.Topic(scope, id, {
-      topicName: topicName || 'lattice-observability-notifications',
+      // Don't specify topicName to let CDK generate unique names, or use environment-specific naming
+      topicName: topicName, // Only use provided topicName, don't default to a fixed name
       displayName: 'Lattice Observability Notifications',
     });
   }

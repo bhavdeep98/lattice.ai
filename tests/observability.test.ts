@@ -51,7 +51,7 @@ describe('Observability & Alarms', () => {
       // Should create exactly 1 notification topic (the test setup already creates 1)
       template.resourceCountIs('AWS::SNS::Topic', 2); // 1 from test setup + 1 from observability
       template.hasResourceProperties('AWS::SNS::Topic', {
-        TopicName: 'lattice-observability-notifications',
+        DisplayName: 'Lattice Observability Notifications',
       });
     });
 
@@ -447,7 +447,7 @@ describe('Observability & Alarms', () => {
       
       // Should create a default notification topic
       template.hasResourceProperties('AWS::SNS::Topic', {
-        TopicName: 'lattice-observability-notifications',
+        DisplayName: 'Lattice Observability Notifications',
       });
     });
   });
