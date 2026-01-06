@@ -37,6 +37,13 @@ CDK requires bootstrapping to deploy stacks. This creates the necessary S3 bucke
 - ✅ Bootstrap includes deployment roles and asset storage
 - ✅ Workflow includes bootstrap verification step
 
+### 5. Fixed CloudWatch Dashboard Conflicts
+CloudWatch Dashboard names must be unique across all deployments. Fixed naming conflicts:
+- ✅ SimpleTestStack now reads environment from CDK context
+- ✅ Dashboard names include timestamp for uniqueness
+- ✅ Staging deployments create `Lattice-staging-*` dashboards
+- ✅ No more "already exists" errors between environments
+
 All roles have:
 - ✅ Trust relationship with `LatticeGitHubActions-CrossAccount`
 - ✅ PowerUserAccess policy attached
@@ -60,6 +67,7 @@ All roles have:
 4. **Permissions**: Attached PowerUserAccess to all deployment roles
 5. **Session Duration**: Fixed role chaining limit - AWS restricts chained role sessions to 1 hour maximum
 6. **CDK Bootstrap**: Bootstrapped CDK environment for stack deployment
+7. **Dashboard Conflicts**: Fixed CloudWatch Dashboard naming conflicts between environments
 
 ## Role Assumption Chain
 ```
