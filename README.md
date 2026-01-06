@@ -85,7 +85,7 @@ applyLatticeAspects(this, {
 - `cdk.out/THREAT_MODEL.md` - Security report for humans
 - `cdk.out/threat-model.json` - Data for automation/CI gates
 
-See [docs/threat-modeling.md](docs/threat-modeling.md) for complete documentation.
+See [docs/external/threat-modeling.md](docs/external/threat-modeling.md) for complete documentation.
 
 ### 🚀 Automated CI/CD Pipeline
 
@@ -116,7 +116,7 @@ Lattice includes a production-ready CI/CD pipeline with security-first deploymen
 - ⚠️ 2 Security warnings - See threat model
 ```
 
-See [docs/cicd-pipeline.md](docs/cicd-pipeline.md) for complete documentation.
+See [docs/external/cicd-pipeline.md](docs/external/cicd-pipeline.md) for complete documentation.
 
 ## 📦 Available Modules
 
@@ -149,7 +149,7 @@ See the `examples/` directory for complete usage examples.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our Contributing Guide for details.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## 📄 License
 
