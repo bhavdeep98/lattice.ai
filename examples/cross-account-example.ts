@@ -14,11 +14,11 @@ import { CrossAccountConfig } from '../src/core/cross-account/types';
 // Cross-account configuration
 const crossAccountConfig: CrossAccountConfig = {
   githubRepository: 'your-org/your-repo', // Replace with your GitHub repository
-  organizationId: 'o-1234567890', // Replace with your AWS Organization ID
+  organizationId: 'o-example123456', // Replace with your AWS Organization ID
   
   accounts: {
     tooling: {
-      accountId: '123456789012', // Replace with your tooling account ID
+      accountId: 'YOUR_TOOLING_ACCOUNT_ID', // Replace with your tooling account ID
       alias: 'lattice-tooling',
       environment: 'tooling',
       allowedRegions: ['us-east-1', 'us-west-2'],
@@ -44,7 +44,7 @@ const crossAccountConfig: CrossAccountConfig = {
     },
     
     dev: {
-      accountId: '123456789013', // Replace with your dev account ID
+      accountId: 'YOUR_DEV_ACCOUNT_ID', // Replace with your dev account ID
       alias: 'lattice-development',
       environment: 'dev',
       allowedRegions: ['us-east-1', 'us-west-2'],
@@ -70,7 +70,7 @@ const crossAccountConfig: CrossAccountConfig = {
     },
     
     staging: {
-      accountId: '123456789014', // Replace with your staging account ID
+      accountId: 'YOUR_STAGING_ACCOUNT_ID', // Replace with your staging account ID
       alias: 'lattice-staging',
       environment: 'staging',
       allowedRegions: ['us-east-1', 'us-west-2'],
@@ -96,7 +96,7 @@ const crossAccountConfig: CrossAccountConfig = {
     },
     
     prod: {
-      accountId: '123456789015', // Replace with your prod account ID
+      accountId: 'YOUR_PROD_ACCOUNT_ID', // Replace with your prod account ID
       alias: 'lattice-production',
       environment: 'prod',
       allowedRegions: ['us-east-1', 'us-west-2'],
@@ -122,7 +122,7 @@ const crossAccountConfig: CrossAccountConfig = {
     },
     
     security: {
-      accountId: '123456789016', // Replace with your security account ID
+      accountId: 'YOUR_SECURITY_ACCOUNT_ID', // Replace with your security account ID
       alias: 'lattice-security',
       environment: 'security',
       allowedRegions: ['us-east-1', 'us-west-2'],
@@ -148,7 +148,7 @@ const crossAccountConfig: CrossAccountConfig = {
     },
     
     sharedServices: {
-      accountId: '123456789017', // Replace with your shared services account ID
+      accountId: 'YOUR_SHARED_SERVICES_ACCOUNT_ID', // Replace with your shared services account ID
       alias: 'lattice-shared-services',
       environment: 'shared-services',
       allowedRegions: ['us-east-1', 'us-west-2'],

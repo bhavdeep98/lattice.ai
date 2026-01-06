@@ -12,15 +12,15 @@ const app = new App();
 
 // Create different workload types to test threat modeling
 new ServerlessApiStack(app, 'ServerlessApiStack', {
-  env: { account: '123456789012', region: 'us-east-1' }
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: 'us-east-1' }
 });
 
 new DataPipelineStack(app, 'DataPipelineStack', {
-  env: { account: '123456789012', region: 'us-east-1' }
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: 'us-east-1' }
 });
 
 new GenAIRagStack(app, 'GenAIRagStack', {
-  env: { account: '123456789012', region: 'us-east-1' }
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: 'us-east-1' }
 });
 
 console.log('🔍 Threat modeling examples created!');

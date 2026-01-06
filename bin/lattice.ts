@@ -8,7 +8,7 @@ const app = new cdk.App();
 // Use simple test stack for CI/CD testing
 new SimpleTestStack(app, 'LatticeTestStack', {
   env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT || '123456789012',
+    account: process.env.CDK_DEFAULT_ACCOUNT || 'YOUR_ACCOUNT_ID',
     region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
   },
 });

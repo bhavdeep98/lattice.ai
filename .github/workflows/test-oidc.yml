@@ -31,7 +31,7 @@ jobs:
       - name: 🔐 Configure AWS Credentials (Test)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount
+          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/LatticeGitHubActions-CrossAccount
           role-session-name: test-oidc-${{ github.run_id }}
           aws-region: us-east-1
           role-duration-seconds: 900
@@ -48,10 +48,10 @@ jobs:
           REGION=${AWS_DEFAULT_REGION:-us-east-1}
           echo "Account: $ACCOUNT"
           echo "Region: $REGION"
-          echo "Expected Account: 618351925005"
+          echo "Expected Account: YOUR_ACCOUNT_ID"
           echo "Expected Region: us-east-1"
           
-          if [ "$ACCOUNT" = "618351925005" ]; then
+          if [ "$ACCOUNT" = "YOUR_ACCOUNT_ID" ]; then
             echo "✅ Account verification passed"
           else
             echo "❌ Account mismatch"

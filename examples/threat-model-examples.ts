@@ -97,7 +97,7 @@ export class DataPipelineStack extends Stack {
     // Glue job for data processing
     const glueJob = new glue.CfnJob(this, 'DataProcessingJob', {
       name: 'customer-data-etl',
-      role: 'arn:aws:iam::123456789012:role/GlueServiceRole', // Would be created properly
+      role: 'arn:aws:iam::YOUR_ACCOUNT_ID:role/GlueServiceRole', // Would be created properly
       command: {
         name: 'glueetl',
         scriptLocation: 's3://my-scripts/etl-script.py'

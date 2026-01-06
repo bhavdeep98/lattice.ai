@@ -74,7 +74,7 @@ export class EscapeHatchExampleStack extends cdk.Stack {
     const processingTopic = sns.Topic.fromTopicArn(
       this, 
       'ProcessingTopic', 
-      'arn:aws:sns:us-east-1:123456789012:processing'
+      'arn:aws:sns:us-east-1:YOUR_ACCOUNT_ID:processing'
     );
     
     appBucket.instance.addEventNotification(
@@ -171,7 +171,7 @@ export class EscapeHatchExampleStack extends cdk.Stack {
     }));
 
     // Example: Add assume role policy for cross-account access
-    const crossAccountPrincipal = new iam.AccountPrincipal('123456789012');
+    const crossAccountPrincipal = new iam.AccountPrincipal('YOUR_TRUSTED_ACCOUNT_ID');
     appRole.instance.assumeRolePolicy?.addStatements(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       principals: [crossAccountPrincipal],

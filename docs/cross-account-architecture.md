@@ -83,7 +83,7 @@ sequenceDiagram
      organizationId: 'o-1234567890',
      accounts: {
        tooling: {
-         accountId: '123456789012',
+         accountId: 'YOUR_TOOLING_ACCOUNT_ID',
          alias: 'lattice-tooling',
          environment: 'tooling',
          // ... configuration
@@ -311,7 +311,7 @@ const alertThresholds = {
    aws iam get-role --role-name LatticeDeploymentRole-dev
    
    # Verify organization membership
-   aws organizations describe-account --account-id 123456789013
+   aws organizations describe-account --account-id YOUR_TARGET_ACCOUNT_ID
    ```
 
 2. **Permission Denied Errors**

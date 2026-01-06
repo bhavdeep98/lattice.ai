@@ -12,12 +12,12 @@ on:
 env:
   NODE_VERSION: '18'
   AWS_DEFAULT_REGION: us-east-1
-  # Cross-Account Configuration - Using actual account IDs
-  TOOLING_ACCOUNT_ID: '618351925005'  # Tooling/CI-CD account (your main account)
-  DEV_ACCOUNT_ID: '618351925005'      # Development account (same as tooling for now)
-  STAGING_ACCOUNT_ID: '618351925005'  # Staging account (same as tooling for now)
-  PROD_ACCOUNT_ID: '618351925005'     # Production account (same as tooling for now)
-  GITHUB_ROLE_ARN: 'arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount'
+  # Cross-Account Configuration - Replace with your actual account IDs
+  TOOLING_ACCOUNT_ID: 'YOUR_TOOLING_ACCOUNT_ID'  # Tooling/CI-CD account
+  DEV_ACCOUNT_ID: 'YOUR_DEV_ACCOUNT_ID'          # Development account
+  STAGING_ACCOUNT_ID: 'YOUR_STAGING_ACCOUNT_ID'  # Staging account
+  PROD_ACCOUNT_ID: 'YOUR_PROD_ACCOUNT_ID'        # Production account
+  GITHUB_ROLE_ARN: 'arn:aws:iam::YOUR_TOOLING_ACCOUNT_ID:role/LatticeGitHubActions-CrossAccount'
 
 # Global permissions for OIDC
 permissions:

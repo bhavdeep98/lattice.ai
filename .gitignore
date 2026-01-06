@@ -98,3 +98,18 @@ lib/
 .Trashes
 ehthumbs.db
 Thumbs.db
+# Internal documentation and sensitive files
+docs/internal/
+docs/external/
+*IMPLEMENTATION*.md
+*CREATION-LOG*.md
+*IP-TRANSFER*.md
+setup-github-oidc.md
+cdk-outputs-*.json
+
+# Business sensitive files
+pricing-strategy.md
+unit-economics*.md
+margin-*.md
+sales-deck*.md
+market-positioning.md

@@ -512,7 +512,7 @@ const opsObservability = LatticeObservabilityManager.create(this, 'OpsObservabil
 
 ```typescript
 // Custom alarm configuration for specific resources
-const sensitiveDatabase = new LatticeDatabase(this, 'SensitiveDB', {
+const criticalDatabase = new LatticeDatabase(this, 'CriticalDB', {
   name: 'critical-db',
   environment: 'prod',
   engine: 'postgres',
@@ -525,7 +525,7 @@ const sensitiveDatabase = new LatticeDatabase(this, 'SensitiveDB', {
 });
 
 // Access individual alarms for fine-tuning
-sensitiveDatabase.alarms.forEach(alarm => {
+criticalDatabase.alarms.forEach(alarm => {
   if (alarm.alarmName.includes('HighCPU')) {
     // Lower threshold for critical database
     alarm.addPropertyOverride('Threshold', 60);

@@ -14,11 +14,11 @@ describe('Cross-Account Architecture', () => {
   describe('CrossAccountStack', () => {
     test('creates tooling account infrastructure', () => {
       const stack = new CrossAccountStack(app, 'ToolingAccount', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: process.env.CDK_DEFAULT_ACCOUNT || 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013', '123456789014', '123456789015'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID', 'YOUR_STAGING_ACCOUNT_ID', 'YOUR_PROD_ACCOUNT_ID'],
         environment: 'tooling',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
       });
 
       expect(stack.deploymentRole).toBeDefined();
@@ -78,11 +78,11 @@ describe('Cross-Account Architecture', () => {
 
     test('creates target account infrastructure', () => {
       const stack = new CrossAccountStack(app, 'TargetAccount', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'dev',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
       });
 
       expect(stack.deploymentRole).toBeDefined();
@@ -104,9 +104,9 @@ describe('Cross-Account Architecture', () => {
 
     test('applies proper IAM policies for development environment', () => {
       const stack = new CrossAccountStack(app, 'DevAccount', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'dev',
       });
 
@@ -121,9 +121,9 @@ describe('Cross-Account Architecture', () => {
 
     test('applies stricter policies for production environment', () => {
       const stack = new CrossAccountStack(app, 'ProdAccount', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789015'],
+        targetAccountIds: ['YOUR_PROD_ACCOUNT_ID'],
         environment: 'prod',
       });
 
@@ -151,11 +151,11 @@ describe('Cross-Account Architecture', () => {
 
     test('includes organization condition when provided', () => {
       const stack = new CrossAccountStack(app, 'SecureAccount', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'dev',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
       });
 
       const template = Template.fromStack(stack);
@@ -171,14 +171,14 @@ describe('Cross-Account Architecture', () => {
       const assumeRolePolicy = devRole.Properties.AssumeRolePolicyDocument;
       const denyStatement = assumeRolePolicy.Statement.find((stmt: any) => stmt.Effect === 'Deny');
       expect(denyStatement).toBeDefined();
-      expect(denyStatement.Condition?.StringNotEquals?.['aws:PrincipalOrgID']).toBe('o-1234567890');
+      expect(denyStatement.Condition?.StringNotEquals?.['aws:PrincipalOrgID']).toBe('o-example123456');
     });
 
     test('creates proper outputs for integration', () => {
       const stack = new CrossAccountStack(app, 'ToolingWithOutputs', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'tooling',
       });
 
@@ -215,10 +215,10 @@ describe('Cross-Account Architecture', () => {
     beforeEach(() => {
       mockConfig = {
         githubRepository: 'test-org/test-repo',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
         accounts: {
           tooling: {
-            accountId: '123456789012',
+            accountId: 'YOUR_ACCOUNT_ID',
             alias: 'test-tooling',
             environment: 'tooling',
             allowedRegions: ['us-east-1'],
@@ -232,7 +232,7 @@ describe('Cross-Account Architecture', () => {
             },
           },
           dev: {
-            accountId: '123456789013',
+            accountId: 'YOUR_DEV_ACCOUNT_ID',
             alias: 'test-dev',
             environment: 'dev',
             allowedRegions: ['us-east-1'],
@@ -246,7 +246,7 @@ describe('Cross-Account Architecture', () => {
             },
           },
           staging: {
-            accountId: '123456789014',
+            accountId: 'YOUR_STAGING_ACCOUNT_ID',
             alias: 'test-staging',
             environment: 'staging',
             allowedRegions: ['us-east-1'],
@@ -260,7 +260,7 @@ describe('Cross-Account Architecture', () => {
             },
           },
           prod: {
-            accountId: '123456789015',
+            accountId: 'YOUR_PROD_ACCOUNT_ID',
             alias: 'test-prod',
             environment: 'prod',
             allowedRegions: ['us-east-1', 'us-west-2'],
@@ -301,7 +301,7 @@ describe('Cross-Account Architecture', () => {
     test('validates deployment context successfully', () => {
       const validContext = {
         environment: 'dev' as const,
-        accountId: '123456789013',
+        accountId: 'YOUR_DEV_ACCOUNT_ID',
         region: 'us-east-1',
         github: {
           repository: 'test-org/test-repo',
@@ -367,7 +367,7 @@ describe('Cross-Account Architecture', () => {
     test('rejects invalid region', () => {
       const invalidContext = {
         environment: 'dev' as const,
-        accountId: '123456789013',
+        accountId: 'YOUR_DEV_ACCOUNT_ID',
         region: 'eu-west-1', // Not allowed for dev account
         github: {
           repository: 'test-org/test-repo',
@@ -394,13 +394,13 @@ describe('Cross-Account Architecture', () => {
 
       expect(() => {
         deploymentManager.validateDeploymentContext(invalidContext);
-      }).toThrow('Region eu-west-1 not allowed for account 123456789013');
+      }).toThrow('Region eu-west-1 not allowed for account YOUR_DEV_ACCOUNT_ID');
     });
 
     test('rejects excessive cost limits', () => {
       const invalidContext = {
         environment: 'dev' as const,
-        accountId: '123456789013',
+        accountId: 'YOUR_DEV_ACCOUNT_ID',
         region: 'us-east-1',
         github: {
           repository: 'test-org/test-repo',
@@ -435,20 +435,20 @@ describe('Cross-Account Architecture', () => {
     test('tooling and target accounts work together', () => {
       // Create tooling account stack
       const toolingStack = new CrossAccountStack(app, 'Tooling', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'tooling',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
       });
 
       // Create target account stack
       const targetStack = new CrossAccountStack(app, 'Target', {
-        env: { account: '123456789013', region: 'us-east-1' },
+        env: { account: 'YOUR_DEV_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'dev',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
       });
 
       expect(toolingStack.deploymentRole).toBeDefined();
@@ -471,9 +471,9 @@ describe('Cross-Account Architecture', () => {
 
     test('supports multiple target accounts', () => {
       const stack = new CrossAccountStack(app, 'MultiTarget', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013', '123456789014', '123456789015'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID', 'YOUR_STAGING_ACCOUNT_ID', 'YOUR_PROD_ACCOUNT_ID'],
         environment: 'tooling',
       });
 
@@ -497,19 +497,19 @@ describe('Cross-Account Architecture', () => {
       const assumeRoleStatement = policyStatements.find((stmt: any) => stmt.Sid === 'AssumeTargetAccountRoles');
       expect(assumeRoleStatement).toBeDefined();
       expect(assumeRoleStatement.Resource).toEqual([
-        'arn:aws:iam::123456789013:role/LatticeDeploymentRole-*',
-        'arn:aws:iam::123456789014:role/LatticeDeploymentRole-*',
-        'arn:aws:iam::123456789015:role/LatticeDeploymentRole-*',
+        'arn:aws:iam::YOUR_DEV_ACCOUNT_ID:role/LatticeDeploymentRole-*',
+        'arn:aws:iam::YOUR_STAGING_ACCOUNT_ID:role/LatticeDeploymentRole-*',
+        'arn:aws:iam::YOUR_PROD_ACCOUNT_ID:role/LatticeDeploymentRole-*',
       ]);
     });
 
     test('enforces security best practices', () => {
       const stack = new CrossAccountStack(app, 'SecureCrossAccount', {
-        env: { account: '123456789012', region: 'us-east-1' },
+        env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['123456789013'],
+        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID'],
         environment: 'tooling',
-        organizationId: 'o-1234567890',
+        organizationId: 'o-example123456',
       });
 
       const template = Template.fromStack(stack);
