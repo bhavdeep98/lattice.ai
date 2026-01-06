@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import { LatticeBucket } from '../src/modules/storage/lattice-bucket';
@@ -382,16 +382,17 @@ describe('Observability & Alarms', () => {
       // Should create dashboards for each role
       template.resourceCountIs('AWS::CloudWatch::Dashboard', 3);
       
+      // Check that dashboard names start with the expected prefix (allowing for timestamp suffix)
       template.hasResourceProperties('AWS::CloudWatch::Dashboard', {
-        DashboardName: 'Lattice-prod-Developer',
+        DashboardName: Match.stringLikeRegexp('Lattice-prod-Developer-\\d+'),
       });
 
       template.hasResourceProperties('AWS::CloudWatch::Dashboard', {
-        DashboardName: 'Lattice-prod-Sre',
+        DashboardName: Match.stringLikeRegexp('Lattice-prod-Sre-\\d+'),
       });
 
       template.hasResourceProperties('AWS::CloudWatch::Dashboard', {
-        DashboardName: 'Lattice-prod-Cto',
+        DashboardName: Match.stringLikeRegexp('Lattice-prod-Cto-\\d+'),
       });
     });
 
