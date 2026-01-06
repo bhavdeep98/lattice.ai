@@ -23,10 +23,16 @@ Your workflow also needed deployment roles for the cross-account pattern. Create
 - ✅ `LatticeDeploymentRole-staging` - For staging deployments  
 - ✅ `LatticeDeploymentRole-prod` - For production deployments
 
+### 3. Fixed Session Duration Limits
+Updated all deployment roles to allow 2-hour sessions (7200 seconds) to match workflow requirements:
+- ✅ All roles now support extended deployment sessions
+- ✅ No more "DurationSeconds exceeds MaxSessionDuration" errors
+
 All roles have:
 - ✅ Trust relationship with `LatticeGitHubActions-CrossAccount`
 - ✅ PowerUserAccess policy attached
 - ✅ Proper assume role permissions
+- ✅ Extended session duration (2 hours)
 
 ## Current Status ✅
 - ✅ OIDC Provider exists: `arn:aws:iam::618351925005:oidc-provider/token.actions.githubusercontent.com`
@@ -43,6 +49,7 @@ All roles have:
 2. **Missing Roles**: Created all required deployment roles for cross-account pattern
 3. **Trust Relationships**: Configured proper role assumption chain
 4. **Permissions**: Attached PowerUserAccess to all deployment roles
+5. **Session Duration**: Extended all roles to support 2-hour sessions (7200 seconds)
 
 ## Role Assumption Chain
 ```
