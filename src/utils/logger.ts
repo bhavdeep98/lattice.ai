@@ -3,83 +3,6 @@
  * Simple, focused logging for Lattice operations
  */
 
-export class LatticeLogger {
-  private static instance: LatticeLogger;
-  private currentStep = 0;
-  private totalSteps = 0;
-
-  private constructor() {}
-
-  public static getInstance(): LatticeLogger {
-    if (!LatticeLogger.instance) {
-      LatticeLogger.instance = new LatticeLogger();
-    }
-    return LatticeLogger.instance;
-  }
-
-  // Simple step logging with progress
-  public step(message: string, step?: number, total?: number): void {
-    if (step !== undefined && total !== undefined) {
-      this.currentStep = step;
-      this.totalSteps = total;
-    } else {
-      this.currentStep++;
-    }
-
-    const progress = this.totalSteps > 0 ? `[${this.currentStep}/${this.totalSteps}]` : '';
-    console.log(`🔧 LATTICE ${progress} ${message}`);
-  }
-
-  // Success logging
-  public success(message: string): void {
-    console.log(`✅ LATTICE ${message}`);
-  }
-
-  // Error logging
-  public error(message: string, error?: Error): void {
-    console.error(`❌ LATTICE ${message}${error ? ': ' + error.message : ''}`);
-  }
-
-  // Warning logging
-  public warn(message: string): void {
-    console.warn(`⚠️  LATTICE ${message}`);
-  }
-
-  // Info logging
-  public info(message: string): void {
-    console.log(`ℹ️  LATTICE ${message}`);
-  }
-
-  // Resource creation
-  public resource(type: string, id: string): void {
-    console.log(`📦 LATTICE Created ${type}: ${id}`);
-  }
-
-  // Start operation
-  public start(operation: string, totalSteps?: number): void {
-    this.currentStep = 0;
-    this.totalSteps = totalSteps || 0;
-    console.log(`🚀 LATTICE Starting ${operation}${totalSteps ? ` (${totalSteps} steps)` : ''}`);
-  }
-
-  // Complete operation
-  public complete(operation: string, duration?: number): void {
-    const time = duration ? ` in ${duration}ms` : '';
-    console.log(`🎉 LATTICE Completed ${operation}${time}`);
-  }
-}
-
-// Export singleton instance
-export const logger = LatticeLogger.getInstance();
-
-export enum LogLevel {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
-  AUDIT = 'audit'
-}
-
 export enum LogLevel {
   DEBUG = 'debug',
   INFO = 'info',
@@ -92,6 +15,11 @@ export interface LatticeLogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
+  context?: {
+    operation?: string;
+    resourceType?: string;
+    resourceId?: string;
+  };
   error?: {
     name: string;
     message: string;
@@ -134,17 +62,17 @@ export class LatticeLogger {
   }
 
   // Error logging
-  public error(message: string, error?: Error): void {
+  public error(message: string, error?: Error, metadata?: Record<string, any>): void {
     console.error(`❌ LATTICE ${message}${error ? ': ' + error.message : ''}`);
   }
 
   // Warning logging
-  public warn(message: string): void {
+  public warn(message: string, metadata?: Record<string, any>): void {
     console.warn(`⚠️  LATTICE ${message}`);
   }
 
   // Info logging
-  public info(message: string): void {
+  public info(message: string, metadata?: Record<string, any>): void {
     console.log(`ℹ️  LATTICE ${message}`);
   }
 
@@ -171,12 +99,12 @@ export class LatticeLogger {
     console.debug(`🐛 LATTICE ${message}`);
   }
 
-  public audit(message: string): void {
+  public audit(message: string, metadata?: Record<string, any>): void {
     console.log(`📋 LATTICE ${message}`);
   }
 
   // Simplified utility methods
-  public logResourceCreation(type: string, id: string): void {
+  public logResourceCreation(type: string, id: string, metadata?: Record<string, any>): void {
     this.resource(type, id);
   }
 
@@ -184,7 +112,7 @@ export class LatticeLogger {
     console.log(`🔄 LATTICE ${action} ${type}: ${id}`);
   }
 
-  public logSecurityEvent(event: string, severity: string): void {
+  public logSecurityEvent(event: string, severity: string, metadata?: Record<string, any>): void {
     const icon = severity === 'critical' ? '🚨' : severity === 'high' ? '⚠️' : 'ℹ️';
     console.log(`${icon} LATTICE Security: ${event}`);
   }
@@ -200,66 +128,20 @@ export class LatticeLogger {
   }
 
   // Simplified context methods (no-op for minimal logging)
-  public setContext(): void {}
+  public setContext(context?: Record<string, any>): void {}
   public clearContext(): void {}
-  public startOperation(operation: string): string {
+  
+  public startOperation(operation: string, metadata?: Record<string, any>): string {
     this.start(operation);
     return Date.now().toString();
   }
-  public endOperation(id: string, success: boolean, metadata?: any): void {
-    const icon = success ? '✅' : '❌';
-    console.log(`${icon} LATTICE Operation ${success ? 'completed' : 'failed'}`);
-  }
-}
-
-  // Legacy logging methods (kept for backward compatibility)
-  public debug(message: string): void {
-    console.debug(`🐛 LATTICE ${message}`);
-  }
-
-  public audit(message: string): void {
-    console.log(`📋 LATTICE ${message}`);
-  }
-
-  // Simplified utility methods
-  public logResourceCreation(type: string, id: string): void {
-    this.resource(type, id);
-  }
-
-  public logInfrastructureChange(action: string, type: string, id: string): void {
-    console.log(`🔄 LATTICE ${action} ${type}: ${id}`);
-  }
-
-  public logSecurityEvent(event: string, severity: string): void {
-    const icon = severity === 'critical' ? '🚨' : severity === 'high' ? '⚠️' : 'ℹ️';
-    console.log(`${icon} LATTICE Security: ${event}`);
-  }
-
-  public logApiRequest(method: string, path: string, status: number, duration: number): void {
-    const icon = status >= 400 ? '❌' : '✅';
-    console.log(`${icon} LATTICE API ${method} ${path} ${status} (${duration}ms)`);
-  }
-
-  public logDatabaseOperation(operation: string, duration?: number): void {
-    const time = duration ? ` (${duration}ms)` : '';
-    console.log(`🗄️  LATTICE DB ${operation}${time}`);
-  }
-
-  // Simplified context methods (no-op for minimal logging)
-  public setContext(): void {}
-  public clearContext(): void {}
-  public startOperation(operation: string): string {
-    this.start(operation);
-    return Date.now().toString();
-  }
+  
   public endOperation(id: string, success: boolean, metadata?: any): void {
     const icon = success ? '✅' : '❌';
     console.log(`${icon} LATTICE Operation ${success ? 'completed' : 'failed'}`);
   }
 
-  public logPerformanceMetric(): void {} // No-op for minimal logging
-}
-}
+  public logPerformanceMetric(metric?: string, value?: number, unit?: string, metadata?: Record<string, any>): void {} // No-op for minimal logging
 }
 
 // Export singleton instance
@@ -272,7 +154,7 @@ export function withLogging<T>(
   metadata?: Record<string, any>
 ): Promise<T> {
   return new Promise(async (resolve, reject) => {
-    const correlationId = logger.startOperation(operation, metadata);
+    const correlationId = logger.startOperation(operation);
     const startTime = Date.now();
     
     try {
@@ -284,7 +166,7 @@ export function withLogging<T>(
     } catch (error) {
       const duration = Date.now() - startTime;
       
-      logger.error(`Operation failed: ${operation}`, error as Error, { duration });
+      logger.error(`Operation failed: ${operation}`, error as Error);
       logger.endOperation(correlationId, false, { duration });
       reject(error);
     }
@@ -303,18 +185,18 @@ export function logExecutionTime<T>(
     const className = this.constructor.name;
     const methodName = propertyName;
     
-    logger.debug(`Executing ${className}.${methodName}`, { args: args.length });
+    logger.debug(`Executing ${className}.${methodName}`);
     
     try {
       const result = await originalMethod.apply(this, args);
       const duration = Date.now() - startTime;
       
-      logger.debug(`Completed ${className}.${methodName}`, { duration, success: true });
+      logger.debug(`Completed ${className}.${methodName} in ${duration}ms`);
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
       
-      logger.error(`Failed ${className}.${methodName}`, error as Error, { duration });
+      logger.error(`Failed ${className}.${methodName} after ${duration}ms`, error as Error);
       throw error;
     }
   };

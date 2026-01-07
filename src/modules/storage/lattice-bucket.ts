@@ -27,7 +27,6 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
   private readonly bucket: s3.Bucket;
   private readonly observabilityManager?: LatticeObservabilityManager;
 
-  @logExecutionTime
   constructor(scope: Construct, id: string, props: LatticeBucketProps) {
     super(scope, id);
 
@@ -144,7 +143,8 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
     // Configure lifecycle rules if specified
     if (lifecycle) {
       logger.info('Configuring lifecycle rules for bucket', {
-        rulesCount: lifecycle.length
+        archiveAfterDays: lifecycle.archiveAfterDays,
+        deleteAfterDays: lifecycle.deleteAfterDays
       });
       
       const lifecycleRules: s3.LifecycleRule[] = [];

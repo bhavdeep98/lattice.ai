@@ -66,6 +66,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.964.0",
     "aws-cdk-lib": "^2.120.0",
     "constructs": "^10.3.0"
   },

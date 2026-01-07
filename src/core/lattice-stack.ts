@@ -74,7 +74,7 @@ export class LatticeStack extends Stack {
             });
             dbOutput = db.output;
             this.outputs.database = dbOutput;
-            logger.resource('Database', dbOutput.instanceId);
+            logger.resource('Database', dbOutput.endpoint);
         }
 
         // 4. API / Compute

@@ -25,7 +25,6 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
   public readonly alarms: cloudwatch.Alarm[] = [];
   private readonly observabilityManager?: LatticeObservabilityManager;
 
-  @logExecutionTime
   constructor(scope: Construct, id: string, props: LatticeComputeProps) {
     super(scope, id);
 
@@ -106,7 +105,8 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     // Add observability after resource creation
     this.addObservability(type, name);
     
-    logger.logResourceCreation('compute', this.output.resourceId, {
+    const resourceId = this.output.instanceIds?.[0] || this.output.clusterArn || this.output.functionArn || 'unknown';
+    logger.logResourceCreation('compute', resourceId, {
       type,
       size,
       autoScaling,

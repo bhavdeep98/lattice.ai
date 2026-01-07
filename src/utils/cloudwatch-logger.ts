@@ -4,7 +4,7 @@
  */
 
 import { CloudWatchLogsClient, PutLogEventsCommand, CreateLogGroupCommand, CreateLogStreamCommand } from '@aws-sdk/client-cloudwatch-logs';
-import { LogEntry, LogLevel } from './logger';
+import { LatticeLogEntry, LogLevel } from './logger';
 import { LoggingConfig } from '../config/logging';
 
 export interface CloudWatchLogEvent {
@@ -63,7 +63,7 @@ export class CloudWatchLogger {
     }
   }
 
-  public async log(entry: LogEntry): Promise<void> {
+  public async log(entry: LatticeLogEntry): Promise<void> {
     const logEvent: CloudWatchLogEvent = {
       timestamp: new Date(entry.timestamp).getTime(),
       message: JSON.stringify(entry)
@@ -149,7 +149,7 @@ export class CloudWatchMetrics {
     try {
       // For this implementation, we'll log metrics as structured log entries
       // In a full implementation, you'd use CloudWatch Metrics API
-      const metricEntry: LogEntry = {
+      const metricEntry: LatticeLogEntry = {
         timestamp: new Date().toISOString(),
         level: LogLevel.INFO,
         message: `Metric: ${metricName}`,
@@ -217,7 +217,7 @@ export async function logInfrastructureEvent(
   resourceId: string,
   metadata?: Record<string, any>
 ): Promise<void> {
-  const logEntry: LogEntry = {
+  const logEntry: LatticeLogEntry = {
     timestamp: new Date().toISOString(),
     level: LogLevel.AUDIT,
     message: `Infrastructure event: ${eventType} ${resourceType}`,
@@ -249,7 +249,7 @@ export async function logSecurityEvent(
   severity: 'low' | 'medium' | 'high' | 'critical',
   metadata?: Record<string, any>
 ): Promise<void> {
-  const logEntry: LogEntry = {
+  const logEntry: LatticeLogEntry = {
     timestamp: new Date().toISOString(),
     level: severity === 'critical' ? LogLevel.ERROR : LogLevel.WARN,
     message: `Security event: ${eventType}`,
