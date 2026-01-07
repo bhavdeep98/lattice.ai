@@ -14,10 +14,10 @@ import { LatticeIdentity } from '../src/modules/identity/lattice-identity';
 
 /**
  * Example demonstrating the "Escape Hatch" pattern in Lattice constructs.
- * 
+ *
  * The Problem: Simple JSON Intent abstractions can be too limiting for complex real-world requirements.
  * The Solution: Every Lattice construct exposes the underlying AWS CDK construct via `public readonly instance`.
- * 
+ *
  * This allows developers to "break glass" when the abstraction doesn't cover their specific needs.
  */
 export class EscapeHatchExampleStack extends cdk.Stack {
@@ -38,7 +38,7 @@ export class EscapeHatchExampleStack extends cdk.Stack {
 
     // 2. ESCAPE HATCH: Need advanced S3 configuration not covered by Lattice?
     // Access the underlying s3.Bucket directly via the `instance` property
-    
+
     // Example: Configure advanced CORS with specific headers and expose headers
     appBucket.instance.addCorsRule({
       allowedOrigins: ['https://admin.myapp.com'],
@@ -72,11 +72,11 @@ export class EscapeHatchExampleStack extends cdk.Stack {
 
     // Example: Configure advanced bucket notifications with filters
     const processingTopic = sns.Topic.fromTopicArn(
-      this, 
-      'ProcessingTopic', 
+      this,
+      'ProcessingTopic',
       'arn:aws:sns:us-east-1:YOUR_ACCOUNT_ID:processing'
     );
-    
+
     appBucket.instance.addEventNotification(
       s3.EventType.OBJECT_CREATED_PUT,
       new s3n.SnsDestination(processingTopic),
@@ -100,7 +100,7 @@ export class EscapeHatchExampleStack extends cdk.Stack {
     });
 
     // Escape hatch: Configure advanced RDS features not in Lattice abstraction
-    
+
     // Example: Add custom parameter group with specific PostgreSQL settings
     const customParameterGroup = new rds.ParameterGroup(this, 'CustomPostgresParams', {
       engine: rds.DatabaseInstanceEngine.postgres({
@@ -108,16 +108,16 @@ export class EscapeHatchExampleStack extends cdk.Stack {
       }),
       parameters: {
         // Advanced PostgreSQL tuning
-        'shared_preload_libraries': 'pg_stat_statements,pg_hint_plan,auto_explain',
+        shared_preload_libraries: 'pg_stat_statements,pg_hint_plan,auto_explain',
         'auto_explain.log_min_duration': '1000',
         'auto_explain.log_analyze': 'true',
         'auto_explain.log_buffers': 'true',
-        'log_statement': 'ddl',
-        'log_min_duration_statement': '5000',
-        'checkpoint_completion_target': '0.9',
-        'wal_buffers': '16MB',
-        'effective_cache_size': '24GB',
-        'random_page_cost': '1.1',
+        log_statement: 'ddl',
+        log_min_duration_statement: '5000',
+        checkpoint_completion_target: '0.9',
+        wal_buffers: '16MB',
+        effective_cache_size: '24GB',
+        random_page_cost: '1.1',
       },
     });
 
@@ -154,37 +154,41 @@ export class EscapeHatchExampleStack extends cdk.Stack {
     });
 
     // Escape hatch: Add complex IAM policies not covered by Lattice
-    
+
     // Example: Add condition-based policy for cross-account access
-    appRole.instance.addToPolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['s3:GetObject', 's3:PutObject'],
-      resources: [appBucket.instance.arnForObjects('*')],
-      conditions: {
-        'StringEquals': {
-          's3:x-amz-server-side-encryption': 'AES256',
+    appRole.instance.addToPolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['s3:GetObject', 's3:PutObject'],
+        resources: [appBucket.instance.arnForObjects('*')],
+        conditions: {
+          StringEquals: {
+            's3:x-amz-server-side-encryption': 'AES256',
+          },
+          IpAddress: {
+            'aws:SourceIp': ['203.0.113.0/24', '198.51.100.0/24'],
+          },
         },
-        'IpAddress': {
-          'aws:SourceIp': ['203.0.113.0/24', '198.51.100.0/24'],
-        },
-      },
-    }));
+      })
+    );
 
     // Example: Add assume role policy for cross-account access
     const crossAccountPrincipal = new iam.AccountPrincipal('123456789012');
-    appRole.instance.assumeRolePolicy?.addStatements(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      principals: [crossAccountPrincipal],
-      actions: ['sts:AssumeRole'],
-      conditions: {
-        'StringEquals': {
-          'sts:ExternalId': 'unique-external-id-12345',
+    appRole.instance.assumeRolePolicy?.addStatements(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        principals: [crossAccountPrincipal],
+        actions: ['sts:AssumeRole'],
+        conditions: {
+          StringEquals: {
+            'sts:ExternalId': 'unique-external-id-12345',
+          },
         },
-      },
-    }));
+      })
+    );
 
     // 5. DEMONSTRATE THE POWER: Complex real-world scenario
-    
+
     // Scenario: Need S3 bucket with custom KMS key, inventory configuration, and replication
     const customKmsKey = new kms.Key(this, 'CustomS3Key', {
       description: 'Custom KMS key for S3 bucket encryption',
@@ -201,28 +205,32 @@ export class EscapeHatchExampleStack extends cdk.Stack {
     // Escape hatch: Override with custom KMS key
     const cfnBucket = advancedBucket.instance.node.defaultChild as s3.CfnBucket;
     cfnBucket.bucketEncryption = {
-      serverSideEncryptionConfiguration: [{
-        serverSideEncryptionByDefault: {
-          sseAlgorithm: 'aws:kms',
-          kmsMasterKeyId: customKmsKey.keyArn,
+      serverSideEncryptionConfiguration: [
+        {
+          serverSideEncryptionByDefault: {
+            sseAlgorithm: 'aws:kms',
+            kmsMasterKeyId: customKmsKey.keyArn,
+          },
         },
-      }],
+      ],
     };
 
     // Escape hatch: Add inventory configuration
     const cfnBucket2 = advancedBucket.instance.node.defaultChild as s3.CfnBucket;
-    cfnBucket2.inventoryConfigurations = [{
-      id: 'EntireBucketInventory',
-      enabled: true,
-      destination: {
-        bucketArn: `arn:aws:s3:::inventory-reports-${this.account}`,
-        format: 'CSV',
-        prefix: 'inventory-reports/',
+    cfnBucket2.inventoryConfigurations = [
+      {
+        id: 'EntireBucketInventory',
+        enabled: true,
+        destination: {
+          bucketArn: `arn:aws:s3:::inventory-reports-${this.account}`,
+          format: 'CSV',
+          prefix: 'inventory-reports/',
+        },
+        scheduleFrequency: 'Daily',
+        includedObjectVersions: 'Current',
+        optionalFields: ['Size', 'LastModifiedDate', 'StorageClass', 'ETag'],
       },
-      scheduleFrequency: 'Daily',
-      includedObjectVersions: 'Current',
-      optionalFields: ['Size', 'LastModifiedDate', 'StorageClass', 'ETag'],
-    }];
+    ];
 
     // Output the escape hatch instances for reference
     new cdk.CfnOutput(this, 'BucketInstanceType', {

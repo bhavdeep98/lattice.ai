@@ -24,14 +24,14 @@ A **real, functional demo** that uses the actual Lattice framework to generate p
 
 ## 🎯 Why This Is Better Than Mock Demos
 
-| Aspect | Mock Demo | Real Demo |
-|--------|-----------|-----------|
-| **Framework** | Fake JSON generation | Real Lattice CDK |
-| **Validation** | None | TypeScript + CDK validation |
-| **Dependencies** | Manual/Missing | Automatic resolution |
-| **Code Quality** | Broken CloudFormation | Production-ready CDK |
-| **Educational Value** | Limited | Shows real framework |
-| **Sales Value** | Questionable | Demonstrates actual product |
+| Aspect                | Mock Demo             | Real Demo                   |
+| --------------------- | --------------------- | --------------------------- |
+| **Framework**         | Fake JSON generation  | Real Lattice CDK            |
+| **Validation**        | None                  | TypeScript + CDK validation |
+| **Dependencies**      | Manual/Missing        | Automatic resolution        |
+| **Code Quality**      | Broken CloudFormation | Production-ready CDK        |
+| **Educational Value** | Limited               | Shows real framework        |
+| **Sales Value**       | Questionable          | Demonstrates actual product |
 
 ## 🏗️ Architecture
 
@@ -45,15 +45,18 @@ User Input → AI Analysis → Lattice Manifest → Real CDK Code → CloudForma
 ## 🚀 How to Use
 
 ### Quick Start:
+
 ```bash
 cd website
 ./start-real-demo.sh
 ```
 
 ### Visit:
+
 **http://localhost:8001/real-lattice-demo.html**
 
 ### Try Examples:
+
 - "I need a healthcare platform with claims processing and HIPAA compliance"
 - "Build an e-commerce platform with payment processing and inventory"
 - "Create a blog platform with user authentication and file uploads"
@@ -61,16 +64,19 @@ cd website
 ## 📊 Demo Flow
 
 ### Step 1: AI Intent Generation
+
 - Analyzes natural language input
 - Maps to Lattice capabilities
 - Generates structured `LatticeManifest`
 
-### Step 2: CDK Code Generation  
+### Step 2: CDK Code Generation
+
 - Uses real Lattice framework
 - Creates actual TypeScript CDK applications
 - Includes proper imports and type safety
 
 ### Step 3: CloudFormation Synthesis
+
 - Attempts real `cdk synth` command
 - Shows the complete infrastructure pipeline
 - Demonstrates production readiness
@@ -80,7 +86,7 @@ cd website
 This demo teaches:
 
 1. **How Lattice Actually Works**: Real framework, not simulation
-2. **AI → Infrastructure Pipeline**: Complete end-to-end process  
+2. **AI → Infrastructure Pipeline**: Complete end-to-end process
 3. **CDK Best Practices**: Type-safe infrastructure as code
 4. **Production Readiness**: Security, monitoring, compliance built-in
 5. **Framework Architecture**: Intent → Framework → Guardrails
@@ -88,16 +94,19 @@ This demo teaches:
 ## 💼 Business Value
 
 ### For Sales:
+
 - **Credible Demonstration**: Shows real product capabilities
 - **Technical Depth**: Satisfies technical evaluators
 - **Differentiation**: Proves Lattice's unique value proposition
 
 ### For Marketing:
+
 - **Interactive Content**: Engaging website experience
 - **Lead Generation**: Captures user requirements and contact info
 - **Product Education**: Teaches Lattice concepts effectively
 
 ### For Development:
+
 - **Framework Testing**: Real validation of Lattice capabilities
 - **User Feedback**: Understand how users interact with the framework
 - **Documentation**: Live examples for developer onboarding
@@ -105,6 +114,7 @@ This demo teaches:
 ## 🔧 Technical Implementation
 
 ### Backend Features:
+
 - Express.js server with CORS support
 - Real Lattice framework integration
 - CDK synthesis attempts
@@ -112,6 +122,7 @@ This demo teaches:
 - Health monitoring
 
 ### Frontend Features:
+
 - Modern, responsive design
 - Real-time code display
 - Copy-to-clipboard functionality
@@ -119,6 +130,7 @@ This demo teaches:
 - Example prompts for user guidance
 
 ### Integration:
+
 - RESTful API design
 - JSON communication
 - Proper error handling

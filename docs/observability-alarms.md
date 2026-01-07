@@ -14,7 +14,7 @@ Lattice now provides comprehensive **Observability & Alarms** with:
 
 1. **Automatic CloudWatch Alarms** for all resources
 2. **Role-based Dashboards** for different personas
-3. **Environment-appropriate Thresholds** 
+3. **Environment-appropriate Thresholds**
 4. **Centralized Notification Management**
 5. **Comprehensive Metrics Coverage**
 
@@ -25,21 +25,25 @@ Lattice now provides comprehensive **Observability & Alarms** with:
 Every Lattice construct automatically creates relevant CloudWatch alarms:
 
 **LatticeCompute Alarms:**
+
 - **EC2**: High CPU, Status Check Failed, High Memory
 - **ECS**: High CPU, High Memory, Task Count
 - **Lambda**: Errors, Duration, Throttles
 
 **LatticeDatabase Alarms:**
+
 - High CPU Utilization
 - Low Freeable Memory (Critical)
 - High Database Connections
 - Low Free Storage Space (Critical)
 
 **LatticeBucket Alarms:**
+
 - High Request Rate
 - High 4xx Error Rate (Critical)
 
 **LatticeNetwork Alarms:**
+
 - NAT Gateway Error Port Allocation (Critical)
 - NAT Gateway Packet Drop Count
 
@@ -48,24 +52,28 @@ Every Lattice construct automatically creates relevant CloudWatch alarms:
 Different personas need different views of the same data:
 
 **Developer Dashboard:**
+
 - Detailed technical metrics
 - CPU, memory, latency charts
 - Error rates and performance data
 - Debugging-focused widgets
 
 **SRE Dashboard:**
+
 - Operational health metrics
 - Resource utilization trends
 - System availability indicators
 - Infrastructure-focused views
 
 **CTO Dashboard:**
+
 - High-level business metrics
 - Availability and uptime summaries
 - Cost and resource efficiency
 - Executive-level KPIs
 
 **Security Dashboard:**
+
 - Security event logs
 - Access patterns
 - Anomaly detection
@@ -75,29 +83,32 @@ Different personas need different views of the same data:
 
 Alarms adapt to the environment to balance sensitivity with noise:
 
-| Environment | Sensitivity | Evaluation Periods | Use Case |
-|-------------|-------------|-------------------|----------|
-| **Production** | High (strict thresholds) | 1-2 periods | Fast detection, minimal tolerance |
-| **Staging** | Moderate | 2-3 periods | Balanced detection, some tolerance |
-| **Development** | Low (relaxed thresholds) | 3-5 periods | Reduce noise, focus on major issues |
+| Environment     | Sensitivity              | Evaluation Periods | Use Case                            |
+| --------------- | ------------------------ | ------------------ | ----------------------------------- |
+| **Production**  | High (strict thresholds) | 1-2 periods        | Fast detection, minimal tolerance   |
+| **Staging**     | Moderate                 | 2-3 periods        | Balanced detection, some tolerance  |
+| **Development** | Low (relaxed thresholds) | 3-5 periods        | Reduce noise, focus on major issues |
 
 ### 4. Severity-Based Configuration
 
 Alarms are categorized by severity with appropriate response times:
 
 **Critical Alarms:**
+
 - 1 evaluation period
 - 1 datapoint to alarm
 - Immediate notification
 - Examples: Status check failed, out of memory
 
 **Warning Alarms:**
+
 - 2 evaluation periods
 - 2 datapoints to alarm
 - Standard notification
 - Examples: High CPU, high connections
 
 **Info Alarms:**
+
 - 3 evaluation periods
 - 2 datapoints to alarm
 - Low-priority notification
@@ -114,7 +125,9 @@ const prodLambda = new LatticeCompute(this, 'ProdLambda', {
   environment: 'prod',
   type: 'serverless',
   size: 'medium',
-  network: { /* ... */ },
+  network: {
+    /* ... */
+  },
   // Observability enabled by default for production
   enableObservability: true,
   enableAlarms: true,
@@ -146,7 +159,9 @@ const prodDatabase = new LatticeDatabase(this, 'ProdDatabase', {
   environment: 'prod',
   engine: 'postgres',
   size: 'large',
-  network: { /* ... */ },
+  network: {
+    /* ... */
+  },
   // Custom notification configuration
   notificationTopic: criticalAlarms,
 });
@@ -193,6 +208,7 @@ const ctoDashboard = observability.getDashboard('cto');
 ### Compute Alarms
 
 #### EC2 Instance Alarms
+
 ```typescript
 {
   'HighCPU': {
@@ -204,7 +220,7 @@ const ctoDashboard = observability.getDashboard('cto');
   },
   'StatusCheckFailed': {
     metric: 'StatusCheckFailed',
-    namespace: 'AWS/EC2', 
+    namespace: 'AWS/EC2',
     threshold: 1,
     severity: 'critical',
     period: '1 minute'
@@ -220,6 +236,7 @@ const ctoDashboard = observability.getDashboard('cto');
 ```
 
 #### Lambda Function Alarms
+
 ```typescript
 {
   'Errors': {
@@ -230,7 +247,7 @@ const ctoDashboard = observability.getDashboard('cto');
     period: '5 minutes'
   },
   'Duration': {
-    metric: 'Duration', 
+    metric: 'Duration',
     namespace: 'AWS/Lambda',
     threshold: 30000, // 30 seconds
     severity: 'warning',
@@ -247,6 +264,7 @@ const ctoDashboard = observability.getDashboard('cto');
 ```
 
 #### ECS Service Alarms
+
 ```typescript
 {
   'HighCPU': {
@@ -277,6 +295,7 @@ const ctoDashboard = observability.getDashboard('cto');
 ### Database Alarms
 
 #### RDS Instance Alarms
+
 ```typescript
 {
   'HighCPU': {
@@ -315,6 +334,7 @@ const ctoDashboard = observability.getDashboard('cto');
 ### Storage Alarms
 
 #### S3 Bucket Alarms
+
 ```typescript
 {
   'HighRequestRate': {
@@ -339,6 +359,7 @@ const ctoDashboard = observability.getDashboard('cto');
 ### Network Alarms
 
 #### NAT Gateway Alarms
+
 ```typescript
 {
   'ErrorPortAllocation': {
@@ -365,18 +386,21 @@ const ctoDashboard = observability.getDashboard('cto');
 ### Developer Dashboard Widgets
 
 **Compute Resources:**
+
 - CPU & Memory utilization charts
 - Request/response latency graphs
 - Error rate trends
 - Throughput metrics
 
 **Database Resources:**
+
 - Query performance metrics
 - Connection pool status
 - Read/write latency
 - Lock wait times
 
 **Storage Resources:**
+
 - Request patterns
 - Error rates by operation
 - Transfer metrics
@@ -385,12 +409,14 @@ const ctoDashboard = observability.getDashboard('cto');
 ### SRE Dashboard Widgets
 
 **System Health:**
+
 - Overall availability metrics
 - Resource utilization summaries
 - Alert status overview
 - Capacity planning data
 
 **Infrastructure:**
+
 - Network performance
 - Storage capacity trends
 - Compute resource efficiency
@@ -399,12 +425,14 @@ const ctoDashboard = observability.getDashboard('cto');
 ### CTO Dashboard Widgets
 
 **Business Metrics:**
+
 - System availability (uptime %)
 - User experience indicators
 - Cost efficiency trends
 - Capacity vs. demand
 
 **Strategic Indicators:**
+
 - Performance vs. SLA targets
 - Resource utilization efficiency
 - Incident frequency trends
@@ -413,12 +441,14 @@ const ctoDashboard = observability.getDashboard('cto');
 ### Security Dashboard Widgets
 
 **Security Events:**
+
 - Authentication failures
 - Access pattern anomalies
 - Network security events
 - Compliance violations
 
 **Audit Information:**
+
 - Access logs summary
 - Permission changes
 - Security group modifications
@@ -486,7 +516,7 @@ const criticalTopic = new sns.Topic(this, 'Critical', {
 criticalTopic.addSubscription(new subscriptions.EmailSubscription('oncall@company.com'));
 
 const warningTopic = new sns.Topic(this, 'Warning', {
-  topicName: 'warning-alerts', 
+  topicName: 'warning-alerts',
 });
 warningTopic.addSubscription(new subscriptions.EmailSubscription('alerts@company.com'));
 ```
@@ -502,7 +532,7 @@ const devObservability = LatticeObservabilityManager.create(this, 'DevObservabil
 });
 
 const opsObservability = LatticeObservabilityManager.create(this, 'OpsObservability', {
-  environment: 'prod', 
+  environment: 'prod',
   roles: ['sre', 'cto'],
   dashboardPrefix: 'Ops',
 });
@@ -517,7 +547,9 @@ const criticalDatabase = new LatticeDatabase(this, 'CriticalDB', {
   environment: 'prod',
   engine: 'postgres',
   size: 'xlarge',
-  network: { /* ... */ },
+  network: {
+    /* ... */
+  },
   // Custom observability for critical resource
   enableObservability: true,
   enableAlarms: true,
@@ -525,7 +557,7 @@ const criticalDatabase = new LatticeDatabase(this, 'CriticalDB', {
 });
 
 // Access individual alarms for fine-tuning
-criticalDatabase.alarms.forEach(alarm => {
+criticalDatabase.alarms.forEach((alarm) => {
   if (alarm.alarmName.includes('HighCPU')) {
     // Lower threshold for critical database
     alarm.addPropertyOverride('Threshold', 60);
@@ -583,7 +615,9 @@ const compute = new LatticeCompute(this, 'Compute', {
   environment: 'prod',
   type: 'vm',
   size: 'medium',
-  network: { /* ... */ },
+  network: {
+    /* ... */
+  },
   // Automatic CPU alarm creation with environment-appropriate threshold
 });
 ```
@@ -608,6 +642,7 @@ const monitoredBucket = new LatticeBucket(this, 'MonitoredBucket', {
 Lattice's Observability & Alarms system transforms infrastructure monitoring from an afterthought into a first-class citizen. By automatically creating appropriate alarms and role-based dashboards, you get production-ready monitoring out of the box.
 
 Key benefits:
+
 - **Proactive Detection**: Issues are caught before they impact users
 - **Role-Based Visibility**: Everyone sees the metrics they need
 - **Environment Awareness**: Appropriate sensitivity for each environment

@@ -14,9 +14,9 @@ describe('Operations & Statefulness', () => {
   beforeEach(() => {
     app = new cdk.App();
     stack = new cdk.Stack(app, 'TestStack', {
-      env: { account: '123456789012', region: 'us-east-1' }
+      env: { account: '123456789012', region: 'us-east-1' },
     });
-    
+
     // Create a mock VPC to avoid lookup issues in tests
     mockVpc = new ec2.Vpc(stack, 'TestVpc', {
       maxAzs: 2,
@@ -27,7 +27,7 @@ describe('Operations & Statefulness', () => {
   describe('StatefulnessPolicy', () => {
     test('production environment enforces RETAIN removal policy', () => {
       const policy = createStatefulnessPolicy({ environment: 'prod' });
-      
+
       expect(policy.getRemovalPolicy()).toBe(RemovalPolicy.RETAIN);
       expect(policy.getDatabaseRemovalPolicy()).toBe(RemovalPolicy.SNAPSHOT);
       expect(policy.shouldEnableDeletionProtection()).toBe(true);
@@ -38,7 +38,7 @@ describe('Operations & Statefulness', () => {
 
     test('development environment allows DESTROY removal policy', () => {
       const policy = createStatefulnessPolicy({ environment: 'dev' });
-      
+
       expect(policy.getRemovalPolicy()).toBe(RemovalPolicy.DESTROY);
       expect(policy.getDatabaseRemovalPolicy()).toBe(RemovalPolicy.DESTROY);
       expect(policy.shouldEnableDeletionProtection()).toBe(false);
@@ -49,7 +49,7 @@ describe('Operations & Statefulness', () => {
 
     test('staging environment enforces RETAIN removal policy', () => {
       const policy = createStatefulnessPolicy({ environment: 'staging' });
-      
+
       expect(policy.getRemovalPolicy()).toBe(RemovalPolicy.RETAIN);
       expect(policy.getDatabaseRemovalPolicy()).toBe(RemovalPolicy.SNAPSHOT);
       expect(policy.shouldEnableDeletionProtection()).toBe(false);
@@ -59,11 +59,11 @@ describe('Operations & Statefulness', () => {
     });
 
     test('forceRetain overrides environment settings', () => {
-      const policy = createStatefulnessPolicy({ 
+      const policy = createStatefulnessPolicy({
         environment: 'dev',
-        forceRetain: true 
+        forceRetain: true,
       });
-      
+
       expect(policy.getRemovalPolicy()).toBe(RemovalPolicy.RETAIN);
       expect(policy.getDatabaseRemovalPolicy()).toBe(RemovalPolicy.SNAPSHOT);
       expect(policy.shouldEnableDeletionProtection()).toBe(true);
@@ -90,7 +90,7 @@ describe('Operations & Statefulness', () => {
 
     test('unknown environment defaults to safe settings', () => {
       const policy = new StatefulnessPolicy({ environment: 'unknown' as any });
-      
+
       expect(policy.getRemovalPolicy()).toBe(RemovalPolicy.RETAIN);
       expect(policy.getDatabaseRemovalPolicy()).toBe(RemovalPolicy.SNAPSHOT);
     });
@@ -271,10 +271,10 @@ describe('Operations & Statefulness', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Should create backup selection for the database
       template.resourceCountIs('AWS::Backup::BackupSelection', 1);
-      
+
       // Check that backup selection exists (name might be generated)
       template.hasResourceProperties('AWS::Backup::BackupSelection', {
         BackupSelection: {
@@ -297,7 +297,7 @@ describe('Operations & Statefulness', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Should create backup plan with multiple rules for production
       template.hasResourceProperties('AWS::Backup::BackupPlan', {
         BackupPlan: {

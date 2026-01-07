@@ -10,22 +10,22 @@ export interface CrossAccountStackProps extends StackProps {
    * The GitHub repository in format "owner/repo"
    */
   githubRepository: string;
-  
+
   /**
    * List of target AWS account IDs that this tooling account can deploy to
    */
   targetAccountIds: string[];
-  
+
   /**
    * The environment this stack is for (tooling, dev, staging, prod)
    */
   environment: 'tooling' | 'dev' | 'staging' | 'prod';
-  
+
   /**
    * Organization ID for additional security
    */
   organizationId?: string;
-  
+
   /**
    * Additional conditions for role assumption
    */
@@ -34,27 +34,27 @@ export interface CrossAccountStackProps extends StackProps {
 
 /**
  * Cross-Account Deployment Stack
- * 
+ *
  * This stack sets up the necessary infrastructure for secure cross-account
  * deployments using GitHub Actions OIDC and role assumption chains.
  */
 export class CrossAccountStack extends Stack {
   public readonly artifactBucket: s3.Bucket;
   public readonly kmsKey: kms.Key;
-  
+
   private deploymentRoleInternal?: iam.Role;
-  
+
   constructor(scope: Construct, id: string, props: CrossAccountStackProps) {
     super(scope, id, props);
-    
+
     const { githubRepository, targetAccountIds, environment, organizationId } = props;
-    
+
     // Create KMS key for encryption
     this.kmsKey = this.createKmsKey(environment);
-    
+
     // Create artifact bucket for storing deployment artifacts
     this.artifactBucket = this.createArtifactBucket(environment);
-    
+
     if (environment === 'tooling') {
       // Tooling account setup
       this.setupToolingAccount(githubRepository, targetAccountIds, organizationId);
@@ -63,11 +63,11 @@ export class CrossAccountStack extends Stack {
       this.setupTargetAccount(environment, organizationId);
     }
   }
-  
+
   public get deploymentRole(): iam.Role | undefined {
     return this.deploymentRoleInternal;
   }
-  
+
   /**
    * Create KMS key for encryption
    */
@@ -106,7 +106,7 @@ export class CrossAccountStack extends Stack {
       }),
     });
   }
-  
+
   /**
    * Create artifact bucket for storing deployment artifacts
    */
@@ -133,7 +133,7 @@ export class CrossAccountStack extends Stack {
       serverAccessLogsPrefix: 'access-logs/',
     });
   }
-  
+
   /**
    * Setup tooling account infrastructure
    */
@@ -151,26 +151,23 @@ export class CrossAccountStack extends Stack {
         '1c58a3a8518e8759bf075b76b750d4f2df264fcd', // Backup thumbprint
       ],
     });
-    
+
     // Create deployment role that GitHub Actions can assume
     this.deploymentRoleInternal = new iam.Role(this, 'GitHubActionsRole', {
       roleName: `LatticeGitHubActions-${this.stackName}`,
       description: 'Role for GitHub Actions to deploy Lattice infrastructure',
-      assumedBy: new iam.WebIdentityPrincipal(
-        oidcProvider.openIdConnectProviderArn,
-        {
-          StringEquals: {
-            'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
-          },
-          StringLike: {
-            'token.actions.githubusercontent.com:sub': [
-              `repo:${githubRepository}:ref:refs/heads/main`,
-              `repo:${githubRepository}:ref:refs/heads/develop`,
-              `repo:${githubRepository}:pull_request`,
-            ],
-          },
-        }
-      ),
+      assumedBy: new iam.WebIdentityPrincipal(oidcProvider.openIdConnectProviderArn, {
+        StringEquals: {
+          'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
+        },
+        StringLike: {
+          'token.actions.githubusercontent.com:sub': [
+            `repo:${githubRepository}:ref:refs/heads/main`,
+            `repo:${githubRepository}:ref:refs/heads/develop`,
+            `repo:${githubRepository}:pull_request`,
+          ],
+        },
+      }),
       maxSessionDuration: Duration.hours(1),
       inlinePolicies: {
         CrossAccountDeployment: new iam.PolicyDocument({
@@ -181,39 +178,28 @@ export class CrossAccountStack extends Stack {
               effect: iam.Effect.ALLOW,
               actions: ['sts:AssumeRole'],
               resources: targetAccountIds.map(
-                accountId => `arn:aws:iam::${accountId}:role/LatticeDeploymentRole-*`
+                (accountId) => `arn:aws:iam::${accountId}:role/LatticeDeploymentRole-*`
               ),
-              conditions: organizationId ? {
-                StringEquals: {
-                  'aws:PrincipalOrgID': organizationId,
-                },
-              } : undefined,
+              conditions: organizationId
+                ? {
+                    StringEquals: {
+                      'aws:PrincipalOrgID': organizationId,
+                    },
+                  }
+                : undefined,
             }),
             // Access to artifact bucket
             new iam.PolicyStatement({
               sid: 'ArtifactBucketAccess',
               effect: iam.Effect.ALLOW,
-              actions: [
-                's3:GetObject',
-                's3:PutObject',
-                's3:DeleteObject',
-                's3:ListBucket',
-              ],
-              resources: [
-                this.artifactBucket.bucketArn,
-                `${this.artifactBucket.bucketArn}/*`,
-              ],
+              actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject', 's3:ListBucket'],
+              resources: [this.artifactBucket.bucketArn, `${this.artifactBucket.bucketArn}/*`],
             }),
             // KMS access for artifact encryption
             new iam.PolicyStatement({
               sid: 'KMSAccess',
               effect: iam.Effect.ALLOW,
-              actions: [
-                'kms:Decrypt',
-                'kms:GenerateDataKey',
-                'kms:ReEncrypt*',
-                'kms:DescribeKey',
-              ],
+              actions: ['kms:Decrypt', 'kms:GenerateDataKey', 'kms:ReEncrypt*', 'kms:DescribeKey'],
               resources: [this.kmsKey.keyArn],
             }),
             // CloudFormation access for CDK deployments
@@ -232,47 +218,41 @@ export class CrossAccountStack extends Stack {
             new iam.PolicyStatement({
               sid: 'SSMAccess',
               effect: iam.Effect.ALLOW,
-              actions: [
-                'ssm:GetParameter',
-                'ssm:GetParameters',
-                'ssm:GetParametersByPath',
-              ],
-              resources: [
-                `arn:aws:ssm:*:${this.account}:parameter/lattice/*`,
-              ],
+              actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
+              resources: [`arn:aws:ssm:*:${this.account}:parameter/lattice/*`],
             }),
           ],
         }),
       },
     });
-    
+
     // Create CloudWatch log group for deployment logs
     new logs.LogGroup(this, 'DeploymentLogs', {
       logGroupName: `/aws/lattice/cross-account-deployment`,
       retention: logs.RetentionDays.ONE_MONTH,
       encryptionKey: this.kmsKey,
     });
-    
+
     // Output important values
     new CfnOutput(this, 'GitHubActionsRoleArn', {
       value: this.deploymentRoleInternal!.roleArn,
       description: 'ARN of the role that GitHub Actions should assume',
       exportName: `${this.stackName}-GitHubActionsRoleArn`,
     });
-    
+
     new CfnOutput(this, 'ArtifactBucketName', {
       value: this.artifactBucket.bucketName,
       description: 'Name of the S3 bucket for storing deployment artifacts',
       exportName: `${this.stackName}-ArtifactBucketName`,
     });
-    
+
     new CfnOutput(this, 'KMSKeyArn', {
       value: this.kmsKey.keyArn,
       description: 'ARN of the KMS key for encryption',
       exportName: `${this.stackName}-KMSKeyArn`,
     });
   }
-  
+
   /**
    * Setup target account infrastructure (dev, staging, prod)
    */
@@ -283,14 +263,14 @@ export class CrossAccountStack extends Stack {
       description: `Role for deploying Lattice infrastructure in ${environment}`,
       assumedBy: new iam.CompositePrincipal(
         // Allow assumption from tooling account
-        new iam.AccountPrincipal(this.account), // This would be the tooling account ID in practice
+        new iam.AccountPrincipal(this.account) // This would be the tooling account ID in practice
       ),
       maxSessionDuration: Duration.hours(2),
       inlinePolicies: {
         DeploymentPolicy: this.createDeploymentPolicy(environment),
       },
     });
-    
+
     // Add organization condition if provided
     if (organizationId) {
       this.deploymentRoleInternal!.assumeRolePolicy?.addStatements(
@@ -306,16 +286,15 @@ export class CrossAccountStack extends Stack {
         })
       );
     }
-    
+
     // Create CloudWatch log group for this environment
     new logs.LogGroup(this, 'EnvironmentLogs', {
       logGroupName: `/aws/lattice/${environment}`,
-      retention: environment === 'prod' 
-        ? logs.RetentionDays.ONE_YEAR 
-        : logs.RetentionDays.THREE_MONTHS,
+      retention:
+        environment === 'prod' ? logs.RetentionDays.ONE_YEAR : logs.RetentionDays.THREE_MONTHS,
       encryptionKey: this.kmsKey,
     });
-    
+
     // Output the deployment role ARN
     new CfnOutput(this, 'DeploymentRoleArn', {
       value: this.deploymentRoleInternal!.roleArn,
@@ -323,7 +302,7 @@ export class CrossAccountStack extends Stack {
       exportName: `${this.stackName}-DeploymentRoleArn`,
     });
   }
-  
+
   /**
    * Create deployment policy based on environment
    */
@@ -352,7 +331,7 @@ export class CrossAccountStack extends Stack {
           `arn:aws:cloudformation:*:${this.account}:stack/CDKToolkit/*`,
         ],
       }),
-      
+
       // IAM permissions (limited)
       new iam.PolicyStatement({
         sid: 'IAMAccess',
@@ -378,7 +357,7 @@ export class CrossAccountStack extends Stack {
           `arn:aws:iam::${this.account}:instance-profile/lattice-*`,
         ],
       }),
-      
+
       // S3 permissions
       new iam.PolicyStatement({
         sid: 'S3Access',
@@ -408,7 +387,7 @@ export class CrossAccountStack extends Stack {
           `arn:aws:s3:::cdk-*/*`,
         ],
       }),
-      
+
       // Lambda permissions
       new iam.PolicyStatement({
         sid: 'LambdaAccess',
@@ -426,11 +405,9 @@ export class CrossAccountStack extends Stack {
           'lambda:DeleteEventSourceMapping',
           'lambda:UpdateEventSourceMapping',
         ],
-        resources: [
-          `arn:aws:lambda:*:${this.account}:function:lattice-*`,
-        ],
+        resources: [`arn:aws:lambda:*:${this.account}:function:lattice-*`],
       }),
-      
+
       // EC2 permissions
       new iam.PolicyStatement({
         sid: 'EC2Access',
@@ -454,7 +431,7 @@ export class CrossAccountStack extends Stack {
         ],
         resources: ['*'],
       }),
-      
+
       // RDS permissions
       new iam.PolicyStatement({
         sid: 'RDSAccess',
@@ -475,7 +452,7 @@ export class CrossAccountStack extends Stack {
           `arn:aws:rds:*:${this.account}:subgrp:lattice-*`,
         ],
       }),
-      
+
       // CloudWatch permissions
       new iam.PolicyStatement({
         sid: 'CloudWatchAccess',
@@ -495,7 +472,7 @@ export class CrossAccountStack extends Stack {
         ],
         resources: ['*'],
       }),
-      
+
       // KMS permissions
       new iam.PolicyStatement({
         sid: 'KMSAccess',
@@ -520,7 +497,7 @@ export class CrossAccountStack extends Stack {
         },
       }),
     ];
-    
+
     // Add environment-specific permissions
     if (environment === 'prod') {
       // Production has additional restrictions
@@ -528,10 +505,7 @@ export class CrossAccountStack extends Stack {
         new iam.PolicyStatement({
           sid: 'ProductionRestrictions',
           effect: iam.Effect.DENY,
-          actions: [
-            'rds:DeleteDBInstance',
-            's3:DeleteBucket',
-          ],
+          actions: ['rds:DeleteDBInstance', 's3:DeleteBucket'],
           resources: ['*'],
           conditions: {
             StringNotEquals: {
@@ -541,7 +515,7 @@ export class CrossAccountStack extends Stack {
         })
       );
     }
-    
+
     return new iam.PolicyDocument({
       statements: basePermissions,
     });

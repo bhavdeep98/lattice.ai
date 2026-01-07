@@ -14,7 +14,7 @@ jobs:
     name: 🔍 Test OIDC Authentication
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -50,14 +50,14 @@ jobs:
           echo "Region: $REGION"
           echo "Expected Account: 618351925005"
           echo "Expected Region: us-east-1"
-          
+
           if [ "$ACCOUNT" = "618351925005" ]; then
             echo "✅ Account verification passed"
           else
             echo "❌ Account mismatch"
             exit 1
           fi
-          
+
           if [ "$REGION" = "us-east-1" ]; then
             echo "✅ Region verification passed"
           else

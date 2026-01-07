@@ -10,10 +10,10 @@ import { LatticeObservabilityManager } from '../src/core/observability';
 
 /**
  * Example demonstrating comprehensive observability in Lattice constructs.
- * 
+ *
  * The Problem: Infrastructure without monitoring is like pipes without sensors.
  * The Solution: Automatic CloudWatch alarms and role-based dashboards.
- * 
+ *
  * Key Features:
  * 1. Automatic alarm creation for all resources
  * 2. Role-based dashboards (Developer, SRE, CTO, Security)
@@ -54,13 +54,9 @@ export class ObservabilityExampleStack extends cdk.Stack {
     });
 
     // Add email subscriptions (in real world, these would be actual email addresses)
-    criticalAlarmsTopic.addSubscription(
-      new subscriptions.EmailSubscription('oncall@example.com')
-    );
+    criticalAlarmsTopic.addSubscription(new subscriptions.EmailSubscription('oncall@example.com'));
 
-    warningAlarmsTopic.addSubscription(
-      new subscriptions.EmailSubscription('alerts@example.com')
-    );
+    warningAlarmsTopic.addSubscription(new subscriptions.EmailSubscription('alerts@example.com'));
 
     // Output topic ARNs for reference
     new cdk.CfnOutput(this, 'CriticalAlarmsTopicArn', {

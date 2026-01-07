@@ -1,657 +1,746 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lattice Interactive Demo - Deploy to Your AWS Account</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        .interactive-demo {
-            padding: 100px 0 50px;
-            background: #f8fafc;
-            min-height: 100vh;
-        }
-        
-        .demo-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .demo-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .demo-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
-        .demo-subtitle {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-        
-        .warning-card {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 3rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .warning-title {
-            color: #92400e;
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .warning-content {
-            color: #92400e;
-            line-height: 1.6;
-        }
-        
+      .interactive-demo {
+        padding: 100px 0 50px;
+        background: #f8fafc;
+        min-height: 100vh;
+      }
+
+      .demo-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .demo-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .demo-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .demo-subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 2rem;
+      }
+
+      .warning-card {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 3rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .warning-title {
+        color: #92400e;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .warning-content {
+        color: #92400e;
+        line-height: 1.6;
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .config-panel,
+      .output-panel {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        background: #1a1a1a;
+        color: white;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .panel-content {
+        padding: 2rem;
+      }
+
+      .config-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .form-section {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #374151;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-group label {
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #007aff;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .checkbox-group input[type='checkbox'] {
+        width: auto;
+      }
+
+      .generate-btn {
+        background: #007aff;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+      }
+
+      .generate-btn:hover {
+        background: #0056cc;
+        transform: translateY(-2px);
+      }
+
+      .generate-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .output-tabs {
+        display: flex;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 1rem;
+      }
+
+      .tab-button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: #6b7280;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .tab-button.active {
+        color: #007aff;
+        border-bottom-color: #007aff;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .code-output {
+        background: #1a1a1a;
+        color: #e5e7eb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        max-height: 600px;
+        overflow-y: auto;
+        position: relative;
+        margin-bottom: 1rem;
+      }
+
+      .copy-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #374151;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background 0.3s ease;
+        z-index: 10;
+      }
+
+      .copy-button:hover {
+        background: #4b5563;
+      }
+
+      .copy-button.copied {
+        background: #10b981;
+      }
+
+      .deployment-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .deploy-option {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .deploy-option:hover {
+        border-color: #007aff;
+        background: #f0f9ff;
+      }
+
+      .deploy-option-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .deploy-option-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .deploy-option-desc {
+        font-size: 0.9rem;
+        color: #6b7280;
+      }
+
+      .cost-estimate {
+        background: #ecfdf5;
+        border: 1px solid #10b981;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .cost-title {
+        color: #047857;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .cost-breakdown {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .cost-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .cost-total {
+        grid-column: 1 / -1;
+        background: #047857;
+        color: white;
+        font-weight: 600;
+        margin-top: 0.5rem;
+      }
+
+      .threat-model {
+        background: #fef2f2;
+        border: 1px solid #ef4444;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .threat-title {
+        color: #dc2626;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .threat-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .threat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 4px;
+      }
+
+      .threat-critical {
+        border-left: 3px solid #dc2626;
+        color: #dc2626;
+      }
+
+      .threat-warning {
+        border-left: 3px solid #f59e0b;
+        color: #d97706;
+      }
+
+      .threat-info {
+        border-left: 3px solid #10b981;
+        color: #047857;
+      }
+
+      .aws-console-link {
+        background: #ff9900;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .aws-console-link:hover {
+        background: #e88900;
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 768px) {
         .demo-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
+          grid-template-columns: 1fr;
         }
-        
-        .config-panel, .output-panel {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-        
-        .panel-header {
-            background: #1a1a1a;
-            color: white;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .panel-content {
-            padding: 2rem;
-        }
-        
-        .config-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .form-section {
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #374151;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-        
-        .form-group label {
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #007AFF;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-        }
-        
-        .generate-btn {
-            background: #007AFF;
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-        }
-        
-        .generate-btn:hover {
-            background: #0056CC;
-            transform: translateY(-2px);
-        }
-        
-        .generate-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .output-tabs {
-            display: flex;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 1rem;
-        }
-        
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-weight: 600;
-            color: #6b7280;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-button.active {
-            color: #007AFF;
-            border-bottom-color: #007AFF;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .code-output {
-            background: #1a1a1a;
-            color: #e5e7eb;
-            padding: 1.5rem;
-            border-radius: 8px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            overflow-x: auto;
-            max-height: 600px;
-            overflow-y: auto;
-            position: relative;
-            margin-bottom: 1rem;
-        }
-        
-        .copy-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: #374151;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.3s ease;
-            z-index: 10;
-        }
-        
-        .copy-button:hover {
-            background: #4b5563;
-        }
-        
-        .copy-button.copied {
-            background: #10b981;
-        }
-        
+
         .deployment-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
+          grid-template-columns: 1fr;
         }
-        
-        .deploy-option {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .deploy-option:hover {
-            border-color: #007AFF;
-            background: #f0f9ff;
-        }
-        
-        .deploy-option-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .deploy-option-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .deploy-option-desc {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-        
-        .cost-estimate {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-        }
-        
-        .cost-title {
-            color: #047857;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
+
         .cost-breakdown {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+          grid-template-columns: 1fr;
         }
-        
-        .cost-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .cost-total {
-            grid-column: 1 / -1;
-            background: #047857;
-            color: white;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-        
-        .threat-model {
-            background: #fef2f2;
-            border: 1px solid #ef4444;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-        }
-        
-        .threat-title {
-            color: #dc2626;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .threat-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .threat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-        
-        .threat-critical {
-            border-left: 3px solid #dc2626;
-            color: #dc2626;
-        }
-        
-        .threat-warning {
-            border-left: 3px solid #f59e0b;
-            color: #d97706;
-        }
-        
-        .threat-info {
-            border-left: 3px solid #10b981;
-            color: #047857;
-        }
-        
-        .aws-console-link {
-            background: #ff9900;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .aws-console-link:hover {
-            background: #e88900;
-            transform: translateY(-1px);
-        }
-        
-        @media (max-width: 768px) {
-            .demo-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .deployment-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .cost-breakdown {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer hexagon structure -->
-                    <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="#18181b" stroke-width="2" fill="none"/>
-                    <!-- Inner cube structure -->
-                    <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#18181b" stroke-width="2.5" fill="none"/>
-                    <!-- Connecting lines -->
-                    <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="#71717a" stroke-width="1.5"/>
-                    <!-- Center connections -->
-                    <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5"/>
-                    <circle cx="50" cy="40" r="2" fill="#18181b"/>
-                </svg>
-                <span class="logo-text">Lattice</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="#platform">Platform</a>
-                <a href="#features">Features</a>
-                <a href="#pricing">Pricing</a>
-                <a href="documentation.html">Docs</a>
-                <a href="interactive-demo.html" class="nav-cta active">Try Demo</a>
-            </div>
-            <div class="nav-mobile">
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg
+            class="logo-icon"
+            width="32"
+            height="32"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Outer hexagon structure -->
+            <path
+              d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+              stroke="#18181b"
+              stroke-width="2"
+              fill="none"
+            />
+            <!-- Inner cube structure -->
+            <path
+              d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+              stroke="#18181b"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <!-- Connecting lines -->
+            <path
+              d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+              stroke="#71717a"
+              stroke-width="1.5"
+            />
+            <!-- Center connections -->
+            <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5" />
+            <circle cx="50" cy="40" r="2" fill="#18181b" />
+          </svg>
+          <span class="logo-text">Lattice</span>
         </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="#platform">Platform</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="documentation.html">Docs</a>
+          <a href="interactive-demo.html" class="nav-cta active">Try Demo</a>
+        </div>
+        <div class="nav-mobile">
+          <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- Interactive Demo Section -->
     <section id="interactive" class="interactive-demo">
-        <div class="demo-container">
-            <div class="demo-header">
-                <h1 class="demo-title">Interactive Lattice Demo</h1>
-                <p class="demo-subtitle">
-                    Configure your SaaS application and deploy real infrastructure to your AWS account
-                </p>
-                
-                <div class="warning-card">
-                    <h3 class="warning-title">
-                        ⚠️ Real AWS Deployment Warning
-                    </h3>
-                    <div class="warning-content">
-                        <p><strong>This demo creates real AWS resources that will incur costs.</strong></p>
-                        <p>Estimated cost: <strong>$15-45/month</strong> depending on configuration.</p>
-                        <p>You can delete all resources using the generated cleanup script or AWS Console.</p>
-                        <p><strong>Only proceed if you have an AWS account and understand the costs.</strong></p>
-                    </div>
-                </div>
+      <div class="demo-container">
+        <div class="demo-header">
+          <h1 class="demo-title">Interactive Lattice Demo</h1>
+          <p class="demo-subtitle">
+            Configure your SaaS application and deploy real infrastructure to your AWS account
+          </p>
+
+          <div class="warning-card">
+            <h3 class="warning-title">⚠️ Real AWS Deployment Warning</h3>
+            <div class="warning-content">
+              <p><strong>This demo creates real AWS resources that will incur costs.</strong></p>
+              <p>Estimated cost: <strong>$15-45/month</strong> depending on configuration.</p>
+              <p>You can delete all resources using the generated cleanup script or AWS Console.</p>
+              <p>
+                <strong>Only proceed if you have an AWS account and understand the costs.</strong>
+              </p>
             </div>
-
-            <div class="demo-grid">
-                <!-- Configuration Panel -->
-                <div class="config-panel">
-                    <div class="panel-header">
-                        ⚙️ Configure Your SaaS Application
-                    </div>
-                    <div class="panel-content">
-                        <form class="config-form" id="configForm">
-                            <!-- Application Details -->
-                            <div class="form-section">
-                                <h3 class="section-title">Application Details</h3>
-                                <div class="form-group">
-                                    <label for="appName">Application Name</label>
-                                    <input type="text" id="appName" name="appName" placeholder="my-saas-app" value="taskflow-demo" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="environment">Environment</label>
-                                    <select id="environment" name="environment" required>
-                                        <option value="dev">Development ($15-25/month)</option>
-                                        <option value="staging">Staging ($25-35/month)</option>
-                                        <option value="prod">Production ($35-45/month)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="domainName">Domain Name (Optional)</label>
-                                    <input type="text" id="domainName" name="domainName" placeholder="app.mycompany.com">
-                                </div>
-                            </div>
-
-                            <!-- Features -->
-                            <div class="form-section">
-                                <h3 class="section-title">Features to Include</h3>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="includeWebsite" name="includeWebsite" checked>
-                                    <label for="includeWebsite">Static Website (S3 + CloudFront)</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="includeApi" name="includeApi" checked>
-                                    <label for="includeApi">REST API (API Gateway + Lambda)</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="includeDatabase" name="includeDatabase" checked>
-                                    <label for="includeDatabase">Database (RDS PostgreSQL)</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="includeStorage" name="includeStorage" checked>
-                                    <label for="includeStorage">File Storage (S3)</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="includeAuth" name="includeAuth" checked>
-                                    <label for="includeAuth">User Authentication (Cognito)</label>
-                                </div>
-                            </div>
-
-                            <!-- Advanced Options -->
-                            <div class="form-section">
-                                <h3 class="section-title">Advanced Options</h3>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="enableThreatModel" name="enableThreatModel" checked>
-                                    <label for="enableThreatModel">Generate Threat Model</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="enableMonitoring" name="enableMonitoring" checked>
-                                    <label for="enableMonitoring">CloudWatch Dashboards & Alarms</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="enableBackups" name="enableBackups" checked>
-                                    <label for="enableBackups">Automated Backups</label>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="generate-btn" id="generateBtn">
-                                🚀 Generate Infrastructure
-                            </button>
-                            
-                            <button type="button" class="generate-btn" onclick="testGeneration()" style="background: #10b981; margin-top: 0.5rem;">
-                                🧪 Test Generation (Debug)
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Output Panel -->
-                <div class="output-panel">
-                    <div class="panel-header">
-                        📋 Generated Infrastructure
-                    </div>
-                    <div class="panel-content">
-                        <div class="output-tabs">
-                            <button class="tab-button active" data-tab="manifest">Lattice Manifest</button>
-                            <button class="tab-button" data-tab="cloudformation">CloudFormation</button>
-                            <button class="tab-button" data-tab="cdk">CDK Code</button>
-                        </div>
-
-                        <!-- Manifest Tab -->
-                        <div class="tab-content active" id="manifest-tab">
-                            <div style="margin-bottom: 1rem;">
-                                <button onclick="testGeneration()" style="background: #10b981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
-                                    🧪 Test Generation Now
-                                </button>
-                            </div>
-                            <div class="code-output" id="manifestOutput">
-                                <div style="color: #6b7280; text-align: center; padding: 2rem;">
-                                    👈 Configure your application and click "Generate Infrastructure" or use the test button above
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CloudFormation Tab -->
-                        <div class="tab-content" id="cloudformation-tab">
-                            <div class="code-output" id="cloudformationOutput">
-                                <div style="color: #6b7280; text-align: center; padding: 2rem;">
-                                    CloudFormation template will appear here after generation
-                                </div>
-                            </div>
-                            <div class="deployment-options" id="cfnDeployOptions" style="display: none;">
-                                <div class="deploy-option" onclick="deployCFNConsole()">
-                                    <div class="deploy-option-icon">🌐</div>
-                                    <div class="deploy-option-title">Deploy via AWS Console</div>
-                                    <div class="deploy-option-desc">One-click deployment in AWS Console</div>
-                                </div>
-                                <div class="deploy-option" onclick="downloadCFN()">
-                                    <div class="deploy-option-icon">💾</div>
-                                    <div class="deploy-option-title">Download Template</div>
-                                    <div class="deploy-option-desc">Save and deploy manually</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CDK Tab -->
-                        <div class="tab-content" id="cdk-tab">
-                            <div class="code-output" id="cdkOutput">
-                                <div style="color: #6b7280; text-align: center; padding: 2rem;">
-                                    CDK code will appear here after generation
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cost Estimate -->
-                        <div class="cost-estimate" id="costEstimate" style="display: none;">
-                            <h4 class="cost-title">💰 Monthly Cost Estimate</h4>
-                            <div class="cost-breakdown" id="costBreakdown">
-                                <!-- Cost items will be populated here -->
-                            </div>
-                        </div>
-
-                        <!-- Threat Model -->
-                        <div class="threat-model" id="threatModel" style="display: none;">
-                            <h4 class="threat-title">🔒 Security Threat Analysis</h4>
-                            <div class="threat-list" id="threatList">
-                                <!-- Threat items will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Instructions -->
-            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); padding: 2rem; margin-top: 2rem;">
-                <h2 style="margin-bottom: 1rem;">🚀 Deployment Instructions</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div>
-                        <h3 style="color: #007AFF; margin-bottom: 0.5rem;">Option 1: AWS Console (Easiest)</h3>
-                        <ol style="line-height: 1.6; color: #374151;">
-                            <li>Click "Deploy via AWS Console" button</li>
-                            <li>Sign in to your AWS account</li>
-                            <li>Review parameters and click "Create Stack"</li>
-                            <li>Wait 10-15 minutes for deployment</li>
-                        </ol>
-                    </div>
-                    <div>
-                        <h3 style="color: #007AFF; margin-bottom: 0.5rem;">Option 2: AWS CLI</h3>
-                        <ol style="line-height: 1.6; color: #374151;">
-                            <li>Download the CloudFormation template</li>
-                            <li>Run: <code>aws cloudformation create-stack --stack-name my-saas --template-body file://template.yaml</code></li>
-                            <li>Monitor deployment in AWS Console</li>
-                        </ol>
-                    </div>
-                    <div>
-                        <h3 style="color: #007AFF; margin-bottom: 0.5rem;">Option 3: CDK (Advanced)</h3>
-                        <ol style="line-height: 1.6; color: #374151;">
-                            <li>Copy the generated CDK code</li>
-                            <li>Run: <code>npm install lattice-aws-cdk</code></li>
-                            <li>Run: <code>cdk deploy</code></li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem; padding: 1rem; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca;">
-                    <h4 style="color: #dc2626; margin-bottom: 0.5rem;">⚠️ Important: Cleanup</h4>
-                    <p style="color: #dc2626; margin: 0;">To avoid ongoing charges, delete the CloudFormation stack when you're done testing: <code>aws cloudformation delete-stack --stack-name my-saas</code></p>
-                </div>
-            </div>
+          </div>
         </div>
+
+        <div class="demo-grid">
+          <!-- Configuration Panel -->
+          <div class="config-panel">
+            <div class="panel-header">⚙️ Configure Your SaaS Application</div>
+            <div class="panel-content">
+              <form class="config-form" id="configForm">
+                <!-- Application Details -->
+                <div class="form-section">
+                  <h3 class="section-title">Application Details</h3>
+                  <div class="form-group">
+                    <label for="appName">Application Name</label>
+                    <input
+                      type="text"
+                      id="appName"
+                      name="appName"
+                      placeholder="my-saas-app"
+                      value="taskflow-demo"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="environment">Environment</label>
+                    <select id="environment" name="environment" required>
+                      <option value="dev">Development ($15-25/month)</option>
+                      <option value="staging">Staging ($25-35/month)</option>
+                      <option value="prod">Production ($35-45/month)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="domainName">Domain Name (Optional)</label>
+                    <input
+                      type="text"
+                      id="domainName"
+                      name="domainName"
+                      placeholder="app.mycompany.com"
+                    />
+                  </div>
+                </div>
+
+                <!-- Features -->
+                <div class="form-section">
+                  <h3 class="section-title">Features to Include</h3>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="includeWebsite" name="includeWebsite" checked />
+                    <label for="includeWebsite">Static Website (S3 + CloudFront)</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="includeApi" name="includeApi" checked />
+                    <label for="includeApi">REST API (API Gateway + Lambda)</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="includeDatabase" name="includeDatabase" checked />
+                    <label for="includeDatabase">Database (RDS PostgreSQL)</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="includeStorage" name="includeStorage" checked />
+                    <label for="includeStorage">File Storage (S3)</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="includeAuth" name="includeAuth" checked />
+                    <label for="includeAuth">User Authentication (Cognito)</label>
+                  </div>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="form-section">
+                  <h3 class="section-title">Advanced Options</h3>
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="enableThreatModel"
+                      name="enableThreatModel"
+                      checked
+                    />
+                    <label for="enableThreatModel">Generate Threat Model</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="enableMonitoring" name="enableMonitoring" checked />
+                    <label for="enableMonitoring">CloudWatch Dashboards & Alarms</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="enableBackups" name="enableBackups" checked />
+                    <label for="enableBackups">Automated Backups</label>
+                  </div>
+                </div>
+
+                <button type="submit" class="generate-btn" id="generateBtn">
+                  🚀 Generate Infrastructure
+                </button>
+
+                <button
+                  type="button"
+                  class="generate-btn"
+                  onclick="testGeneration()"
+                  style="background: #10b981; margin-top: 0.5rem"
+                >
+                  🧪 Test Generation (Debug)
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Output Panel -->
+          <div class="output-panel">
+            <div class="panel-header">📋 Generated Infrastructure</div>
+            <div class="panel-content">
+              <div class="output-tabs">
+                <button class="tab-button active" data-tab="manifest">Lattice Manifest</button>
+                <button class="tab-button" data-tab="cloudformation">CloudFormation</button>
+                <button class="tab-button" data-tab="cdk">CDK Code</button>
+              </div>
+
+              <!-- Manifest Tab -->
+              <div class="tab-content active" id="manifest-tab">
+                <div style="margin-bottom: 1rem">
+                  <button
+                    onclick="testGeneration()"
+                    style="
+                      background: #10b981;
+                      color: white;
+                      border: none;
+                      padding: 0.5rem 1rem;
+                      border-radius: 4px;
+                      cursor: pointer;
+                    "
+                  >
+                    🧪 Test Generation Now
+                  </button>
+                </div>
+                <div class="code-output" id="manifestOutput">
+                  <div style="color: #6b7280; text-align: center; padding: 2rem">
+                    👈 Configure your application and click "Generate Infrastructure" or use the
+                    test button above
+                  </div>
+                </div>
+              </div>
+
+              <!-- CloudFormation Tab -->
+              <div class="tab-content" id="cloudformation-tab">
+                <div class="code-output" id="cloudformationOutput">
+                  <div style="color: #6b7280; text-align: center; padding: 2rem">
+                    CloudFormation template will appear here after generation
+                  </div>
+                </div>
+                <div class="deployment-options" id="cfnDeployOptions" style="display: none">
+                  <div class="deploy-option" onclick="deployCFNConsole()">
+                    <div class="deploy-option-icon">🌐</div>
+                    <div class="deploy-option-title">Deploy via AWS Console</div>
+                    <div class="deploy-option-desc">One-click deployment in AWS Console</div>
+                  </div>
+                  <div class="deploy-option" onclick="downloadCFN()">
+                    <div class="deploy-option-icon">💾</div>
+                    <div class="deploy-option-title">Download Template</div>
+                    <div class="deploy-option-desc">Save and deploy manually</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CDK Tab -->
+              <div class="tab-content" id="cdk-tab">
+                <div class="code-output" id="cdkOutput">
+                  <div style="color: #6b7280; text-align: center; padding: 2rem">
+                    CDK code will appear here after generation
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cost Estimate -->
+              <div class="cost-estimate" id="costEstimate" style="display: none">
+                <h4 class="cost-title">💰 Monthly Cost Estimate</h4>
+                <div class="cost-breakdown" id="costBreakdown">
+                  <!-- Cost items will be populated here -->
+                </div>
+              </div>
+
+              <!-- Threat Model -->
+              <div class="threat-model" id="threatModel" style="display: none">
+                <h4 class="threat-title">🔒 Security Threat Analysis</h4>
+                <div class="threat-list" id="threatList">
+                  <!-- Threat items will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div
+          style="
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-top: 2rem;
+          "
+        >
+          <h2 style="margin-bottom: 1rem">🚀 Deployment Instructions</h2>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 2rem;
+            "
+          >
+            <div>
+              <h3 style="color: #007aff; margin-bottom: 0.5rem">Option 1: AWS Console (Easiest)</h3>
+              <ol style="line-height: 1.6; color: #374151">
+                <li>Click "Deploy via AWS Console" button</li>
+                <li>Sign in to your AWS account</li>
+                <li>Review parameters and click "Create Stack"</li>
+                <li>Wait 10-15 minutes for deployment</li>
+              </ol>
+            </div>
+            <div>
+              <h3 style="color: #007aff; margin-bottom: 0.5rem">Option 2: AWS CLI</h3>
+              <ol style="line-height: 1.6; color: #374151">
+                <li>Download the CloudFormation template</li>
+                <li>
+                  Run:
+                  <code
+                    >aws cloudformation create-stack --stack-name my-saas --template-body
+                    file://template.yaml</code
+                  >
+                </li>
+                <li>Monitor deployment in AWS Console</li>
+              </ol>
+            </div>
+            <div>
+              <h3 style="color: #007aff; margin-bottom: 0.5rem">Option 3: CDK (Advanced)</h3>
+              <ol style="line-height: 1.6; color: #374151">
+                <li>Copy the generated CDK code</li>
+                <li>Run: <code>npm install lattice-aws-cdk</code></li>
+                <li>Run: <code>cdk deploy</code></li>
+              </ol>
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-top: 2rem;
+              padding: 1rem;
+              background: #fef2f2;
+              border-radius: 8px;
+              border: 1px solid #fecaca;
+            "
+          >
+            <h4 style="color: #dc2626; margin-bottom: 0.5rem">⚠️ Important: Cleanup</h4>
+            <p style="color: #dc2626; margin: 0">
+              To avoid ongoing charges, delete the CloudFormation stack when you're done testing:
+              <code>aws cloudformation delete-stack --stack-name my-saas</code>
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <script src="interactive-demo.js"></script>
-</body>
+  </body>
 </html>

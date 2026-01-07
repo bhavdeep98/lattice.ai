@@ -1,175 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documentation - Lattice AWS CDK</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="docs-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-</head>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="docs-styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
 
-<body>
+  <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer hexagon structure -->
-                    <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="#18181b" stroke-width="2" fill="none"/>
-                    <!-- Inner cube structure -->
-                    <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#18181b" stroke-width="2.5" fill="none"/>
-                    <!-- Connecting lines -->
-                    <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="#71717a" stroke-width="1.5"/>
-                    <!-- Center connections -->
-                    <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5"/>
-                    <circle cx="50" cy="40" r="2" fill="#18181b"/>
-                </svg>
-                <span class="logo-text">Lattice</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="index.html#platform">Platform</a>
-                <a href="index.html#features">Features</a>
-                <a href="index.html#pricing">Pricing</a>
-                <a href="documentation.html" class="active">Docs</a>
-                <a href="interactive-demo.html" class="nav-cta">Try Demo</a>
-            </div>
-            <div class="nav-mobile">
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg
+            class="logo-icon"
+            width="32"
+            height="32"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Outer hexagon structure -->
+            <path
+              d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+              stroke="#18181b"
+              stroke-width="2"
+              fill="none"
+            />
+            <!-- Inner cube structure -->
+            <path
+              d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+              stroke="#18181b"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <!-- Connecting lines -->
+            <path
+              d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+              stroke="#71717a"
+              stroke-width="1.5"
+            />
+            <!-- Center connections -->
+            <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5" />
+            <circle cx="50" cy="40" r="2" fill="#18181b" />
+          </svg>
+          <span class="logo-text">Lattice</span>
         </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#platform">Platform</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="documentation.html" class="active">Docs</a>
+          <a href="interactive-demo.html" class="nav-cta">Try Demo</a>
+        </div>
+        <div class="nav-mobile">
+          <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- Documentation Header -->
     <section class="docs-header">
-        <div class="container">
-            <div class="docs-header-content">
-                <h1 class="docs-title">Documentation</h1>
-                <p class="docs-subtitle">
-                    Everything you need to build production-ready AWS infrastructure with Lattice
-                </p>
-                <div class="docs-search">
-                    <input type="text" id="docs-search" placeholder="Search documentation..." />
-                    <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M19 19L13 13L19 19ZM15 8C15 11.866 11.866 15 8 15C4.134 15 1 11.866 1 8C1 4.134 4.134 1 8 1C11.866 1 15 4.134 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-            </div>
+      <div class="container">
+        <div class="docs-header-content">
+          <h1 class="docs-title">Documentation</h1>
+          <p class="docs-subtitle">
+            Everything you need to build production-ready AWS infrastructure with Lattice
+          </p>
+          <div class="docs-search">
+            <input type="text" id="docs-search" placeholder="Search documentation..." />
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M19 19L13 13L19 19ZM15 8C15 11.866 11.866 15 8 15C4.134 15 1 11.866 1 8C1 4.134 4.134 1 8 1C11.866 1 15 4.134 15 8Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Documentation Content -->
     <section class="docs-content">
-        <div class="container">
-            <div class="docs-layout">
-                <!-- Sidebar Navigation -->
-                <aside class="docs-sidebar">
-                    <div class="sidebar-section">
-                        <h3 class="sidebar-title">Getting Started</h3>
-                        <ul class="sidebar-links">
-                            <li><a href="#quick-start" class="sidebar-link active">Quick Start</a></li>
-                            <li><a href="#installation" class="sidebar-link">Installation</a></li>
-                            <li><a href="#first-stack" class="sidebar-link">Your First Stack</a></li>
-                            <li><a href="#deployment" class="sidebar-link">Deployment</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3 class="sidebar-title">Core Concepts</h3>
-                        <ul class="sidebar-links">
-                            <li><a href="#intents" class="sidebar-link">AI Intents</a></li>
-                            <li><a href="#modules" class="sidebar-link">Lattice Modules</a></li>
-                            <li><a href="#aspects" class="sidebar-link">Guardrails & Aspects</a></li>
-                            <li><a href="#environments" class="sidebar-link">Environment Management</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3 class="sidebar-title">Modules</h3>
-                        <ul class="sidebar-links">
-                            <li><a href="#network-module" class="sidebar-link">Network Module</a></li>
-                            <li><a href="#storage-module" class="sidebar-link">Storage Module</a></li>
-                            <li><a href="#database-module" class="sidebar-link">Database Module</a></li>
-                            <li><a href="#compute-module" class="sidebar-link">Compute Module</a></li>
-                            <li><a href="#identity-module" class="sidebar-link">Identity Module</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3 class="sidebar-title">Advanced Features</h3>
-                        <ul class="sidebar-links">
-                            <li><a href="#threat-modeling" class="sidebar-link">Threat Modeling</a></li>
-                            <li><a href="#observability" class="sidebar-link">Observability</a></li>
-                            <li><a href="#cross-account" class="sidebar-link">Cross-Account Deployment</a></li>
-                            <li><a href="#escape-hatches" class="sidebar-link">Escape Hatches</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3 class="sidebar-title">Operations</h3>
-                        <ul class="sidebar-links">
-                            <li><a href="#cicd" class="sidebar-link">CI/CD Pipeline</a></li>
-                            <li><a href="#backup-strategy" class="sidebar-link">Backup Strategy</a></li>
-                            <li><a href="#monitoring" class="sidebar-link">Monitoring & Alerts</a></li>
-                            <li><a href="#troubleshooting" class="sidebar-link">Troubleshooting</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3 class="sidebar-title">Examples</h3>
-                        <ul class="sidebar-links">
-                            <li><a href="#simple-api" class="sidebar-link">Simple API</a></li>
-                            <li><a href="#data-pipeline" class="sidebar-link">Data Pipeline</a></li>
-                            <li><a href="#web-application" class="sidebar-link">Web Application</a></li>
-                            <li><a href="#microservices" class="sidebar-link">Microservices</a></li>
-                        </ul>
-                    </div>
-                </aside>
+      <div class="container">
+        <div class="docs-layout">
+          <!-- Sidebar Navigation -->
+          <aside class="docs-sidebar">
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">Getting Started</h3>
+              <ul class="sidebar-links">
+                <li><a href="#quick-start" class="sidebar-link active">Quick Start</a></li>
+                <li><a href="#installation" class="sidebar-link">Installation</a></li>
+                <li><a href="#first-stack" class="sidebar-link">Your First Stack</a></li>
+                <li><a href="#deployment" class="sidebar-link">Deployment</a></li>
+              </ul>
+            </div>
 
-                <!-- Main Content -->
-                <main class="docs-main">
-                    <!-- Quick Start Section -->
-                    <section id="quick-start" class="docs-section">
-                        <h1>Quick Start</h1>
-                        <p class="section-intro">
-                            Get up and running with Lattice AWS CDK in under 5 minutes. This guide will walk you through 
-                            creating your first production-ready AWS infrastructure.
-                        </p>
-                        
-                        <div class="step-container">
-                            <div class="step">
-                                <div class="step-number">1</div>
-                                <div class="step-content">
-                                    <h3>Install Lattice</h3>
-                                    <p>Add Lattice to your project using npm or yarn:</p>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span class="code-lang">bash</span>
-                                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                        </div>
-                                        <pre><code>npm install lattice-aws-cdk aws-cdk-lib constructs</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="step">
-                                <div class="step-number">2</div>
-                                <div class="step-content">
-                                    <h3>Create Your First Stack</h3>
-                                    <p>Create a simple stack with built-in security and monitoring:</p>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span class="code-lang">typescript</span>
-                                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                        </div>
-                                        <pre><code>import { Stack, StackProps } from 'aws-cdk-lib';
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">Core Concepts</h3>
+              <ul class="sidebar-links">
+                <li><a href="#intents" class="sidebar-link">AI Intents</a></li>
+                <li><a href="#modules" class="sidebar-link">Lattice Modules</a></li>
+                <li><a href="#aspects" class="sidebar-link">Guardrails & Aspects</a></li>
+                <li><a href="#environments" class="sidebar-link">Environment Management</a></li>
+              </ul>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">Modules</h3>
+              <ul class="sidebar-links">
+                <li><a href="#network-module" class="sidebar-link">Network Module</a></li>
+                <li><a href="#storage-module" class="sidebar-link">Storage Module</a></li>
+                <li><a href="#database-module" class="sidebar-link">Database Module</a></li>
+                <li><a href="#compute-module" class="sidebar-link">Compute Module</a></li>
+                <li><a href="#identity-module" class="sidebar-link">Identity Module</a></li>
+              </ul>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">Advanced Features</h3>
+              <ul class="sidebar-links">
+                <li><a href="#threat-modeling" class="sidebar-link">Threat Modeling</a></li>
+                <li><a href="#observability" class="sidebar-link">Observability</a></li>
+                <li><a href="#cross-account" class="sidebar-link">Cross-Account Deployment</a></li>
+                <li><a href="#escape-hatches" class="sidebar-link">Escape Hatches</a></li>
+              </ul>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">Operations</h3>
+              <ul class="sidebar-links">
+                <li><a href="#cicd" class="sidebar-link">CI/CD Pipeline</a></li>
+                <li><a href="#backup-strategy" class="sidebar-link">Backup Strategy</a></li>
+                <li><a href="#monitoring" class="sidebar-link">Monitoring & Alerts</a></li>
+                <li><a href="#troubleshooting" class="sidebar-link">Troubleshooting</a></li>
+              </ul>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="sidebar-title">Examples</h3>
+              <ul class="sidebar-links">
+                <li><a href="#simple-api" class="sidebar-link">Simple API</a></li>
+                <li><a href="#data-pipeline" class="sidebar-link">Data Pipeline</a></li>
+                <li><a href="#web-application" class="sidebar-link">Web Application</a></li>
+                <li><a href="#microservices" class="sidebar-link">Microservices</a></li>
+              </ul>
+            </div>
+          </aside>
+
+          <!-- Main Content -->
+          <main class="docs-main">
+            <!-- Quick Start Section -->
+            <section id="quick-start" class="docs-section">
+              <h1>Quick Start</h1>
+              <p class="section-intro">
+                Get up and running with Lattice AWS CDK in under 5 minutes. This guide will walk you
+                through creating your first production-ready AWS infrastructure.
+              </p>
+
+              <div class="step-container">
+                <div class="step">
+                  <div class="step-number">1</div>
+                  <div class="step-content">
+                    <h3>Install Lattice</h3>
+                    <p>Add Lattice to your project using npm or yarn:</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span class="code-lang">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                      </div>
+                      <pre><code>npm install lattice-aws-cdk aws-cdk-lib constructs</code></pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-number">2</div>
+                  <div class="step-content">
+                    <h3>Create Your First Stack</h3>
+                    <p>Create a simple stack with built-in security and monitoring:</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span class="code-lang">typescript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                      </div>
+                      <pre><code>import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { 
   LatticeNetwork, 
@@ -213,168 +243,168 @@ export class MyFirstStack extends Stack {
     // ✅ Automatically secured, monitored, and backed up!
   }
 }</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="step">
-                                <div class="step-number">3</div>
-                                <div class="step-content">
-                                    <h3>Deploy to AWS</h3>
-                                    <p>Deploy your infrastructure with a single command:</p>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span class="code-lang">bash</span>
-                                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                        </div>
-                                        <pre><code>npm run build
-cdk deploy</code></pre>
-                                    </div>
-                                    <div class="info-box">
-                                        <div class="info-icon">ℹ️</div>
-                                        <div class="info-content">
-                                            <strong>What happens during deployment:</strong>
-                                            <ul>
-                                                <li>Automatic threat modeling and security analysis</li>
-                                                <li>Cost validation and optimization</li>
-                                                <li>CloudWatch dashboards and alarms creation</li>
-                                                <li>Backup strategies implementation</li>
-                                                <li>Resource tagging and organization</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="next-steps">
-                            <h3>🎉 Congratulations!</h3>
-                            <p>You've just deployed production-ready AWS infrastructure with:</p>
-                            <div class="achievement-grid">
-                                <div class="achievement">
-                                    <span class="achievement-icon">🛡️</span>
-                                    <span>Security by default</span>
-                                </div>
-                                <div class="achievement">
-                                    <span class="achievement-icon">📊</span>
-                                    <span>Comprehensive monitoring</span>
-                                </div>
-                                <div class="achievement">
-                                    <span class="achievement-icon">💰</span>
-                                    <span>Cost optimization</span>
-                                </div>
-                                <div class="achievement">
-                                    <span class="achievement-icon">🔄</span>
-                                    <span>Automated backups</span>
-                                </div>
-                            </div>
-                            
-                            <div class="next-actions">
-                                <h4>Next Steps:</h4>
-                                <ul>
-                                    <li><a href="#modules">Explore available modules</a></li>
-                                    <li><a href="#threat-modeling">Review your threat model</a></li>
-                                    <li><a href="#observability">Set up monitoring dashboards</a></li>
-                                    <li><a href="#escape-hatches">Learn about escape hatches</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
+                  </div>
+                </div>
 
-                    <!-- Installation Section -->
-                    <section id="installation" class="docs-section">
-                        <h1>Installation</h1>
-                        <p class="section-intro">
-                            Detailed installation guide for different environments and use cases.
-                        </p>
-                        
-                        <h2>Prerequisites</h2>
-                        <div class="requirements-grid">
-                            <div class="requirement-item">
-                                <div class="requirement-icon">📦</div>
-                                <div class="requirement-content">
-                                    <h3>Node.js</h3>
-                                    <p>Version 18.x or higher</p>
-                                    <code>node --version</code>
-                                </div>
-                            </div>
-                            <div class="requirement-item">
-                                <div class="requirement-icon">☁️</div>
-                                <div class="requirement-content">
-                                    <h3>AWS CLI</h3>
-                                    <p>Configured with appropriate credentials</p>
-                                    <code>aws configure</code>
-                                </div>
-                            </div>
-                            <div class="requirement-item">
-                                <div class="requirement-icon">🏗️</div>
-                                <div class="requirement-content">
-                                    <h3>AWS CDK</h3>
-                                    <p>Version 2.120.0 or higher</p>
-                                    <code>npm install -g aws-cdk</code>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Package Installation</h2>
-                        <div class="installation-tabs">
-                            <div class="tab-buttons">
-                                <button class="tab-btn active" onclick="showTab('npm')">npm</button>
-                                <button class="tab-btn" onclick="showTab('yarn')">yarn</button>
-                                <button class="tab-btn" onclick="showTab('pnpm')">pnpm</button>
-                            </div>
-                            
-                            <div id="npm" class="tab-content active">
-                                <div class="code-block">
-                                    <div class="code-header">
-                                        <span class="code-lang">bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                    </div>
-                                    <pre><code># Install Lattice and peer dependencies
+                <div class="step">
+                  <div class="step-number">3</div>
+                  <div class="step-content">
+                    <h3>Deploy to AWS</h3>
+                    <p>Deploy your infrastructure with a single command:</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span class="code-lang">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                      </div>
+                      <pre><code>npm run build
+cdk deploy</code></pre>
+                    </div>
+                    <div class="info-box">
+                      <div class="info-icon">ℹ️</div>
+                      <div class="info-content">
+                        <strong>What happens during deployment:</strong>
+                        <ul>
+                          <li>Automatic threat modeling and security analysis</li>
+                          <li>Cost validation and optimization</li>
+                          <li>CloudWatch dashboards and alarms creation</li>
+                          <li>Backup strategies implementation</li>
+                          <li>Resource tagging and organization</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="next-steps">
+                <h3>🎉 Congratulations!</h3>
+                <p>You've just deployed production-ready AWS infrastructure with:</p>
+                <div class="achievement-grid">
+                  <div class="achievement">
+                    <span class="achievement-icon">🛡️</span>
+                    <span>Security by default</span>
+                  </div>
+                  <div class="achievement">
+                    <span class="achievement-icon">📊</span>
+                    <span>Comprehensive monitoring</span>
+                  </div>
+                  <div class="achievement">
+                    <span class="achievement-icon">💰</span>
+                    <span>Cost optimization</span>
+                  </div>
+                  <div class="achievement">
+                    <span class="achievement-icon">🔄</span>
+                    <span>Automated backups</span>
+                  </div>
+                </div>
+
+                <div class="next-actions">
+                  <h4>Next Steps:</h4>
+                  <ul>
+                    <li><a href="#modules">Explore available modules</a></li>
+                    <li><a href="#threat-modeling">Review your threat model</a></li>
+                    <li><a href="#observability">Set up monitoring dashboards</a></li>
+                    <li><a href="#escape-hatches">Learn about escape hatches</a></li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- Installation Section -->
+            <section id="installation" class="docs-section">
+              <h1>Installation</h1>
+              <p class="section-intro">
+                Detailed installation guide for different environments and use cases.
+              </p>
+
+              <h2>Prerequisites</h2>
+              <div class="requirements-grid">
+                <div class="requirement-item">
+                  <div class="requirement-icon">📦</div>
+                  <div class="requirement-content">
+                    <h3>Node.js</h3>
+                    <p>Version 18.x or higher</p>
+                    <code>node --version</code>
+                  </div>
+                </div>
+                <div class="requirement-item">
+                  <div class="requirement-icon">☁️</div>
+                  <div class="requirement-content">
+                    <h3>AWS CLI</h3>
+                    <p>Configured with appropriate credentials</p>
+                    <code>aws configure</code>
+                  </div>
+                </div>
+                <div class="requirement-item">
+                  <div class="requirement-icon">🏗️</div>
+                  <div class="requirement-content">
+                    <h3>AWS CDK</h3>
+                    <p>Version 2.120.0 or higher</p>
+                    <code>npm install -g aws-cdk</code>
+                  </div>
+                </div>
+              </div>
+
+              <h2>Package Installation</h2>
+              <div class="installation-tabs">
+                <div class="tab-buttons">
+                  <button class="tab-btn active" onclick="showTab('npm')">npm</button>
+                  <button class="tab-btn" onclick="showTab('yarn')">yarn</button>
+                  <button class="tab-btn" onclick="showTab('pnpm')">pnpm</button>
+                </div>
+
+                <div id="npm" class="tab-content active">
+                  <div class="code-block">
+                    <div class="code-header">
+                      <span class="code-lang">bash</span>
+                      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code># Install Lattice and peer dependencies
 npm install lattice-aws-cdk aws-cdk-lib constructs
 
 # Install development dependencies
 npm install --save-dev @types/node typescript</code></pre>
-                                </div>
-                            </div>
-                            
-                            <div id="yarn" class="tab-content">
-                                <div class="code-block">
-                                    <div class="code-header">
-                                        <span class="code-lang">bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                    </div>
-                                    <pre><code># Install Lattice and peer dependencies
+                  </div>
+                </div>
+
+                <div id="yarn" class="tab-content">
+                  <div class="code-block">
+                    <div class="code-header">
+                      <span class="code-lang">bash</span>
+                      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code># Install Lattice and peer dependencies
 yarn add lattice-aws-cdk aws-cdk-lib constructs
 
 # Install development dependencies
 yarn add --dev @types/node typescript</code></pre>
-                                </div>
-                            </div>
-                            
-                            <div id="pnpm" class="tab-content">
-                                <div class="code-block">
-                                    <div class="code-header">
-                                        <span class="code-lang">bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                    </div>
-                                    <pre><code># Install Lattice and peer dependencies
+                  </div>
+                </div>
+
+                <div id="pnpm" class="tab-content">
+                  <div class="code-block">
+                    <div class="code-header">
+                      <span class="code-lang">bash</span>
+                      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code># Install Lattice and peer dependencies
 pnpm add lattice-aws-cdk aws-cdk-lib constructs
 
 # Install development dependencies
 pnpm add --save-dev @types/node typescript</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Project Setup</h2>
-                        <p>Initialize a new CDK project with Lattice:</p>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">bash</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code># Create new directory
+                  </div>
+                </div>
+              </div>
+
+              <h2>Project Setup</h2>
+              <p>Initialize a new CDK project with Lattice:</p>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code># Create new directory
 mkdir my-lattice-app && cd my-lattice-app
 
 # Initialize CDK project
@@ -385,77 +415,78 @@ npm install lattice-aws-cdk
 
 # Bootstrap CDK (one-time setup per AWS account/region)
 cdk bootstrap</code></pre>
-                        </div>
-                        
-                        <div class="warning-box">
-                            <div class="warning-icon">⚠️</div>
-                            <div class="warning-content">
-                                <strong>Important:</strong> Make sure to run <code>cdk bootstrap</code> in each AWS account and region where you plan to deploy Lattice stacks.
-                            </div>
-                        </div>
-                    </section>
+              </div>
 
-                    <!-- Continue with more sections... -->
-                    
-                    <!-- Modules Section -->
-                    <section id="modules" class="docs-section">
-                        <h1>Lattice Modules</h1>
-                        <p class="section-intro">
-                            Lattice provides 5 core modules that handle different aspects of AWS infrastructure. 
-                            Each module accepts simple JSON intents and creates production-ready AWS resources.
-                        </p>
-                        
-                        <div class="modules-overview">
-                            <div class="module-grid">
-                                <div class="module-card">
-                                    <div class="module-icon">🌐</div>
-                                    <h3>Network Module</h3>
-                                    <p>VPC, subnets, NAT gateways, and security groups with high availability</p>
-                                    <a href="#network-module" class="module-link">Learn more →</a>
-                                </div>
-                                <div class="module-card">
-                                    <div class="module-icon">🗄️</div>
-                                    <h3>Storage Module</h3>
-                                    <p>S3 buckets with encryption, versioning, and lifecycle policies</p>
-                                    <a href="#storage-module" class="module-link">Learn more →</a>
-                                </div>
-                                <div class="module-card">
-                                    <div class="module-icon">🗃️</div>
-                                    <h3>Database Module</h3>
-                                    <p>RDS instances with backups, monitoring, and security</p>
-                                    <a href="#database-module" class="module-link">Learn more →</a>
-                                </div>
-                                <div class="module-card">
-                                    <div class="module-icon">⚙️</div>
-                                    <h3>Compute Module</h3>
-                                    <p>EC2, ECS, and Lambda with auto-scaling and monitoring</p>
-                                    <a href="#compute-module" class="module-link">Learn more →</a>
-                                </div>
-                                <div class="module-card">
-                                    <div class="module-icon">🔐</div>
-                                    <h3>Identity Module</h3>
-                                    <p>IAM roles and policies with least-privilege access</p>
-                                    <a href="#identity-module" class="module-link">Learn more →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+              <div class="warning-box">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-content">
+                  <strong>Important:</strong> Make sure to run <code>cdk bootstrap</code> in each
+                  AWS account and region where you plan to deploy Lattice stacks.
+                </div>
+              </div>
+            </section>
 
-                    <!-- Network Module -->
-                    <section id="network-module" class="docs-section">
-                        <h1>Network Module</h1>
-                        <p class="section-intro">
-                            The Network Module creates a complete VPC infrastructure with subnets, NAT gateways, 
-                            and security groups following AWS best practices.
-                        </p>
-                        
-                        <h2>Basic Usage</h2>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">typescript</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code>import { LatticeNetwork } from 'lattice-aws-cdk';
+            <!-- Continue with more sections... -->
+
+            <!-- Modules Section -->
+            <section id="modules" class="docs-section">
+              <h1>Lattice Modules</h1>
+              <p class="section-intro">
+                Lattice provides 5 core modules that handle different aspects of AWS infrastructure.
+                Each module accepts simple JSON intents and creates production-ready AWS resources.
+              </p>
+
+              <div class="modules-overview">
+                <div class="module-grid">
+                  <div class="module-card">
+                    <div class="module-icon">🌐</div>
+                    <h3>Network Module</h3>
+                    <p>VPC, subnets, NAT gateways, and security groups with high availability</p>
+                    <a href="#network-module" class="module-link">Learn more →</a>
+                  </div>
+                  <div class="module-card">
+                    <div class="module-icon">🗄️</div>
+                    <h3>Storage Module</h3>
+                    <p>S3 buckets with encryption, versioning, and lifecycle policies</p>
+                    <a href="#storage-module" class="module-link">Learn more →</a>
+                  </div>
+                  <div class="module-card">
+                    <div class="module-icon">🗃️</div>
+                    <h3>Database Module</h3>
+                    <p>RDS instances with backups, monitoring, and security</p>
+                    <a href="#database-module" class="module-link">Learn more →</a>
+                  </div>
+                  <div class="module-card">
+                    <div class="module-icon">⚙️</div>
+                    <h3>Compute Module</h3>
+                    <p>EC2, ECS, and Lambda with auto-scaling and monitoring</p>
+                    <a href="#compute-module" class="module-link">Learn more →</a>
+                  </div>
+                  <div class="module-card">
+                    <div class="module-icon">🔐</div>
+                    <h3>Identity Module</h3>
+                    <p>IAM roles and policies with least-privilege access</p>
+                    <a href="#identity-module" class="module-link">Learn more →</a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Network Module -->
+            <section id="network-module" class="docs-section">
+              <h1>Network Module</h1>
+              <p class="section-intro">
+                The Network Module creates a complete VPC infrastructure with subnets, NAT gateways,
+                and security groups following AWS best practices.
+              </p>
+
+              <h2>Basic Usage</h2>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">typescript</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>import { LatticeNetwork } from 'lattice-aws-cdk';
 
 const network = new LatticeNetwork(this, 'Network', {
   cidr: '10.0.0.0/16',
@@ -464,128 +495,138 @@ const network = new LatticeNetwork(this, 'Network', {
   natGateways: 3,
   enableVpnGateway: false
 });</code></pre>
-                        </div>
-                        
-                        <h2>Configuration Options</h2>
-                        <div class="config-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Property</th>
-                                        <th>Type</th>
-                                        <th>Default</th>
-                                        <th>Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><code>cidr</code></td>
-                                        <td>string</td>
-                                        <td>Required</td>
-                                        <td>CIDR block for the VPC</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>environment</code></td>
-                                        <td>string</td>
-                                        <td>Required</td>
-                                        <td>Environment (dev, staging, prod)</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>highAvailability</code></td>
-                                        <td>boolean</td>
-                                        <td>false</td>
-                                        <td>Enable multi-AZ deployment</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>natGateways</code></td>
-                                        <td>number</td>
-                                        <td>1</td>
-                                        <td>Number of NAT gateways</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>enableVpnGateway</code></td>
-                                        <td>boolean</td>
-                                        <td>false</td>
-                                        <td>Enable VPN gateway</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <h2>What Gets Created</h2>
-                        <div class="created-resources">
-                            <div class="resource-category">
-                                <h3>🌐 Network Infrastructure</h3>
-                                <ul>
-                                    <li>VPC with specified CIDR block</li>
-                                    <li>Public subnets across multiple AZs</li>
-                                    <li>Private subnets with NAT gateway access</li>
-                                    <li>Isolated subnets for databases</li>
-                                </ul>
-                            </div>
-                            <div class="resource-category">
-                                <h3>🔒 Security</h3>
-                                <ul>
-                                    <li>Default security groups with minimal access</li>
-                                    <li>Network ACLs for additional protection</li>
-                                    <li>Flow logs for network monitoring</li>
-                                    <li>VPC endpoints for AWS services</li>
-                                </ul>
-                            </div>
-                            <div class="resource-category">
-                                <h3>📊 Monitoring</h3>
-                                <ul>
-                                    <li>CloudWatch metrics for NAT gateways</li>
-                                    <li>VPC Flow Logs</li>
-                                    <li>Network performance alarms</li>
-                                    <li>Cost monitoring dashboards</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
+              </div>
 
-                    <!-- Threat Modeling Section -->
-                    <section id="threat-modeling" class="docs-section">
-                        <h1>Automated Threat Modeling</h1>
-                        <p class="section-intro">
-                            Lattice automatically generates comprehensive threat models for your AWS architectures using STRIDE analysis, 
-                            providing both human-readable reports and machine-readable data for CI/CD integration.
-                        </p>
-                        
-                        <h2>How It Works</h2>
-                        <div class="threat-modeling-flow">
-                            <div class="flow-step">
-                                <div class="flow-number">1</div>
-                                <div class="flow-content">
-                                    <h3>Workload Detection</h3>
-                                    <p>Automatically identifies your architecture pattern (serverless-api, data-pipeline, genai-rag)</p>
-                                </div>
-                            </div>
-                            <div class="flow-arrow">→</div>
-                            <div class="flow-step">
-                                <div class="flow-number">2</div>
-                                <div class="flow-content">
-                                    <h3>STRIDE Analysis</h3>
-                                    <p>Analyzes all 6 threat categories: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege</p>
-                                </div>
-                            </div>
-                            <div class="flow-arrow">→</div>
-                            <div class="flow-step">
-                                <div class="flow-number">3</div>
-                                <div class="flow-content">
-                                    <h3>Report Generation</h3>
-                                    <p>Creates detailed reports with AWS-specific mitigations and actionable recommendations</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Enabling Threat Modeling</h2>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">typescript</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code>applyLatticeAspects(this, {
+              <h2>Configuration Options</h2>
+              <div class="config-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Property</th>
+                      <th>Type</th>
+                      <th>Default</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>cidr</code></td>
+                      <td>string</td>
+                      <td>Required</td>
+                      <td>CIDR block for the VPC</td>
+                    </tr>
+                    <tr>
+                      <td><code>environment</code></td>
+                      <td>string</td>
+                      <td>Required</td>
+                      <td>Environment (dev, staging, prod)</td>
+                    </tr>
+                    <tr>
+                      <td><code>highAvailability</code></td>
+                      <td>boolean</td>
+                      <td>false</td>
+                      <td>Enable multi-AZ deployment</td>
+                    </tr>
+                    <tr>
+                      <td><code>natGateways</code></td>
+                      <td>number</td>
+                      <td>1</td>
+                      <td>Number of NAT gateways</td>
+                    </tr>
+                    <tr>
+                      <td><code>enableVpnGateway</code></td>
+                      <td>boolean</td>
+                      <td>false</td>
+                      <td>Enable VPN gateway</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>What Gets Created</h2>
+              <div class="created-resources">
+                <div class="resource-category">
+                  <h3>🌐 Network Infrastructure</h3>
+                  <ul>
+                    <li>VPC with specified CIDR block</li>
+                    <li>Public subnets across multiple AZs</li>
+                    <li>Private subnets with NAT gateway access</li>
+                    <li>Isolated subnets for databases</li>
+                  </ul>
+                </div>
+                <div class="resource-category">
+                  <h3>🔒 Security</h3>
+                  <ul>
+                    <li>Default security groups with minimal access</li>
+                    <li>Network ACLs for additional protection</li>
+                    <li>Flow logs for network monitoring</li>
+                    <li>VPC endpoints for AWS services</li>
+                  </ul>
+                </div>
+                <div class="resource-category">
+                  <h3>📊 Monitoring</h3>
+                  <ul>
+                    <li>CloudWatch metrics for NAT gateways</li>
+                    <li>VPC Flow Logs</li>
+                    <li>Network performance alarms</li>
+                    <li>Cost monitoring dashboards</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- Threat Modeling Section -->
+            <section id="threat-modeling" class="docs-section">
+              <h1>Automated Threat Modeling</h1>
+              <p class="section-intro">
+                Lattice automatically generates comprehensive threat models for your AWS
+                architectures using STRIDE analysis, providing both human-readable reports and
+                machine-readable data for CI/CD integration.
+              </p>
+
+              <h2>How It Works</h2>
+              <div class="threat-modeling-flow">
+                <div class="flow-step">
+                  <div class="flow-number">1</div>
+                  <div class="flow-content">
+                    <h3>Workload Detection</h3>
+                    <p>
+                      Automatically identifies your architecture pattern (serverless-api,
+                      data-pipeline, genai-rag)
+                    </p>
+                  </div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                  <div class="flow-number">2</div>
+                  <div class="flow-content">
+                    <h3>STRIDE Analysis</h3>
+                    <p>
+                      Analyzes all 6 threat categories: Spoofing, Tampering, Repudiation,
+                      Information Disclosure, Denial of Service, Elevation of Privilege
+                    </p>
+                  </div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                  <div class="flow-number">3</div>
+                  <div class="flow-content">
+                    <h3>Report Generation</h3>
+                    <p>
+                      Creates detailed reports with AWS-specific mitigations and actionable
+                      recommendations
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <h2>Enabling Threat Modeling</h2>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">typescript</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>applyLatticeAspects(this, {
   environment: 'prod',
   projectName: 'MyApp',
   owner: 'DevTeam',
@@ -595,198 +636,205 @@ const network = new LatticeNetwork(this, 'Network', {
     projectName: 'Customer API'
   }
 });</code></pre>
-                        </div>
-                        
-                        <h2>Output Files</h2>
-                        <div class="output-files">
-                            <div class="file-item">
-                                <div class="file-icon">📄</div>
-                                <div class="file-info">
-                                    <h3>THREAT_MODEL.md</h3>
-                                    <p>Human-readable security report with detailed analysis and recommendations</p>
-                                </div>
-                            </div>
-                            <div class="file-item">
-                                <div class="file-icon">📊</div>
-                                <div class="file-info">
-                                    <h3>threat-model.json</h3>
-                                    <p>Machine-readable data for CI/CD integration and security automation</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Sample Threat Analysis</h2>
-                        <div class="threat-example">
-                            <h3>🔍 Identified Threats</h3>
-                            <div class="threat-grid">
-                                <div class="threat-item high">
-                                    <div class="threat-severity">HIGH</div>
-                                    <div class="threat-details">
-                                        <h4>SQL Injection (Tampering)</h4>
-                                        <p>Database queries vulnerable to injection attacks</p>
-                                        <strong>Mitigation:</strong> Use parameterized queries and AWS RDS Proxy
-                                    </div>
-                                </div>
-                                <div class="threat-item medium">
-                                    <div class="threat-severity">MEDIUM</div>
-                                    <div class="threat-details">
-                                        <h4>Data Exposure (Information Disclosure)</h4>
-                                        <p>S3 buckets may be misconfigured for public access</p>
-                                        <strong>Mitigation:</strong> Enable S3 Block Public Access and bucket policies
-                                    </div>
-                                </div>
-                                <div class="threat-item low">
-                                    <div class="threat-severity">LOW</div>
-                                    <div class="threat-details">
-                                        <h4>DDoS Attack (Denial of Service)</h4>
-                                        <p>API endpoints vulnerable to traffic spikes</p>
-                                        <strong>Mitigation:</strong> Implement AWS WAF and API Gateway throttling
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+              </div>
 
-                    <!-- Observability Section -->
-                    <section id="observability" class="docs-section">
-                        <h1>Comprehensive Observability</h1>
-                        <p class="section-intro">
-                            Lattice automatically creates monitoring, alarms, and dashboards for all infrastructure components, 
-                            providing role-based views and environment-aware thresholds.
-                        </p>
-                        
-                        <h2>Automatic Monitoring</h2>
-                        <p>When you set <code>environment: 'prod'</code>, Lattice automatically creates:</p>
-                        
-                        <div class="monitoring-features">
-                            <div class="feature-row">
-                                <div class="feature-icon">🚨</div>
-                                <div class="feature-content">
-                                    <h3>Smart Alarms</h3>
-                                    <p>CPU, memory, errors, and duration alarms with environment-specific thresholds</p>
-                                </div>
-                            </div>
-                            <div class="feature-row">
-                                <div class="feature-icon">📊</div>
-                                <div class="feature-content">
-                                    <h3>Role-Based Dashboards</h3>
-                                    <p>Separate views for Developers, SREs, CTOs, and Security teams</p>
-                                </div>
-                            </div>
-                            <div class="feature-row">
-                                <div class="feature-icon">📧</div>
-                                <div class="feature-content">
-                                    <h3>SNS Integration</h3>
-                                    <p>Custom notification topics for different severity levels</p>
-                                </div>
-                            </div>
-                            <div class="feature-row">
-                                <div class="feature-icon">🎯</div>
-                                <div class="feature-content">
-                                    <h3>Environment-Aware Thresholds</h3>
-                                    <p>Strict monitoring for production, relaxed for development</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Dashboard Types</h2>
-                        <div class="dashboard-grid">
-                            <div class="dashboard-card">
-                                <h3>👨‍💻 Developer Dashboard</h3>
-                                <ul>
-                                    <li>Application performance metrics</li>
-                                    <li>Error rates and response times</li>
-                                    <li>Recent deployments</li>
-                                    <li>Debug information</li>
-                                </ul>
-                            </div>
-                            <div class="dashboard-card">
-                                <h3>🔧 SRE Dashboard</h3>
-                                <ul>
-                                    <li>Infrastructure health</li>
-                                    <li>Resource utilization</li>
-                                    <li>Capacity planning</li>
-                                    <li>Incident response</li>
-                                </ul>
-                            </div>
-                            <div class="dashboard-card">
-                                <h3>👔 CTO Dashboard</h3>
-                                <ul>
-                                    <li>High-level system health</li>
-                                    <li>Cost optimization</li>
-                                    <li>Business metrics</li>
-                                    <li>Strategic insights</li>
-                                </ul>
-                            </div>
-                            <div class="dashboard-card">
-                                <h3>🛡️ Security Dashboard</h3>
-                                <ul>
-                                    <li>Security events</li>
-                                    <li>Access patterns</li>
-                                    <li>Compliance status</li>
-                                    <li>Threat detection</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>Environment Thresholds</h2>
-                        <div class="threshold-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Metric</th>
-                                        <th>Development</th>
-                                        <th>Staging</th>
-                                        <th>Production</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>CPU Utilization</td>
-                                        <td>90%</td>
-                                        <td>80%</td>
-                                        <td>70%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Memory Utilization</td>
-                                        <td>95%</td>
-                                        <td>85%</td>
-                                        <td>75%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Error Rate</td>
-                                        <td>10%</td>
-                                        <td>5%</td>
-                                        <td>1%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Response Time</td>
-                                        <td>5000ms</td>
-                                        <td>2000ms</td>
-                                        <td>1000ms</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
+              <h2>Output Files</h2>
+              <div class="output-files">
+                <div class="file-item">
+                  <div class="file-icon">📄</div>
+                  <div class="file-info">
+                    <h3>THREAT_MODEL.md</h3>
+                    <p>Human-readable security report with detailed analysis and recommendations</p>
+                  </div>
+                </div>
+                <div class="file-item">
+                  <div class="file-icon">📊</div>
+                  <div class="file-info">
+                    <h3>threat-model.json</h3>
+                    <p>Machine-readable data for CI/CD integration and security automation</p>
+                  </div>
+                </div>
+              </div>
 
-                    <!-- Escape Hatches Section -->
-                    <section id="escape-hatches" class="docs-section">
-                        <h1>Escape Hatches</h1>
-                        <p class="section-intro">
-                            When you need advanced AWS features beyond Lattice's simple interfaces, escape hatches provide 
-                            full access to underlying CDK constructs without losing the benefits of Lattice's guardrails.
-                        </p>
-                        
-                        <h2>The Pattern</h2>
-                        <p>Every Lattice construct exposes an <code>instance</code> property that gives you direct access to the underlying CDK construct:</p>
-                        
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">typescript</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code>// Start with simple Lattice intent
+              <h2>Sample Threat Analysis</h2>
+              <div class="threat-example">
+                <h3>🔍 Identified Threats</h3>
+                <div class="threat-grid">
+                  <div class="threat-item high">
+                    <div class="threat-severity">HIGH</div>
+                    <div class="threat-details">
+                      <h4>SQL Injection (Tampering)</h4>
+                      <p>Database queries vulnerable to injection attacks</p>
+                      <strong>Mitigation:</strong> Use parameterized queries and AWS RDS Proxy
+                    </div>
+                  </div>
+                  <div class="threat-item medium">
+                    <div class="threat-severity">MEDIUM</div>
+                    <div class="threat-details">
+                      <h4>Data Exposure (Information Disclosure)</h4>
+                      <p>S3 buckets may be misconfigured for public access</p>
+                      <strong>Mitigation:</strong> Enable S3 Block Public Access and bucket policies
+                    </div>
+                  </div>
+                  <div class="threat-item low">
+                    <div class="threat-severity">LOW</div>
+                    <div class="threat-details">
+                      <h4>DDoS Attack (Denial of Service)</h4>
+                      <p>API endpoints vulnerable to traffic spikes</p>
+                      <strong>Mitigation:</strong> Implement AWS WAF and API Gateway throttling
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Observability Section -->
+            <section id="observability" class="docs-section">
+              <h1>Comprehensive Observability</h1>
+              <p class="section-intro">
+                Lattice automatically creates monitoring, alarms, and dashboards for all
+                infrastructure components, providing role-based views and environment-aware
+                thresholds.
+              </p>
+
+              <h2>Automatic Monitoring</h2>
+              <p>When you set <code>environment: 'prod'</code>, Lattice automatically creates:</p>
+
+              <div class="monitoring-features">
+                <div class="feature-row">
+                  <div class="feature-icon">🚨</div>
+                  <div class="feature-content">
+                    <h3>Smart Alarms</h3>
+                    <p>
+                      CPU, memory, errors, and duration alarms with environment-specific thresholds
+                    </p>
+                  </div>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-icon">📊</div>
+                  <div class="feature-content">
+                    <h3>Role-Based Dashboards</h3>
+                    <p>Separate views for Developers, SREs, CTOs, and Security teams</p>
+                  </div>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-icon">📧</div>
+                  <div class="feature-content">
+                    <h3>SNS Integration</h3>
+                    <p>Custom notification topics for different severity levels</p>
+                  </div>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-icon">🎯</div>
+                  <div class="feature-content">
+                    <h3>Environment-Aware Thresholds</h3>
+                    <p>Strict monitoring for production, relaxed for development</p>
+                  </div>
+                </div>
+              </div>
+
+              <h2>Dashboard Types</h2>
+              <div class="dashboard-grid">
+                <div class="dashboard-card">
+                  <h3>👨‍💻 Developer Dashboard</h3>
+                  <ul>
+                    <li>Application performance metrics</li>
+                    <li>Error rates and response times</li>
+                    <li>Recent deployments</li>
+                    <li>Debug information</li>
+                  </ul>
+                </div>
+                <div class="dashboard-card">
+                  <h3>🔧 SRE Dashboard</h3>
+                  <ul>
+                    <li>Infrastructure health</li>
+                    <li>Resource utilization</li>
+                    <li>Capacity planning</li>
+                    <li>Incident response</li>
+                  </ul>
+                </div>
+                <div class="dashboard-card">
+                  <h3>👔 CTO Dashboard</h3>
+                  <ul>
+                    <li>High-level system health</li>
+                    <li>Cost optimization</li>
+                    <li>Business metrics</li>
+                    <li>Strategic insights</li>
+                  </ul>
+                </div>
+                <div class="dashboard-card">
+                  <h3>🛡️ Security Dashboard</h3>
+                  <ul>
+                    <li>Security events</li>
+                    <li>Access patterns</li>
+                    <li>Compliance status</li>
+                    <li>Threat detection</li>
+                  </ul>
+                </div>
+              </div>
+
+              <h2>Environment Thresholds</h2>
+              <div class="threshold-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Development</th>
+                      <th>Staging</th>
+                      <th>Production</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>CPU Utilization</td>
+                      <td>90%</td>
+                      <td>80%</td>
+                      <td>70%</td>
+                    </tr>
+                    <tr>
+                      <td>Memory Utilization</td>
+                      <td>95%</td>
+                      <td>85%</td>
+                      <td>75%</td>
+                    </tr>
+                    <tr>
+                      <td>Error Rate</td>
+                      <td>10%</td>
+                      <td>5%</td>
+                      <td>1%</td>
+                    </tr>
+                    <tr>
+                      <td>Response Time</td>
+                      <td>5000ms</td>
+                      <td>2000ms</td>
+                      <td>1000ms</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Escape Hatches Section -->
+            <section id="escape-hatches" class="docs-section">
+              <h1>Escape Hatches</h1>
+              <p class="section-intro">
+                When you need advanced AWS features beyond Lattice's simple interfaces, escape
+                hatches provide full access to underlying CDK constructs without losing the benefits
+                of Lattice's guardrails.
+              </p>
+
+              <h2>The Pattern</h2>
+              <p>
+                Every Lattice construct exposes an <code>instance</code> property that gives you
+                direct access to the underlying CDK construct:
+              </p>
+
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">typescript</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>// Start with simple Lattice intent
 const bucket = new LatticeBucket(this, 'DataBucket', {
   name: 'analytics-data',
   environment: 'prod',
@@ -808,71 +856,71 @@ bucket.instance.addLifecycleRule({
     transitionAfter: Duration.days(1)
   }]
 });</code></pre>
-                        </div>
-                        
-                        <h2>Available Escape Hatches</h2>
-                        <div class="escape-hatch-grid">
-                            <div class="escape-hatch-item">
-                                <h3>🌐 LatticeNetwork</h3>
-                                <p><code>network.instance</code> → <code>ec2.Vpc</code></p>
-                                <p>Access VPC, subnets, security groups, and routing</p>
-                            </div>
-                            <div class="escape-hatch-item">
-                                <h3>🗄️ LatticeBucket</h3>
-                                <p><code>bucket.instance</code> → <code>s3.Bucket</code></p>
-                                <p>Add CORS, lifecycle rules, notifications</p>
-                            </div>
-                            <div class="escape-hatch-item">
-                                <h3>🗃️ LatticeDatabase</h3>
-                                <p><code>database.instance</code> → <code>rds.DatabaseInstance</code></p>
-                                <p>Configure read replicas, parameter groups</p>
-                            </div>
-                            <div class="escape-hatch-item">
-                                <h3>⚙️ LatticeCompute</h3>
-                                <p><code>compute.instance</code> → <code>lambda.Function</code></p>
-                                <p>Add layers, environment variables, triggers</p>
-                            </div>
-                        </div>
-                        
-                        <h2>Best Practices</h2>
-                        <div class="best-practices">
-                            <div class="practice-item">
-                                <div class="practice-icon">✅</div>
-                                <div class="practice-content">
-                                    <h3>Start Simple</h3>
-                                    <p>Begin with Lattice intents and only use escape hatches when needed</p>
-                                </div>
-                            </div>
-                            <div class="practice-item">
-                                <div class="practice-icon">✅</div>
-                                <div class="practice-content">
-                                    <h3>Document Usage</h3>
-                                    <p>Comment why you're using escape hatches for future maintainers</p>
-                                </div>
-                            </div>
-                            <div class="practice-item">
-                                <div class="practice-icon">✅</div>
-                                <div class="practice-content">
-                                    <h3>Test Thoroughly</h3>
-                                    <p>Escape hatch code bypasses some Lattice validations</p>
-                                </div>
-                            </div>
-                            <div class="practice-item">
-                                <div class="practice-icon">✅</div>
-                                <div class="practice-content">
-                                    <h3>Keep Guardrails</h3>
-                                    <p>Lattice Aspects still apply security and cost controls</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Advanced Example</h2>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">typescript</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code>// Complex multi-service setup with escape hatches
+              </div>
+
+              <h2>Available Escape Hatches</h2>
+              <div class="escape-hatch-grid">
+                <div class="escape-hatch-item">
+                  <h3>🌐 LatticeNetwork</h3>
+                  <p><code>network.instance</code> → <code>ec2.Vpc</code></p>
+                  <p>Access VPC, subnets, security groups, and routing</p>
+                </div>
+                <div class="escape-hatch-item">
+                  <h3>🗄️ LatticeBucket</h3>
+                  <p><code>bucket.instance</code> → <code>s3.Bucket</code></p>
+                  <p>Add CORS, lifecycle rules, notifications</p>
+                </div>
+                <div class="escape-hatch-item">
+                  <h3>🗃️ LatticeDatabase</h3>
+                  <p><code>database.instance</code> → <code>rds.DatabaseInstance</code></p>
+                  <p>Configure read replicas, parameter groups</p>
+                </div>
+                <div class="escape-hatch-item">
+                  <h3>⚙️ LatticeCompute</h3>
+                  <p><code>compute.instance</code> → <code>lambda.Function</code></p>
+                  <p>Add layers, environment variables, triggers</p>
+                </div>
+              </div>
+
+              <h2>Best Practices</h2>
+              <div class="best-practices">
+                <div class="practice-item">
+                  <div class="practice-icon">✅</div>
+                  <div class="practice-content">
+                    <h3>Start Simple</h3>
+                    <p>Begin with Lattice intents and only use escape hatches when needed</p>
+                  </div>
+                </div>
+                <div class="practice-item">
+                  <div class="practice-icon">✅</div>
+                  <div class="practice-content">
+                    <h3>Document Usage</h3>
+                    <p>Comment why you're using escape hatches for future maintainers</p>
+                  </div>
+                </div>
+                <div class="practice-item">
+                  <div class="practice-icon">✅</div>
+                  <div class="practice-content">
+                    <h3>Test Thoroughly</h3>
+                    <p>Escape hatch code bypasses some Lattice validations</p>
+                  </div>
+                </div>
+                <div class="practice-item">
+                  <div class="practice-icon">✅</div>
+                  <div class="practice-content">
+                    <h3>Keep Guardrails</h3>
+                    <p>Lattice Aspects still apply security and cost controls</p>
+                  </div>
+                </div>
+              </div>
+
+              <h2>Advanced Example</h2>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">typescript</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>// Complex multi-service setup with escape hatches
 const network = new LatticeNetwork(this, 'Network', {
   cidr: '10.0.0.0/16',
   environment: 'prod',
@@ -898,25 +946,25 @@ network.instance.addGatewayEndpoint('S3Endpoint', {
   service: ec2.GatewayVpcEndpointAwsService.S3,
   subnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }]
 });</code></pre>
-                        </div>
-                    </section>
+              </div>
+            </section>
 
-                    <!-- Examples Section -->
-                    <section id="simple-api" class="docs-section">
-                        <h1>Examples</h1>
-                        <p class="section-intro">
-                            Real-world examples showing how to build common architectures with Lattice.
-                        </p>
-                        
-                        <h2>Simple API</h2>
-                        <p>A basic REST API with database and monitoring:</p>
-                        
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">typescript</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code>import { Stack, StackProps } from 'aws-cdk-lib';
+            <!-- Examples Section -->
+            <section id="simple-api" class="docs-section">
+              <h1>Examples</h1>
+              <p class="section-intro">
+                Real-world examples showing how to build common architectures with Lattice.
+              </p>
+
+              <h2>Simple API</h2>
+              <p>A basic REST API with database and monitoring:</p>
+
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">typescript</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { 
   LatticeNetwork, 
@@ -973,146 +1021,149 @@ export class SimpleApiStack extends Stack {
     // Result: Production-ready API with monitoring, security, and backups!
   }
 }</code></pre>
-                        </div>
-                        
-                        <div class="example-result">
-                            <h3>🎉 What You Get</h3>
-                            <div class="result-grid">
-                                <div class="result-item">
-                                    <span class="result-icon">🌐</span>
-                                    <span>Multi-AZ VPC with proper subnetting</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-icon">🗃️</span>
-                                    <span>PostgreSQL with automated backups</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-icon">⚡</span>
-                                    <span>Lambda function with monitoring</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-icon">🗄️</span>
-                                    <span>Encrypted S3 bucket with versioning</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-icon">🛡️</span>
-                                    <span>Comprehensive threat model</span>
-                                </div>
-                                <div class="result-item">
-                                    <span class="result-icon">📊</span>
-                                    <span>4 role-based dashboards</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+              </div>
 
-                    <!-- Troubleshooting Section -->
-                    <section id="troubleshooting" class="docs-section">
-                        <h1>Troubleshooting</h1>
-                        <p class="section-intro">
-                            Common issues and solutions when working with Lattice AWS CDK.
-                        </p>
-                        
-                        <h2>Common Issues</h2>
-                        
-                        <div class="troubleshooting-item">
-                            <h3>❌ CDK Bootstrap Required</h3>
-                            <div class="error-message">
-                                <code>Error: This stack uses assets, so the toolkit stack must be deployed</code>
-                            </div>
-                            <div class="solution">
-                                <h4>Solution:</h4>
-                                <p>Run CDK bootstrap in your target AWS account and region:</p>
-                                <div class="code-block">
-                                    <pre><code>cdk bootstrap aws://ACCOUNT-NUMBER/REGION</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="troubleshooting-item">
-                            <h3>❌ Dashboard Name Conflicts</h3>
-                            <div class="error-message">
-                                <code>Error: Dashboard with name already exists</code>
-                            </div>
-                            <div class="solution">
-                                <h4>Solution:</h4>
-                                <p>Lattice automatically handles naming conflicts by adding timestamps. If you see this error, try:</p>
-                                <div class="code-block">
-                                    <pre><code>// Add unique suffix to your stack
+              <div class="example-result">
+                <h3>🎉 What You Get</h3>
+                <div class="result-grid">
+                  <div class="result-item">
+                    <span class="result-icon">🌐</span>
+                    <span>Multi-AZ VPC with proper subnetting</span>
+                  </div>
+                  <div class="result-item">
+                    <span class="result-icon">🗃️</span>
+                    <span>PostgreSQL with automated backups</span>
+                  </div>
+                  <div class="result-item">
+                    <span class="result-icon">⚡</span>
+                    <span>Lambda function with monitoring</span>
+                  </div>
+                  <div class="result-item">
+                    <span class="result-icon">🗄️</span>
+                    <span>Encrypted S3 bucket with versioning</span>
+                  </div>
+                  <div class="result-item">
+                    <span class="result-icon">🛡️</span>
+                    <span>Comprehensive threat model</span>
+                  </div>
+                  <div class="result-item">
+                    <span class="result-icon">📊</span>
+                    <span>4 role-based dashboards</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Troubleshooting Section -->
+            <section id="troubleshooting" class="docs-section">
+              <h1>Troubleshooting</h1>
+              <p class="section-intro">
+                Common issues and solutions when working with Lattice AWS CDK.
+              </p>
+
+              <h2>Common Issues</h2>
+
+              <div class="troubleshooting-item">
+                <h3>❌ CDK Bootstrap Required</h3>
+                <div class="error-message">
+                  <code>Error: This stack uses assets, so the toolkit stack must be deployed</code>
+                </div>
+                <div class="solution">
+                  <h4>Solution:</h4>
+                  <p>Run CDK bootstrap in your target AWS account and region:</p>
+                  <div class="code-block">
+                    <pre><code>cdk bootstrap aws://ACCOUNT-NUMBER/REGION</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="troubleshooting-item">
+                <h3>❌ Dashboard Name Conflicts</h3>
+                <div class="error-message">
+                  <code>Error: Dashboard with name already exists</code>
+                </div>
+                <div class="solution">
+                  <h4>Solution:</h4>
+                  <p>
+                    Lattice automatically handles naming conflicts by adding timestamps. If you see
+                    this error, try:
+                  </p>
+                  <div class="code-block">
+                    <pre><code>// Add unique suffix to your stack
 export class MyStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id + '-' + Date.now(), props);
     // ... rest of your stack
   }
 }</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="troubleshooting-item">
-                            <h3>❌ SNS Topic Naming Conflicts</h3>
-                            <div class="error-message">
-                                <code>Error: Topic with name already exists</code>
-                            </div>
-                            <div class="solution">
-                                <h4>Solution:</h4>
-                                <p>Use unique project names in your Lattice aspects:</p>
-                                <div class="code-block">
-                                    <pre><code>applyLatticeAspects(this, {
+                  </div>
+                </div>
+              </div>
+
+              <div class="troubleshooting-item">
+                <h3>❌ SNS Topic Naming Conflicts</h3>
+                <div class="error-message">
+                  <code>Error: Topic with name already exists</code>
+                </div>
+                <div class="solution">
+                  <h4>Solution:</h4>
+                  <p>Use unique project names in your Lattice aspects:</p>
+                  <div class="code-block">
+                    <pre><code>applyLatticeAspects(this, {
   environment: 'prod',
   projectName: 'MyApp-' + this.account, // Make it unique
   owner: 'DevTeam'
 });</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Getting Help</h2>
-                        <div class="help-options">
-                            <div class="help-item">
-                                <div class="help-icon">📧</div>
-                                <div class="help-content">
-                                    <h3>Email Support</h3>
-                                    <p>Contact: bhavdeepsachdeva@gmail.com</p>
-                                    <p>Response time: Within 24 hours</p>
-                                </div>
-                            </div>
-                            <div class="help-item">
-                                <div class="help-icon">🐛</div>
-                                <div class="help-content">
-                                    <h3>Bug Reports</h3>
-                                    <p>Include your CDK version, Lattice version, and error logs</p>
-                                    <p>Provide minimal reproduction case</p>
-                                </div>
-                            </div>
-                            <div class="help-item">
-                                <div class="help-icon">💡</div>
-                                <div class="help-content">
-                                    <h3>Feature Requests</h3>
-                                    <p>Describe your use case and desired outcome</p>
-                                    <p>Include business justification if applicable</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section id="intents" class="docs-section">
-                        <h1>AI Intents</h1>
-                        <p class="section-intro">
-                            Learn how Lattice transforms simple JSON intents into complex AWS infrastructure.
-                        </p>
-                        
-                        <h2>What are AI Intents?</h2>
-                        <p>
-                            AI Intents are simple, declarative JSON objects that describe what you want to build, 
-                            not how to build it. They're designed to be easily generated by AI systems while 
-                            remaining human-readable and maintainable.
-                        </p>
-                        
-                        <div class="comparison-container">
-                            <div class="comparison-side">
-                                <h3>❌ Traditional CDK</h3>
-                                <div class="code-block">
-                                    <pre><code>const vpc = new ec2.Vpc(this, 'VPC', {
+                  </div>
+                </div>
+              </div>
+
+              <h2>Getting Help</h2>
+              <div class="help-options">
+                <div class="help-item">
+                  <div class="help-icon">📧</div>
+                  <div class="help-content">
+                    <h3>Email Support</h3>
+                    <p>Contact: bhavdeepsachdeva@gmail.com</p>
+                    <p>Response time: Within 24 hours</p>
+                  </div>
+                </div>
+                <div class="help-item">
+                  <div class="help-icon">🐛</div>
+                  <div class="help-content">
+                    <h3>Bug Reports</h3>
+                    <p>Include your CDK version, Lattice version, and error logs</p>
+                    <p>Provide minimal reproduction case</p>
+                  </div>
+                </div>
+                <div class="help-item">
+                  <div class="help-icon">💡</div>
+                  <div class="help-content">
+                    <h3>Feature Requests</h3>
+                    <p>Describe your use case and desired outcome</p>
+                    <p>Include business justification if applicable</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section id="intents" class="docs-section">
+              <h1>AI Intents</h1>
+              <p class="section-intro">
+                Learn how Lattice transforms simple JSON intents into complex AWS infrastructure.
+              </p>
+
+              <h2>What are AI Intents?</h2>
+              <p>
+                AI Intents are simple, declarative JSON objects that describe what you want to
+                build, not how to build it. They're designed to be easily generated by AI systems
+                while remaining human-readable and maintainable.
+              </p>
+
+              <div class="comparison-container">
+                <div class="comparison-side">
+                  <h3>❌ Traditional CDK</h3>
+                  <div class="code-block">
+                    <pre><code>const vpc = new ec2.Vpc(this, 'VPC', {
   cidr: '10.0.0.0/16',
   maxAzs: 3,
   subnetConfiguration: [
@@ -1139,13 +1190,13 @@ export class MyStack extends Stack {
 
 // Add security groups, NACLs, route tables...
 // 50+ more lines of configuration</code></pre>
-                                </div>
-                            </div>
-                            
-                            <div class="comparison-side">
-                                <h3>✅ Lattice Intent</h3>
-                                <div class="code-block">
-                                    <pre><code>const networkIntent = {
+                  </div>
+                </div>
+
+                <div class="comparison-side">
+                  <h3>✅ Lattice Intent</h3>
+                  <div class="code-block">
+                    <pre><code>const networkIntent = {
   cidr: '10.0.0.0/16',
   environment: 'prod',
   highAvailability: true
@@ -1159,44 +1210,46 @@ const network = new LatticeNetwork(
 
 // Done! Security, monitoring, 
 // and best practices included</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Intent Schema</h2>
-                        <p>Each Lattice module accepts a specific intent schema. Here are the common patterns:</p>
-                        
-                        <div class="schema-grid">
-                            <div class="schema-card">
-                                <h3>Network Intent</h3>
-                                <div class="code-block">
-                                    <pre><code>{
+                  </div>
+                </div>
+              </div>
+
+              <h2>Intent Schema</h2>
+              <p>
+                Each Lattice module accepts a specific intent schema. Here are the common patterns:
+              </p>
+
+              <div class="schema-grid">
+                <div class="schema-card">
+                  <h3>Network Intent</h3>
+                  <div class="code-block">
+                    <pre><code>{
   "cidr": "10.0.0.0/16",
   "environment": "prod",
   "highAvailability": true,
   "natGateways": 3,
   "enableVpnGateway": false
 }</code></pre>
-                                </div>
-                            </div>
-                            
-                            <div class="schema-card">
-                                <h3>Storage Intent</h3>
-                                <div class="code-block">
-                                    <pre><code>{
+                  </div>
+                </div>
+
+                <div class="schema-card">
+                  <h3>Storage Intent</h3>
+                  <div class="code-block">
+                    <pre><code>{
   "name": "app-data",
   "environment": "prod",
   "encryption": true,
   "versioning": true,
   "publicAccess": false
 }</code></pre>
-                                </div>
-                            </div>
-                            
-                            <div class="schema-card">
-                                <h3>Database Intent</h3>
-                                <div class="code-block">
-                                    <pre><code>{
+                  </div>
+                </div>
+
+                <div class="schema-card">
+                  <h3>Database Intent</h3>
+                  <div class="code-block">
+                    <pre><code>{
   "name": "app-db",
   "environment": "prod",
   "engine": "postgres",
@@ -1204,87 +1257,110 @@ const network = new LatticeNetwork(
   "multiAz": true,
   "backupRetention": 30
 }</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h2>Environment-Aware Behavior</h2>
-                        <p>
-                            Intents automatically adjust based on the environment parameter, ensuring 
-                            cost optimization for development and maximum reliability for production.
-                        </p>
-                        
-                        <div class="environment-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Feature</th>
-                                        <th>Development</th>
-                                        <th>Staging</th>
-                                        <th>Production</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>High Availability</td>
-                                        <td>❌ Single AZ</td>
-                                        <td>✅ Multi-AZ</td>
-                                        <td>✅ Multi-AZ</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Backup Retention</td>
-                                        <td>7 days</td>
-                                        <td>14 days</td>
-                                        <td>30 days</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Monitoring</td>
-                                        <td>Basic</td>
-                                        <td>Enhanced</td>
-                                        <td>Comprehensive</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Resource Sizing</td>
-                                        <td>Minimal</td>
-                                        <td>Moderate</td>
-                                        <td>Optimized</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
-                </main>
-            </div>
+                  </div>
+                </div>
+              </div>
+
+              <h2>Environment-Aware Behavior</h2>
+              <p>
+                Intents automatically adjust based on the environment parameter, ensuring cost
+                optimization for development and maximum reliability for production.
+              </p>
+
+              <div class="environment-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Feature</th>
+                      <th>Development</th>
+                      <th>Staging</th>
+                      <th>Production</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>High Availability</td>
+                      <td>❌ Single AZ</td>
+                      <td>✅ Multi-AZ</td>
+                      <td>✅ Multi-AZ</td>
+                    </tr>
+                    <tr>
+                      <td>Backup Retention</td>
+                      <td>7 days</td>
+                      <td>14 days</td>
+                      <td>30 days</td>
+                    </tr>
+                    <tr>
+                      <td>Monitoring</td>
+                      <td>Basic</td>
+                      <td>Enhanced</td>
+                      <td>Comprehensive</td>
+                    </tr>
+                    <tr>
+                      <td>Resource Sizing</td>
+                      <td>Minimal</td>
+                      <td>Moderate</td>
+                      <td>Optimized</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </main>
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="rgba(255,255,255,0.7)" stroke-width="2" fill="none"/>
-                        <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#60a5fa" stroke-width="2.5" fill="none"/>
-                        <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-                        <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#60a5fa" stroke-width="1.5"/>
-                        <circle cx="50" cy="40" r="2" fill="#60a5fa"/>
-                    </svg>
-                    <span class="logo-text">Lattice</span>
-                </div>
-                <div class="footer-links">
-                    <a href="index.html">Home</a>
-                    <a href="interactive-demo.html">Demo</a>
-                    <a href="documentation.html">Documentation</a>
-                    <a href="https://github.com/bhavdeep98/lattice-aws-cdk">GitHub</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Lattice AWS CDK by Bhavdeep Singh Sachdeva. Business Source License 1.1.</p>
-            </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <svg
+              class="logo-icon"
+              width="32"
+              height="32"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+                stroke="rgba(255,255,255,0.7)"
+                stroke-width="2"
+                fill="none"
+              />
+              <path
+                d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+                stroke="#60a5fa"
+                stroke-width="2.5"
+                fill="none"
+              />
+              <path
+                d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+                stroke="rgba(255,255,255,0.5)"
+                stroke-width="1.5"
+              />
+              <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#60a5fa" stroke-width="1.5" />
+              <circle cx="50" cy="40" r="2" fill="#60a5fa" />
+            </svg>
+            <span class="logo-text">Lattice</span>
+          </div>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="interactive-demo.html">Demo</a>
+            <a href="documentation.html">Documentation</a>
+            <a href="https://github.com/bhavdeep98/lattice-aws-cdk">GitHub</a>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>
+            &copy; 2026 Lattice AWS CDK by Bhavdeep Singh Sachdeva. Business Source License 1.1.
+          </p>
+        </div>
+      </div>
     </footer>
 
     <script src="docs-script.js"></script>
-</body>
+  </body>
 </html>

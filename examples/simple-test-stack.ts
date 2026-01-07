@@ -19,7 +19,7 @@ export class SimpleTestStack extends Stack {
       environment,
       encryption: true,
       versioning: true,
-      publicRead: false
+      publicRead: false,
     });
 
     // Another bucket for testing patterns
@@ -29,8 +29,8 @@ export class SimpleTestStack extends Stack {
       encryption: true,
       lifecycle: {
         archiveAfterDays: 30,
-        deleteAfterDays: 90
-      }
+        deleteAfterDays: 90,
+      },
     });
   }
 }

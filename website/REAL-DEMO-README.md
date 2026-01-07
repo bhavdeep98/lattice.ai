@@ -26,12 +26,14 @@ User Input → AI Analysis → Lattice Manifest → CDK Code → CloudFormation
 ## 🚀 Quick Start
 
 ### Option 1: Automatic Setup
+
 ```bash
 cd website
 ./start-real-demo.sh
 ```
 
 ### Option 2: Manual Setup
+
 ```bash
 cd website
 
@@ -59,7 +61,7 @@ The backend provides these endpoints:
 ## 🎮 How to Use
 
 1. **Enter Requirements**: Describe what you want to build in natural language
-2. **Generate**: Click "Generate with Lattice" 
+2. **Generate**: Click "Generate with Lattice"
 3. **View Results**: See the 3-step process:
    - AI Intent (Lattice Manifest)
    - CDK Code Generation
@@ -84,11 +86,12 @@ Create a blog platform with user authentication, content management, and file up
 ## 🔧 How It Works
 
 ### 1. AI Analysis
+
 The backend analyzes natural language input and maps it to Lattice capabilities:
 
 ```javascript
 // Input: "I need a healthcare platform with database"
-// Output: 
+// Output:
 {
   appName: 'healthcare-platform',
   environment: 'prod',
@@ -100,16 +103,20 @@ The backend analyzes natural language input and maps it to Lattice capabilities:
 ```
 
 ### 2. CDK Code Generation
+
 Creates real TypeScript code using Lattice:
 
 ```typescript
 import { LatticeStack, LatticeManifest } from '../src';
 
-const manifest: LatticeManifest = { /* generated manifest */ };
+const manifest: LatticeManifest = {
+  /* generated manifest */
+};
 const stack = new LatticeStack(app, 'HealthcareStack', manifest);
 ```
 
 ### 3. CloudFormation Synthesis
+
 Attempts to run `cdk synth` to generate the final CloudFormation template.
 
 ## 🎯 Value Demonstration
@@ -124,6 +131,7 @@ This demo shows why Lattice is valuable:
 ## 🔍 Troubleshooting
 
 ### Backend Not Starting
+
 ```bash
 # Check Node.js version
 node --version  # Should be 16+
@@ -136,15 +144,19 @@ lsof -i :3001
 ```
 
 ### CDK Synthesis Fails
+
 This is expected in the demo environment. The demo shows:
+
 - ✅ Manifest generation (works)
-- ✅ CDK code generation (works)  
+- ✅ CDK code generation (works)
 - ⚠️ CloudFormation synthesis (may fail without full CDK setup)
 
 In a real environment with proper AWS CDK setup, all steps would work.
 
 ### CORS Issues
+
 Make sure both servers are running:
+
 - Backend: `http://localhost:3001`
 - Frontend: `http://localhost:8001`
 
@@ -159,13 +171,13 @@ To use this in production:
 
 ## 📊 Comparison: Mock vs Real Demo
 
-| Feature | Mock Demo | Real Demo |
-|---------|-----------|-----------|
-| Framework | Fake JSON generation | Real Lattice CDK |
-| Validation | None | TypeScript + CDK |
-| Dependencies | Manual/Missing | Automatic |
-| Deployment | Not possible | Production ready |
-| Value Demo | Limited | Complete |
+| Feature      | Mock Demo            | Real Demo        |
+| ------------ | -------------------- | ---------------- |
+| Framework    | Fake JSON generation | Real Lattice CDK |
+| Validation   | None                 | TypeScript + CDK |
+| Dependencies | Manual/Missing       | Automatic        |
+| Deployment   | Not possible         | Production ready |
+| Value Demo   | Limited              | Complete         |
 
 ## 🎓 Educational Value
 
@@ -181,7 +193,7 @@ This demo teaches:
 This demo can be integrated into:
 
 - **Sales Presentations**: Show real value to prospects
-- **Developer Onboarding**: Hands-on Lattice experience  
+- **Developer Onboarding**: Hands-on Lattice experience
 - **Documentation**: Live examples in docs
 - **Marketing Website**: Interactive product demonstration
 

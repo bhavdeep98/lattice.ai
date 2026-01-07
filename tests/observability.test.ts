@@ -16,9 +16,9 @@ describe('Observability & Alarms', () => {
   beforeEach(() => {
     app = new cdk.App();
     stack = new cdk.Stack(app, 'TestStack', {
-      env: { account: '123456789012', region: 'us-east-1' }
+      env: { account: '123456789012', region: 'us-east-1' },
     });
-    
+
     // Create a mock VPC to avoid lookup issues in tests
     mockVpc = new ec2.Vpc(stack, 'TestVpc', {
       maxAzs: 2,
@@ -84,7 +84,7 @@ describe('Observability & Alarms', () => {
 
       const template = Template.fromStack(stack);
       template.resourceCountIs('AWS::CloudWatch::Alarm', bucket.alarms.length);
-      
+
       // Check for S3-specific alarms
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         AlarmName: 'Lattice-prod-test-bucket-prod-HighRequestRate',
@@ -131,7 +131,7 @@ describe('Observability & Alarms', () => {
       expect(devBucket.alarms.length).toBeGreaterThan(0);
 
       const template = Template.fromStack(stack);
-      
+
       // Check that production has lower threshold (more sensitive)
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         AlarmName: 'Lattice-prod-prod-bucket-prod-HighRequestRate',
@@ -160,7 +160,7 @@ describe('Observability & Alarms', () => {
       expect(database.alarms.length).toBeGreaterThan(0);
 
       const template = Template.fromStack(stack);
-      
+
       // Check for RDS-specific alarms
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         MetricName: 'CPUUtilization',
@@ -194,7 +194,7 @@ describe('Observability & Alarms', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Critical alarm (low memory)
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         MetricName: 'FreeableMemory',
@@ -229,7 +229,7 @@ describe('Observability & Alarms', () => {
       expect(lambda.alarms.length).toBeGreaterThan(0);
 
       const template = Template.fromStack(stack);
-      
+
       // Lambda-specific alarms
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         MetricName: 'Errors',
@@ -265,7 +265,7 @@ describe('Observability & Alarms', () => {
       expect(ec2Instance.alarms.length).toBeGreaterThan(0);
 
       const template = Template.fromStack(stack);
-      
+
       // EC2-specific alarms
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         MetricName: 'CPUUtilization',
@@ -297,7 +297,7 @@ describe('Observability & Alarms', () => {
       expect(ecsService.alarms.length).toBeGreaterThan(0);
 
       const template = Template.fromStack(stack);
-      
+
       // ECS-specific alarms
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         MetricName: 'CPUUtilization',
@@ -322,7 +322,7 @@ describe('Observability & Alarms', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Production should have lower thresholds (more sensitive)
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         Threshold: 1000, // Production S3 request threshold
@@ -340,7 +340,7 @@ describe('Observability & Alarms', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Development should have higher thresholds (less sensitive)
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         Threshold: 2000, // Development S3 request threshold
@@ -358,7 +358,7 @@ describe('Observability & Alarms', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Staging should have moderate settings
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         EvaluationPeriods: 3, // Balanced detection speed
@@ -378,10 +378,10 @@ describe('Observability & Alarms', () => {
       observabilityManager.addComputeObservability('test-lambda', 'lambda');
 
       const template = Template.fromStack(stack);
-      
+
       // Should create dashboards for each role
       template.resourceCountIs('AWS::CloudWatch::Dashboard', 3);
-      
+
       // Check that dashboard names start with the expected prefix (allowing for timestamp suffix)
       template.hasResourceProperties('AWS::CloudWatch::Dashboard', {
         DashboardName: Match.stringLikeRegexp('Lattice-prod-Developer-\\d+'),
@@ -426,7 +426,7 @@ describe('Observability & Alarms', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Alarms should have SNS actions
       template.hasResourceProperties('AWS::CloudWatch::Alarm', {
         AlarmActions: [{ Ref: 'TestTopic339EC197' }], // SNS topic reference
@@ -444,7 +444,7 @@ describe('Observability & Alarms', () => {
       });
 
       const template = Template.fromStack(stack);
-      
+
       // Should create a default notification topic
       template.hasResourceProperties('AWS::SNS::Topic', {
         DisplayName: 'Lattice Observability Notifications',

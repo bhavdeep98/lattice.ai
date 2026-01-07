@@ -1,476 +1,530 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Infrastructure Assistant - Lattice AWS CDK</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        .ai-demo {
-            padding: 100px 0 50px;
-            background: #fafafa;
-            min-height: 100vh;
-            color: #1a1a1a;
+      .ai-demo {
+        padding: 100px 0 50px;
+        background: #fafafa;
+        min-height: 100vh;
+        color: #1a1a1a;
+      }
+
+      .ai-demo-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .ai-demo-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .ai-demo-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1a1a1a;
+      }
+
+      .ai-demo-subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+
+      .chatbot-container {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+        border: 1px solid #e5e7eb;
+      }
+
+      .chatbot-header {
+        background: #1a1a1a;
+        color: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .chatbot-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #007aff, #5856d6);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+      }
+
+      .chatbot-info h3 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .chatbot-info p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+      }
+
+      .chat-messages {
+        height: 500px;
+        overflow-y: auto;
+        padding: 2rem;
+        background: #fafafa;
+        color: #1a1a1a;
+      }
+
+      .message {
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+      }
+
+      .message.user {
+        flex-direction: row-reverse;
+      }
+
+      .message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .message.ai .message-avatar {
+        background: linear-gradient(135deg, #007aff, #5856d6);
+        color: white;
+      }
+
+      .message.user .message-avatar {
+        background: #e5e7eb;
+        color: #374151;
+      }
+
+      .message-content {
+        max-width: 70%;
+        padding: 1rem 1.5rem;
+        border-radius: 18px;
+        line-height: 1.5;
+      }
+
+      .message.ai .message-content {
+        background: white;
+        border: 1px solid #e5e7eb;
+      }
+
+      .message.user .message-content {
+        background: #007aff;
+        color: white;
+      }
+
+      .code-block {
+        background: #1a1a1a;
+        color: #e5e7eb;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        overflow-x: auto;
+        margin: 1rem 0;
+        position: relative;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: #374151;
+        color: white;
+        border: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: background 0.3s ease;
+      }
+
+      .copy-btn:hover {
+        background: #4b5563;
+      }
+
+      .copy-btn.copied {
+        background: #10b981;
+      }
+
+      .ai-section-header {
+        color: #1a1a1a;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.75rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #007aff;
+      }
+
+      .ai-subsection-header {
+        color: #374151;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 1rem 0 0.5rem 0;
+      }
+
+      .module-description {
+        background: #f8fafc;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        border-radius: 8px;
+        border-left: 3px solid #007aff;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .module-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+
+      .guardrail-item {
+        background: #f0fdf4;
+        padding: 0.5rem 0.75rem;
+        margin: 0.25rem 0;
+        border-radius: 6px;
+        border-left: 3px solid #10b981;
+        font-size: 0.9rem;
+      }
+
+      .deployment-note {
+        background: #fef3c7;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        border-left: 3px solid #f59e0b;
+        font-weight: 500;
+      }
+
+      .chat-input-container {
+        padding: 1.5rem 2rem;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .example-prompts {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .example-prompt {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+      }
+
+      .example-prompt:hover {
+        background: #007aff;
+        color: white;
+        transform: translateY(-1px);
+      }
+
+      .chat-input-form {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+      }
+
+      .chat-input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 1rem;
+        resize: none;
+        min-height: 50px;
+        max-height: 120px;
+        transition: border-color 0.3s ease;
+      }
+
+      .chat-input:focus {
+        outline: none;
+        border-color: #007aff;
+      }
+
+      .send-btn {
+        background: #007aff;
+        color: white;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .send-btn:hover {
+        background: #0056cc;
+        transform: translateY(-2px);
+      }
+
+      .send-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .typing-indicator {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-style: italic;
+        margin-top: 1rem;
+      }
+
+      .typing-indicator.active {
+        display: flex;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: #6b7280;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+      }
+
+      .typing-dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
         }
-        
-        .ai-demo-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        40% {
+          transform: scale(1);
+          opacity: 1;
         }
-        
-        .ai-demo-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
+      }
+
+      .welcome-message {
+        text-align: center;
+        color: #6b7280;
+        padding: 2rem;
+        font-style: italic;
+      }
+
+      @media (max-width: 768px) {
         .ai-demo-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #1a1a1a;
+          font-size: 2rem;
         }
-        
-        .ai-demo-subtitle {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-        
-        .chatbot-container {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            margin: 0 auto;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .chatbot-header {
-            background: #1a1a1a;
-            color: white;
-            padding: 1.5rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .chatbot-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #007AFF, #5856D6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-        
-        .chatbot-info h3 {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-        
-        .chatbot-info p {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-        
-        .chat-messages {
-            height: 500px;
-            overflow-y: auto;
-            padding: 2rem;
-            background: #fafafa;
-            color: #1a1a1a;
-        }
-        
-        .message {
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .message.user {
-            flex-direction: row-reverse;
-        }
-        
-        .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        
-        .message.ai .message-avatar {
-            background: linear-gradient(135deg, #007AFF, #5856D6);
-            color: white;
-        }
-        
-        .message.user .message-avatar {
-            background: #e5e7eb;
-            color: #374151;
-        }
-        
-        .message-content {
-            max-width: 70%;
-            padding: 1rem 1.5rem;
-            border-radius: 18px;
-            line-height: 1.5;
-        }
-        
-        .message.ai .message-content {
-            background: white;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .message.user .message-content {
-            background: #007AFF;
-            color: white;
-        }
-        
-        .code-block {
-            background: #1a1a1a;
-            color: #e5e7eb;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            overflow-x: auto;
-            margin: 1rem 0;
-            position: relative;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: #374151;
-            color: white;
-            border: none;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            transition: background 0.3s ease;
-        }
-        
-        .copy-btn:hover {
-            background: #4b5563;
-        }
-        
-        .copy-btn.copied {
-            background: #10b981;
-        }
-        
-        .ai-section-header {
-            color: #1a1a1a;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 1.5rem 0 0.75rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #007AFF;
-        }
-        
-        .ai-subsection-header {
-            color: #374151;
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 1rem 0 0.5rem 0;
-        }
-        
-        .module-description {
-            background: #f8fafc;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            border-radius: 8px;
-            border-left: 3px solid #007AFF;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-        
-        .module-icon {
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        
-        .guardrail-item {
-            background: #f0fdf4;
-            padding: 0.5rem 0.75rem;
-            margin: 0.25rem 0;
-            border-radius: 6px;
-            border-left: 3px solid #10b981;
-            font-size: 0.9rem;
-        }
-        
-        .deployment-note {
-            background: #fef3c7;
-            padding: 0.75rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            border-left: 3px solid #f59e0b;
-            font-weight: 500;
-        }
-        
-        .chat-input-container {
-            padding: 1.5rem 2rem;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-        }
-        
+
         .example-prompts {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
+          flex-direction: column;
         }
-        
-        .example-prompt {
-            background: #f3f4f6;
-            color: #374151;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .example-prompt:hover {
-            background: #007AFF;
-            color: white;
-            transform: translateY(-1px);
-        }
-        
+
         .chat-input-form {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
+          flex-direction: column;
         }
-        
-        .chat-input {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 1rem;
-            resize: none;
-            min-height: 50px;
-            max-height: 120px;
-            transition: border-color 0.3s ease;
+
+        .message-content {
+          max-width: 85%;
         }
-        
-        .chat-input:focus {
-            outline: none;
-            border-color: #007AFF;
-        }
-        
-        .send-btn {
-            background: #007AFF;
-            color: white;
-            padding: 1rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .send-btn:hover {
-            background: #0056CC;
-            transform: translateY(-2px);
-        }
-        
-        .send-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .typing-indicator {
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            color: #6b7280;
-            font-style: italic;
-            margin-top: 1rem;
-        }
-        
-        .typing-indicator.active {
-            display: flex;
-        }
-        
-        .typing-dots {
-            display: flex;
-            gap: 0.25rem;
-        }
-        
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: #6b7280;
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-        
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-            40% { transform: scale(1); opacity: 1; }
-        }
-        
-        .welcome-message {
-            text-align: center;
-            color: #6b7280;
-            padding: 2rem;
-            font-style: italic;
-        }
-        
-        @media (max-width: 768px) {
-            .ai-demo-title {
-                font-size: 2rem;
-            }
-            
-            .example-prompts {
-                flex-direction: column;
-            }
-            
-            .chat-input-form {
-                flex-direction: column;
-            }
-            
-            .message-content {
-                max-width: 85%;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer hexagon structure -->
-                    <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="#18181b" stroke-width="2" fill="none"/>
-                    <!-- Inner cube structure -->
-                    <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#18181b" stroke-width="2.5" fill="none"/>
-                    <!-- Connecting lines -->
-                    <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="#71717a" stroke-width="1.5"/>
-                    <!-- Center connections -->
-                    <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5"/>
-                    <circle cx="50" cy="40" r="2" fill="#18181b"/>
-                </svg>
-                <span class="logo-text">Lattice</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="index.html#platform">Platform</a>
-                <a href="index.html#features">Features</a>
-                <a href="index.html#pricing">Pricing</a>
-                <a href="documentation.html">Docs</a>
-                <a href="interactive-demo.html" class="nav-cta">Try Demo</a>
-            </div>
-            <div class="nav-mobile">
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg
+            class="logo-icon"
+            width="32"
+            height="32"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Outer hexagon structure -->
+            <path
+              d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+              stroke="#18181b"
+              stroke-width="2"
+              fill="none"
+            />
+            <!-- Inner cube structure -->
+            <path
+              d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+              stroke="#18181b"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <!-- Connecting lines -->
+            <path
+              d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+              stroke="#71717a"
+              stroke-width="1.5"
+            />
+            <!-- Center connections -->
+            <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5" />
+            <circle cx="50" cy="40" r="2" fill="#18181b" />
+          </svg>
+          <span class="logo-text">Lattice</span>
         </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#platform">Platform</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="documentation.html">Docs</a>
+          <a href="interactive-demo.html" class="nav-cta">Try Demo</a>
+        </div>
+        <div class="nav-mobile">
+          <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- AI Demo Section -->
     <section class="ai-demo">
-        <div class="ai-demo-container">
-            <div class="ai-demo-header">
-                <h1 class="ai-demo-title">AI Infrastructure Assistant</h1>
-                <p class="ai-demo-subtitle">
-                    See how Lattice transforms natural language into production-ready AWS infrastructure. 
-                    Watch the 3-layer process: AI Intent → Framework Processing → Guardrails Applied.
-                </p>
-            </div>
-
-            <!-- Chatbot Interface -->
-            <div class="chatbot-container">
-                <div class="chatbot-header">
-                    <div class="chatbot-avatar">🤖</div>
-                    <div class="chatbot-info">
-                        <h3>Lattice AI Assistant</h3>
-                        <p>I'll show you how Lattice generates AWS infrastructure step-by-step</p>
-                    </div>
-                </div>
-
-                <div class="chat-messages" id="chatMessages">
-                    <div class="welcome-message">
-                        👋 Hi! I'm your AI infrastructure assistant. I'll show you how Lattice transforms your requirements into production-ready AWS infrastructure through our 3-layer process.
-                        <br><br>
-                        Try describing what you want to build - I'll walk you through the Intent → Framework → Guardrails workflow!
-                    </div>
-                </div>
-
-                <div class="typing-indicator" id="typingIndicator">
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                    <span>AI is thinking...</span>
-                </div>
-
-                <div class="chat-input-container">
-                    <div class="example-prompts">
-                        <div class="example-prompt" onclick="useExamplePrompt('I need a simple web application with a database and user authentication')">
-                            🌐 Web app with database
-                        </div>
-                        <div class="example-prompt" onclick="useExamplePrompt('Create a REST API with file storage and monitoring')">
-                            🔗 REST API with storage
-                        </div>
-                        <div class="example-prompt" onclick="useExamplePrompt('Build a data pipeline that processes CSV files')">
-                            📊 Data pipeline
-                        </div>
-                        <div class="example-prompt" onclick="useExamplePrompt('I want a serverless blog platform with comments')">
-                            📝 Serverless blog
-                        </div>
-                    </div>
-
-                    <form class="chat-input-form" id="chatForm">
-                        <textarea 
-                            class="chat-input" 
-                            id="chatInput" 
-                            placeholder="Describe what you want to build... (e.g., 'I need an e-commerce platform with payment processing')"
-                            rows="1"
-                        ></textarea>
-                        <button type="submit" class="send-btn" id="sendBtn">
-                            <span>Send</span>
-                            <span>🚀</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
+      <div class="ai-demo-container">
+        <div class="ai-demo-header">
+          <h1 class="ai-demo-title">AI Infrastructure Assistant</h1>
+          <p class="ai-demo-subtitle">
+            See how Lattice transforms natural language into production-ready AWS infrastructure.
+            Watch the 3-layer process: AI Intent → Framework Processing → Guardrails Applied.
+          </p>
         </div>
+
+        <!-- Chatbot Interface -->
+        <div class="chatbot-container">
+          <div class="chatbot-header">
+            <div class="chatbot-avatar">🤖</div>
+            <div class="chatbot-info">
+              <h3>Lattice AI Assistant</h3>
+              <p>I'll show you how Lattice generates AWS infrastructure step-by-step</p>
+            </div>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+              👋 Hi! I'm your AI infrastructure assistant. I'll show you how Lattice transforms your
+              requirements into production-ready AWS infrastructure through our 3-layer process.
+              <br /><br />
+              Try describing what you want to build - I'll walk you through the Intent → Framework →
+              Guardrails workflow!
+            </div>
+          </div>
+
+          <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
+            <span>AI is thinking...</span>
+          </div>
+
+          <div class="chat-input-container">
+            <div class="example-prompts">
+              <div
+                class="example-prompt"
+                onclick="
+                  useExamplePrompt(
+                    'I need a simple web application with a database and user authentication'
+                  )
+                "
+              >
+                🌐 Web app with database
+              </div>
+              <div
+                class="example-prompt"
+                onclick="useExamplePrompt('Create a REST API with file storage and monitoring')"
+              >
+                🔗 REST API with storage
+              </div>
+              <div
+                class="example-prompt"
+                onclick="useExamplePrompt('Build a data pipeline that processes CSV files')"
+              >
+                📊 Data pipeline
+              </div>
+              <div
+                class="example-prompt"
+                onclick="useExamplePrompt('I want a serverless blog platform with comments')"
+              >
+                📝 Serverless blog
+              </div>
+            </div>
+
+            <form class="chat-input-form" id="chatForm">
+              <textarea
+                class="chat-input"
+                id="chatInput"
+                placeholder="Describe what you want to build... (e.g., 'I need an e-commerce platform with payment processing')"
+                rows="1"
+              ></textarea>
+              <button type="submit" class="send-btn" id="sendBtn">
+                <span>Send</span>
+                <span>🚀</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </section>
 
     <script src="production-ready-templates.js"></script>
     <script src="ai-interface-demo-fixed.js"></script>
-</body>
+  </body>
 </html>

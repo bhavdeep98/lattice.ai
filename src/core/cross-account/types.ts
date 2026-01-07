@@ -8,12 +8,12 @@ export interface CrossAccountConfig {
    * GitHub repository in format "owner/repo"
    */
   githubRepository: string;
-  
+
   /**
    * AWS Organization ID for additional security
    */
   organizationId?: string;
-  
+
   /**
    * Account configuration for each environment
    */
@@ -25,7 +25,7 @@ export interface CrossAccountConfig {
     security?: AccountConfig;
     sharedServices?: AccountConfig;
   };
-  
+
   /**
    * Global settings
    */
@@ -34,17 +34,17 @@ export interface CrossAccountConfig {
      * Primary AWS region
      */
     primaryRegion: string;
-    
+
     /**
      * Secondary AWS region for disaster recovery
      */
     secondaryRegion?: string;
-    
+
     /**
      * Default tags applied to all resources
      */
     defaultTags: Record<string, string>;
-    
+
     /**
      * Cost control settings
      */
@@ -57,7 +57,7 @@ export interface CrossAccountConfig {
         staging: number;
         prod: number;
       };
-      
+
       /**
        * Budget alerts
        */
@@ -77,32 +77,32 @@ export interface AccountConfig {
    * AWS Account ID
    */
   accountId: string;
-  
+
   /**
    * Account alias for easier identification
    */
   alias: string;
-  
+
   /**
    * Environment type
    */
   environment: Environment | 'tooling' | 'security' | 'shared-services';
-  
+
   /**
    * AWS regions where resources can be deployed
    */
   allowedRegions: string[];
-  
+
   /**
    * Maximum instance sizes allowed in this account
    */
   maxInstanceSize: 'nano' | 'micro' | 'small' | 'medium' | 'large' | 'xlarge' | '2xlarge';
-  
+
   /**
    * Whether this account allows public internet access
    */
   allowPublicAccess: boolean;
-  
+
   /**
    * Backup retention settings
    */
@@ -112,7 +112,7 @@ export interface AccountConfig {
     monthly: number;
     yearly: number;
   };
-  
+
   /**
    * Compliance requirements
    */
@@ -121,23 +121,23 @@ export interface AccountConfig {
      * Whether encryption at rest is required
      */
     requireEncryption: boolean;
-    
+
     /**
      * Whether all traffic must be encrypted in transit
      */
     requireTLSInTransit: boolean;
-    
+
     /**
      * Whether detailed logging is required
      */
     requireDetailedLogging: boolean;
-    
+
     /**
      * Data residency requirements
      */
     dataResidency?: string[];
   };
-  
+
   /**
    * Network configuration
    */
@@ -146,12 +146,12 @@ export interface AccountConfig {
      * VPC CIDR blocks
      */
     vpcCidrs: string[];
-    
+
     /**
      * Whether to enable VPC Flow Logs
      */
     enableFlowLogs: boolean;
-    
+
     /**
      * Whether to enable AWS Config
      */
@@ -167,17 +167,17 @@ export interface DeploymentContext {
    * Target environment
    */
   environment: Environment;
-  
+
   /**
    * Target AWS account ID
    */
   accountId: string;
-  
+
   /**
    * Target AWS region
    */
   region: string;
-  
+
   /**
    * GitHub context
    */
@@ -189,7 +189,7 @@ export interface DeploymentContext {
     runId: string;
     runNumber: string;
   };
-  
+
   /**
    * Deployment metadata
    */
@@ -198,7 +198,7 @@ export interface DeploymentContext {
     version?: string;
     changesetId?: string;
   };
-  
+
   /**
    * Cost controls for this deployment
    */
@@ -207,7 +207,7 @@ export interface DeploymentContext {
     maxInstanceSize: string;
     allowedServices: string[];
   };
-  
+
   /**
    * Security context
    */
@@ -232,12 +232,12 @@ export interface AssumeRoleResult {
     sessionToken: string;
     expiration: Date;
   };
-  
+
   /**
    * Assumed role ARN
    */
   assumedRoleArn: string;
-  
+
   /**
    * Session name
    */
@@ -252,7 +252,7 @@ export interface DeploymentArtifact {
    * Artifact type
    */
   type: 'cloudformation-template' | 'lambda-code' | 'docker-image' | 'static-assets';
-  
+
   /**
    * S3 location of the artifact
    */
@@ -261,7 +261,7 @@ export interface DeploymentArtifact {
     key: string;
     version?: string;
   };
-  
+
   /**
    * Artifact metadata
    */
@@ -271,7 +271,7 @@ export interface DeploymentArtifact {
     createdAt: string;
     createdBy: string;
   };
-  
+
   /**
    * Encryption information
    */
@@ -289,32 +289,32 @@ export interface DeploymentStatus {
    * Deployment ID
    */
   deploymentId: string;
-  
+
   /**
    * Current status
    */
   status: 'pending' | 'in-progress' | 'succeeded' | 'failed' | 'cancelled';
-  
+
   /**
    * Target environment
    */
   environment: Environment;
-  
+
   /**
    * Start time
    */
   startTime: string;
-  
+
   /**
    * End time (if completed)
    */
   endTime?: string;
-  
+
   /**
    * Error message (if failed)
    */
   error?: string;
-  
+
   /**
    * Deployed stacks
    */
@@ -323,12 +323,12 @@ export interface DeploymentStatus {
     status: string;
     outputs?: Record<string, string>;
   }[];
-  
+
   /**
    * Deployment artifacts
    */
   artifacts: DeploymentArtifact[];
-  
+
   /**
    * Cost estimation
    */
@@ -347,32 +347,32 @@ export interface BootstrapStatus {
    * Account ID
    */
   accountId: string;
-  
+
   /**
    * Environment
    */
   environment: Environment;
-  
+
   /**
    * Bootstrap status
    */
   status: 'not-bootstrapped' | 'bootstrapping' | 'bootstrapped' | 'failed';
-  
+
   /**
    * CDK Toolkit version
    */
   cdkVersion?: string;
-  
+
   /**
    * Bootstrap stack version
    */
   bootstrapVersion?: number;
-  
+
   /**
    * Last updated
    */
   lastUpdated?: string;
-  
+
   /**
    * Error message (if failed)
    */

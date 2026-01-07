@@ -1,974 +1,1116 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lattice AWS CDK - Production-Ready Infrastructure for Startups</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-</head>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
 
-<body>
+  <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer hexagon structure -->
-                    <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="#18181b" stroke-width="2" fill="none"/>
-                    <!-- Inner cube structure -->
-                    <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#18181b" stroke-width="2.5" fill="none"/>
-                    <!-- Connecting lines -->
-                    <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="#71717a" stroke-width="1.5"/>
-                    <!-- Center connections -->
-                    <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5"/>
-                    <circle cx="50" cy="40" r="2" fill="#18181b"/>
-                </svg>
-                <span class="logo-text">Lattice</span>
-            </div>
-            <div class="nav-links">
-                <a href="#platform">Platform</a>
-                <a href="#features">Features</a>
-                <a href="#pricing">Pricing</a>
-                <a href="documentation.html">Docs</a>
-                <a href="real-lattice-demo.html" class="nav-cta">Real Demo</a>
-            </div>
-            <div class="nav-mobile">
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg
+            class="logo-icon"
+            width="32"
+            height="32"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Outer hexagon structure -->
+            <path
+              d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+              stroke="#18181b"
+              stroke-width="2"
+              fill="none"
+            />
+            <!-- Inner cube structure -->
+            <path
+              d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+              stroke="#18181b"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <!-- Connecting lines -->
+            <path
+              d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+              stroke="#71717a"
+              stroke-width="1.5"
+            />
+            <!-- Center connections -->
+            <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5" />
+            <circle cx="50" cy="40" r="2" fill="#18181b" />
+          </svg>
+          <span class="logo-text">Lattice</span>
         </div>
+        <div class="nav-links">
+          <a href="#platform">Platform</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="documentation.html">Docs</a>
+          <a href="real-lattice-demo.html" class="nav-cta">Real Demo</a>
+        </div>
+        <div class="nav-mobile">
+          <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-icon">🚀</span>
-                    <span>Production-ready in days, not months</span>
-                </div>
-                <h1 class="hero-title">
-                    Production AWS Infrastructure<br>
-                    <span class="gradient-text">in days, not months</span>
-                </h1>
-                <p class="hero-subtitle">
-                    Lattice transforms simple JSON intents into production-ready AWS infrastructure with built-in security, 
-                    cost controls, and comprehensive monitoring. Perfect for AI code generation and startup growth.
-                </p>
-                <div class="hero-actions">
-                    <a href="real-lattice-demo.html" class="btn btn-primary btn-large">
-                        <span>🚀 Try Real Lattice Demo</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                    <a href="interactive-demo.html" class="btn btn-secondary btn-large">
-                        <span>📋 Interactive Builder</span>
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">7 days</div>
-                        <div class="stat-label">To production deployment</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">15 months</div>
-                        <div class="stat-label">DevOps hiring delay</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">30-50%</div>
-                        <div class="stat-label">AWS cost savings</div>
-                    </div>
-                </div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="badge-icon">🚀</span>
+            <span>Production-ready in days, not months</span>
+          </div>
+          <h1 class="hero-title">
+            Production AWS Infrastructure<br />
+            <span class="gradient-text">in days, not months</span>
+          </h1>
+          <p class="hero-subtitle">
+            Lattice transforms simple JSON intents into production-ready AWS infrastructure with
+            built-in security, cost controls, and comprehensive monitoring. Perfect for AI code
+            generation and startup growth.
+          </p>
+          <div class="hero-actions">
+            <a href="real-lattice-demo.html" class="btn btn-primary btn-large">
+              <span>🚀 Try Real Lattice Demo</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M6 12L10 8L6 4"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+            <a href="interactive-demo.html" class="btn btn-secondary btn-large">
+              <span>📋 Interactive Builder</span>
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number">7 days</div>
+              <div class="stat-label">To production deployment</div>
             </div>
-            <div class="hero-visual">
-                <div class="code-demo">
-                    <div class="code-window">
-                        <div class="code-header">
-                            <div class="code-dots">
-                                <span class="dot red"></span>
-                                <span class="dot yellow"></span>
-                                <span class="dot green"></span>
-                            </div>
-                            <span class="code-title">AI Intent → Production AWS</span>
-                        </div>
-                        <div class="code-content">
-                            <div class="code-line">
-                                <span class="comment">// AI generates this simple JSON</span>
-                            </div>
-                            <div class="code-line">
-                                <span class="keyword">const</span> <span class="variable">intent</span> = {
-                            </div>
-                            <div class="code-line indent">
-                                <span class="property">name</span>: <span class="string">'startup-api'</span>,
-                            </div>
-                            <div class="code-line indent">
-                                <span class="property">environment</span>: <span class="string">'prod'</span>,
-                            </div>
-                            <div class="code-line indent">
-                                <span class="property">highAvailability</span>: <span class="boolean">true</span>
-                            </div>
-                            <div class="code-line">
-                                };
-                            </div>
-                            <div class="code-line">
-                                <span class="comment">// Lattice handles the rest</span>
-                            </div>
-                            <div class="code-line">
-                                <span class="keyword">const</span> <span class="variable">stack</span> = <span class="keyword">new</span> <span class="class">LatticeStack</span>(<span class="variable">intent</span>);
-                            </div>
-                            <div class="code-line">
-                                <span class="comment">// ✅ Auto-secured, monitored, backed up!</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="output-arrow">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="aws-resources">
-                        <div class="resource-grid">
-                            <div class="resource-item">
-                                <div class="resource-icon">🌐</div>
-                                <span>VPC + Subnets</span>
-                            </div>
-                            <div class="resource-item">
-                                <div class="resource-icon">🔒</div>
-                                <span>Security Groups</span>
-                            </div>
-                            <div class="resource-item">
-                                <div class="resource-icon">⚡</div>
-                                <span>Lambda + API Gateway</span>
-                            </div>
-                            <div class="resource-item">
-                                <div class="resource-icon">🗄️</div>
-                                <span>RDS + Backups</span>
-                            </div>
-                            <div class="resource-item">
-                                <div class="resource-icon">🔍</div>
-                                <span>Threat Modeling</span>
-                            </div>
-                            <div class="resource-item">
-                                <div class="resource-icon">📊</div>
-                                <span>Auto Dashboards</span>
-                            </div>
-                            <div class="resource-item">
-                                <div class="resource-icon">🔄</div>
-                                <span>Backup Strategy</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="stat-item">
+              <div class="stat-number">15 months</div>
+              <div class="stat-label">DevOps hiring delay</div>
             </div>
+            <div class="stat-item">
+              <div class="stat-number">30-50%</div>
+              <div class="stat-label">AWS cost savings</div>
+            </div>
+          </div>
         </div>
+        <div class="hero-visual">
+          <div class="code-demo">
+            <div class="code-window">
+              <div class="code-header">
+                <div class="code-dots">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                </div>
+                <span class="code-title">AI Intent → Production AWS</span>
+              </div>
+              <div class="code-content">
+                <div class="code-line">
+                  <span class="comment">// AI generates this simple JSON</span>
+                </div>
+                <div class="code-line">
+                  <span class="keyword">const</span> <span class="variable">intent</span> = {
+                </div>
+                <div class="code-line indent">
+                  <span class="property">name</span>: <span class="string">'startup-api'</span>,
+                </div>
+                <div class="code-line indent">
+                  <span class="property">environment</span>: <span class="string">'prod'</span>,
+                </div>
+                <div class="code-line indent">
+                  <span class="property">highAvailability</span>: <span class="boolean">true</span>
+                </div>
+                <div class="code-line">};</div>
+                <div class="code-line">
+                  <span class="comment">// Lattice handles the rest</span>
+                </div>
+                <div class="code-line">
+                  <span class="keyword">const</span> <span class="variable">stack</span> =
+                  <span class="keyword">new</span> <span class="class">LatticeStack</span>(<span
+                    class="variable"
+                    >intent</span
+                  >);
+                </div>
+                <div class="code-line">
+                  <span class="comment">// ✅ Auto-secured, monitored, backed up!</span>
+                </div>
+              </div>
+            </div>
+            <div class="output-arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 12H19M19 12L12 5M19 12L12 19"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div class="aws-resources">
+              <div class="resource-grid">
+                <div class="resource-item">
+                  <div class="resource-icon">🌐</div>
+                  <span>VPC + Subnets</span>
+                </div>
+                <div class="resource-item">
+                  <div class="resource-icon">🔒</div>
+                  <span>Security Groups</span>
+                </div>
+                <div class="resource-item">
+                  <div class="resource-icon">⚡</div>
+                  <span>Lambda + API Gateway</span>
+                </div>
+                <div class="resource-item">
+                  <div class="resource-icon">🗄️</div>
+                  <span>RDS + Backups</span>
+                </div>
+                <div class="resource-item">
+                  <div class="resource-icon">🔍</div>
+                  <span>Threat Modeling</span>
+                </div>
+                <div class="resource-item">
+                  <div class="resource-icon">📊</div>
+                  <span>Auto Dashboards</span>
+                </div>
+                <div class="resource-item">
+                  <div class="resource-icon">🔄</div>
+                  <span>Backup Strategy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- How It Works Section -->
     <section id="how-it-works" class="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How Lattice Works</h2>
+        <p class="section-subtitle">
+          Three layers that transform AI intents into production-ready AWS infrastructure
+        </p>
+      </div>
+
+      <!-- Layer 1: AI Intent -->
+      <div class="layer-section" data-layer="1">
         <div class="container">
-            <h2 class="section-title">How Lattice Works</h2>
-            <p class="section-subtitle">Three layers that transform AI intents into production-ready AWS infrastructure
+          <div class="layer-content">
+            <div class="layer-info">
+              <div class="layer-number">01</div>
+              <h3 class="layer-title">AI Intent Layer</h3>
+              <p class="layer-description">
+                AI systems generate simple, declarative JSON that describes what you want to build.
+                No complex AWS syntax or configuration required.
+              </p>
+              <div class="layer-features">
+                <div class="feature-item">
+                  <span class="feature-icon">🤖</span>
+                  <span>AI-Friendly Interfaces</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">📝</span>
+                  <span>Simple JSON Schema</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">⚡</span>
+                  <span>Zero AWS Knowledge Required</span>
+                </div>
+              </div>
+            </div>
+            <div class="layer-visual">
+              <div class="visual-card intent-card">
+                <div class="card-header">AI Intent</div>
+                <div class="card-content">
+                  <div class="intent-block">
+                    <span class="intent-label">Network</span>
+                    <span class="intent-value">High Availability VPC</span>
+                  </div>
+                  <div class="intent-block">
+                    <span class="intent-label">Storage</span>
+                    <span class="intent-value">Encrypted S3 Bucket</span>
+                  </div>
+                  <div class="intent-block">
+                    <span class="intent-label">Database</span>
+                    <span class="intent-value">PostgreSQL with Backups</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 2: Lattice Framework -->
+      <div class="layer-section" data-layer="2">
+        <div class="container">
+          <div class="layer-content reverse">
+            <div class="layer-visual">
+              <div class="visual-card framework-card">
+                <div class="card-header">Lattice Framework</div>
+                <div class="card-content">
+                  <div class="framework-modules">
+                    <div class="module-item">
+                      <span class="module-icon">🌐</span>
+                      <span>Network Module</span>
+                    </div>
+                    <div class="module-item">
+                      <span class="module-icon">🗄️</span>
+                      <span>Storage Module</span>
+                    </div>
+                    <div class="module-item">
+                      <span class="module-icon">🔐</span>
+                      <span>Identity Module</span>
+                    </div>
+                    <div class="module-item">
+                      <span class="module-icon">🗃️</span>
+                      <span>Database Module</span>
+                    </div>
+                    <div class="module-item">
+                      <span class="module-icon">⚙️</span>
+                      <span>Compute Module</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="layer-info">
+              <div class="layer-number">02</div>
+              <h3 class="layer-title">Lattice Framework</h3>
+              <p class="layer-description">
+                The framework translates simple intents into complex AWS CDK constructs. Each module
+                handles a specific domain with best practices built-in.
+              </p>
+              <div class="layer-features">
+                <div class="feature-item">
+                  <span class="feature-icon">🏗️</span>
+                  <span>5 Core Modules</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">🔧</span>
+                  <span>AWS CDK Native</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">📚</span>
+                  <span>Best Practices Built-in</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 3: Guardrails -->
+      <div class="layer-section" data-layer="3">
+        <div class="container">
+          <div class="layer-content">
+            <div class="layer-info">
+              <div class="layer-number">03</div>
+              <h3 class="layer-title">Guardrails Layer</h3>
+              <p class="layer-description">
+                Lattice Aspects act as the "Final Inspector" - automatically applying security, cost
+                controls, and governance policies to ALL resources.
+              </p>
+              <div class="layer-features">
+                <div class="feature-item">
+                  <span class="feature-icon">🛡️</span>
+                  <span>Security Enforcement</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">💰</span>
+                  <span>Cost Controls</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">🏷️</span>
+                  <span>Auto Tagging</span>
+                </div>
+              </div>
+            </div>
+            <div class="layer-visual">
+              <div class="visual-card guardrails-card">
+                <div class="card-header">Guardrails</div>
+                <div class="card-content">
+                  <div class="guardrail-item">
+                    <div class="guardrail-icon security">🛡️</div>
+                    <div class="guardrail-info">
+                      <span class="guardrail-name">Security Aspect</span>
+                      <span class="guardrail-desc">Encryption, Access Controls</span>
+                    </div>
+                    <div class="guardrail-status">✅</div>
+                  </div>
+                  <div class="guardrail-item">
+                    <div class="guardrail-icon cost">💰</div>
+                    <div class="guardrail-info">
+                      <span class="guardrail-name">Cost Aspect</span>
+                      <span class="guardrail-desc">Size Validation</span>
+                    </div>
+                    <div class="guardrail-status">✅</div>
+                  </div>
+                  <div class="guardrail-item">
+                    <div class="guardrail-icon tagging">🏷️</div>
+                    <div class="guardrail-info">
+                      <span class="guardrail-name">Tagging Aspect</span>
+                      <span class="guardrail-desc">Resource Organization</span>
+                    </div>
+                    <div class="guardrail-status">✅</div>
+                  </div>
+                  <div class="guardrail-item">
+                    <div class="guardrail-icon tagging">🏷️</div>
+                    <div class="guardrail-info">
+                      <span class="guardrail-name">Tagging Aspect</span>
+                      <span class="guardrail-desc">Resource Organization</span>
+                    </div>
+                    <div class="guardrail-status">✅</div>
+                  </div>
+                  <div class="guardrail-item">
+                    <div class="guardrail-icon sustainability">🌱</div>
+                    <div class="guardrail-info">
+                      <span class="guardrail-name">Sustainability</span>
+                      <span class="guardrail-desc">Graviton Optimization</span>
+                    </div>
+                    <div class="guardrail-status">✅</div>
+                  </div>
+                  <div class="guardrail-item">
+                    <div class="guardrail-icon observability">📊</div>
+                    <div class="guardrail-info">
+                      <span class="guardrail-name">Observability</span>
+                      <span class="guardrail-desc">Auto-Dashboards</span>
+                    </div>
+                    <div class="guardrail-status">✅</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="result-section">
+        <div class="container">
+          <div class="result-content">
+            <h3 class="result-title">Result: Production-Ready AWS Infrastructure</h3>
+            <p class="result-description">
+              Secure, cost-controlled, and properly tagged AWS resources that follow best practices
             </p>
-        </div>
-
-        <!-- Layer 1: AI Intent -->
-        <div class="layer-section" data-layer="1">
-            <div class="container">
-                <div class="layer-content">
-                    <div class="layer-info">
-                        <div class="layer-number">01</div>
-                        <h3 class="layer-title">AI Intent Layer</h3>
-                        <p class="layer-description">
-                            AI systems generate simple, declarative JSON that describes what you want to build.
-                            No complex AWS syntax or configuration required.
-                        </p>
-                        <div class="layer-features">
-                            <div class="feature-item">
-                                <span class="feature-icon">🤖</span>
-                                <span>AI-Friendly Interfaces</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-icon">📝</span>
-                                <span>Simple JSON Schema</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-icon">⚡</span>
-                                <span>Zero AWS Knowledge Required</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layer-visual">
-                        <div class="visual-card intent-card">
-                            <div class="card-header">AI Intent</div>
-                            <div class="card-content">
-                                <div class="intent-block">
-                                    <span class="intent-label">Network</span>
-                                    <span class="intent-value">High Availability VPC</span>
-                                </div>
-                                <div class="intent-block">
-                                    <span class="intent-label">Storage</span>
-                                    <span class="intent-value">Encrypted S3 Bucket</span>
-                                </div>
-                                <div class="intent-block">
-                                    <span class="intent-label">Database</span>
-                                    <span class="intent-value">PostgreSQL with Backups</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="result-grid">
+              <div class="result-item">
+                <span class="result-icon">🔒</span>
+                <span class="result-text">Encrypted by Default</span>
+              </div>
+              <div class="result-item">
+                <span class="result-icon">💸</span>
+                <span class="result-text">Cost Optimized</span>
+              </div>
+              <div class="result-item">
+                <span class="result-icon">🏷️</span>
+                <span class="result-text">Properly Tagged</span>
+              </div>
+              <div class="result-item">
+                <span class="result-icon">⚡</span>
+                <span class="result-text">High Performance</span>
+              </div>
             </div>
+          </div>
         </div>
-
-        <!-- Layer 2: Lattice Framework -->
-        <div class="layer-section" data-layer="2">
-            <div class="container">
-                <div class="layer-content reverse">
-                    <div class="layer-visual">
-                        <div class="visual-card framework-card">
-                            <div class="card-header">Lattice Framework</div>
-                            <div class="card-content">
-                                <div class="framework-modules">
-                                    <div class="module-item">
-                                        <span class="module-icon">🌐</span>
-                                        <span>Network Module</span>
-                                    </div>
-                                    <div class="module-item">
-                                        <span class="module-icon">🗄️</span>
-                                        <span>Storage Module</span>
-                                    </div>
-                                    <div class="module-item">
-                                        <span class="module-icon">🔐</span>
-                                        <span>Identity Module</span>
-                                    </div>
-                                    <div class="module-item">
-                                        <span class="module-icon">🗃️</span>
-                                        <span>Database Module</span>
-                                    </div>
-                                    <div class="module-item">
-                                        <span class="module-icon">⚙️</span>
-                                        <span>Compute Module</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layer-info">
-                        <div class="layer-number">02</div>
-                        <h3 class="layer-title">Lattice Framework</h3>
-                        <p class="layer-description">
-                            The framework translates simple intents into complex AWS CDK constructs.
-                            Each module handles a specific domain with best practices built-in.
-                        </p>
-                        <div class="layer-features">
-                            <div class="feature-item">
-                                <span class="feature-icon">🏗️</span>
-                                <span>5 Core Modules</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-icon">🔧</span>
-                                <span>AWS CDK Native</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-icon">📚</span>
-                                <span>Best Practices Built-in</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Layer 3: Guardrails -->
-        <div class="layer-section" data-layer="3">
-            <div class="container">
-                <div class="layer-content">
-                    <div class="layer-info">
-                        <div class="layer-number">03</div>
-                        <h3 class="layer-title">Guardrails Layer</h3>
-                        <p class="layer-description">
-                            Lattice Aspects act as the "Final Inspector" - automatically applying security,
-                            cost controls, and governance policies to ALL resources.
-                        </p>
-                        <div class="layer-features">
-                            <div class="feature-item">
-                                <span class="feature-icon">🛡️</span>
-                                <span>Security Enforcement</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-icon">💰</span>
-                                <span>Cost Controls</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-icon">🏷️</span>
-                                <span>Auto Tagging</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layer-visual">
-                        <div class="visual-card guardrails-card">
-                            <div class="card-header">Guardrails</div>
-                            <div class="card-content">
-                                <div class="guardrail-item">
-                                    <div class="guardrail-icon security">🛡️</div>
-                                    <div class="guardrail-info">
-                                        <span class="guardrail-name">Security Aspect</span>
-                                        <span class="guardrail-desc">Encryption, Access Controls</span>
-                                    </div>
-                                    <div class="guardrail-status">✅</div>
-                                </div>
-                                <div class="guardrail-item">
-                                    <div class="guardrail-icon cost">💰</div>
-                                    <div class="guardrail-info">
-                                        <span class="guardrail-name">Cost Aspect</span>
-                                        <span class="guardrail-desc">Size Validation</span>
-                                    </div>
-                                    <div class="guardrail-status">✅</div>
-                                </div>
-                                <div class="guardrail-item">
-                                    <div class="guardrail-icon tagging">🏷️</div>
-                                    <div class="guardrail-info">
-                                        <span class="guardrail-name">Tagging Aspect</span>
-                                        <span class="guardrail-desc">Resource Organization</span>
-                                    </div>
-                                    <div class="guardrail-status">✅</div>
-                                </div>
-                                <div class="guardrail-item">
-                                    <div class="guardrail-icon tagging">🏷️</div>
-                                    <div class="guardrail-info">
-                                        <span class="guardrail-name">Tagging Aspect</span>
-                                        <span class="guardrail-desc">Resource Organization</span>
-                                    </div>
-                                    <div class="guardrail-status">✅</div>
-                                </div>
-                                <div class="guardrail-item">
-                                    <div class="guardrail-icon sustainability">🌱</div>
-                                    <div class="guardrail-info">
-                                        <span class="guardrail-name">Sustainability</span>
-                                        <span class="guardrail-desc">Graviton Optimization</span>
-                                    </div>
-                                    <div class="guardrail-status">✅</div>
-                                </div>
-                                <div class="guardrail-item">
-                                    <div class="guardrail-icon observability">📊</div>
-                                    <div class="guardrail-info">
-                                        <span class="guardrail-name">Observability</span>
-                                        <span class="guardrail-desc">Auto-Dashboards</span>
-                                    </div>
-                                    <div class="guardrail-status">✅</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Result -->
-        <div class="result-section">
-            <div class="container">
-                <div class="result-content">
-                    <h3 class="result-title">Result: Production-Ready AWS Infrastructure</h3>
-                    <p class="result-description">
-                        Secure, cost-controlled, and properly tagged AWS resources that follow best practices
-                    </p>
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <span class="result-icon">🔒</span>
-                            <span class="result-text">Encrypted by Default</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-icon">💸</span>
-                            <span class="result-text">Cost Optimized</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-icon">🏷️</span>
-                            <span class="result-text">Properly Tagged</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-icon">⚡</span>
-                            <span class="result-text">High Performance</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </section>
 
     <!-- Demo Section -->
-    <section id="platform" class="demo-section" style="padding: 4rem 0; background: #f8fafc;">
-        <div class="container">
-            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">Experience Lattice in Action</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; max-width: 1000px; margin: 0 auto;">
-                
-                <!-- Real Lattice Demo Card -->
-                <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); text-align: center; border: 2px solid #007AFF;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #111827;">Real Lattice Framework</h3>
-                    <p style="color: #6b7280; margin-bottom: 2rem; line-height: 1.6;">
-                        Experience the actual Lattice framework in action. Uses real CDK code generation, 
-                        TypeScript validation, and CloudFormation synthesis.
-                    </p>
-                    <a href="real-lattice-demo.html" class="btn btn-primary" style="width: 100%;">
-                        <span>🚀 Try Real Demo</span>
-                    </a>
-                </div>
+    <section id="platform" class="demo-section" style="padding: 4rem 0; background: #f8fafc">
+      <div class="container">
+        <h2 class="section-title" style="text-align: center; margin-bottom: 3rem">
+          Experience Lattice in Action
+        </h2>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+          "
+        >
+          <!-- Real Lattice Demo Card -->
+          <div
+            style="
+              background: white;
+              border-radius: 16px;
+              padding: 2rem;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+              text-align: center;
+              border: 2px solid #007aff;
+            "
+          >
+            <div style="font-size: 3rem; margin-bottom: 1rem">🚀</div>
+            <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #111827">
+              Real Lattice Framework
+            </h3>
+            <p style="color: #6b7280; margin-bottom: 2rem; line-height: 1.6">
+              Experience the actual Lattice framework in action. Uses real CDK code generation,
+              TypeScript validation, and CloudFormation synthesis.
+            </p>
+            <a href="real-lattice-demo.html" class="btn btn-primary" style="width: 100%">
+              <span>🚀 Try Real Demo</span>
+            </a>
+          </div>
 
-                <!-- Interactive Demo Card -->
-                <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏗️</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #111827;">Infrastructure Builder</h3>
-                    <p style="color: #6b7280; margin-bottom: 2rem; line-height: 1.6;">
-                        Configure your SaaS application with a visual interface. Select features, set environment, 
-                        and generate production-ready CloudFormation templates.
-                    </p>
-                    <a href="interactive-demo.html" class="btn btn-secondary" style="width: 100%;">
-                        <span>Try Interactive Demo</span>
-                    </a>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem;">
-                <p style="color: #6b7280; font-size: 1.1rem;">
-                    Both demos generate real CloudFormation templates you can deploy to AWS
-                </p>
-            </div>
+          <!-- Interactive Demo Card -->
+          <div
+            style="
+              background: white;
+              border-radius: 16px;
+              padding: 2rem;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+              text-align: center;
+            "
+          >
+            <div style="font-size: 3rem; margin-bottom: 1rem">🏗️</div>
+            <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #111827">
+              Infrastructure Builder
+            </h3>
+            <p style="color: #6b7280; margin-bottom: 2rem; line-height: 1.6">
+              Configure your SaaS application with a visual interface. Select features, set
+              environment, and generate production-ready CloudFormation templates.
+            </p>
+            <a href="interactive-demo.html" class="btn btn-secondary" style="width: 100%">
+              <span>Try Interactive Demo</span>
+            </a>
+          </div>
         </div>
+
+        <div style="text-align: center; margin-top: 3rem">
+          <p style="color: #6b7280; font-size: 1.1rem">
+            Both demos generate real CloudFormation templates you can deploy to AWS
+          </p>
+        </div>
+      </div>
     </section>
 
     <!-- Features Section -->
     <section id="features" class="features">
-        <div class="container">
-            <h2 class="section-title">Why Choose Lattice?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
-                    <h3 class="feature-title">AI-First Design</h3>
-                    <p class="feature-description">
-                        Simple JSON interfaces designed specifically for AI code generation systems
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3 class="feature-title">Built-in Security</h3>
-                    <p class="feature-description">
-                        Automatic encryption, access controls, and security best practices
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💰</div>
-                    <h3 class="feature-title">Cost Control</h3>
-                    <p class="feature-description">
-                        Environment-based resource sizing and cost optimization guardrails
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3 class="feature-title">AWS Native</h3>
-                    <p class="feature-description">
-                        Built on AWS CDK for type safety and seamless AWS integration
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3 class="feature-title">Automated Threat Modeling</h3>
-                    <p class="feature-description">
-                        STRIDE analysis and security reports generated automatically at deployment time
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3 class="feature-title">Comprehensive Monitoring</h3>
-                    <p class="feature-description">
-                        Role-based dashboards and environment-aware alarms for all infrastructure
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
-                    <h3 class="feature-title">Cross-Account Deployment</h3>
-                    <p class="feature-description">
-                        Deploy across multiple AWS accounts with built-in governance and security
-                    </p>
-                </div>
-            </div>
+      <div class="container">
+        <h2 class="section-title">Why Choose Lattice?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title">AI-First Design</h3>
+            <p class="feature-description">
+              Simple JSON interfaces designed specifically for AI code generation systems
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title">Built-in Security</h3>
+            <p class="feature-description">
+              Automatic encryption, access controls, and security best practices
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3 class="feature-title">Cost Control</h3>
+            <p class="feature-description">
+              Environment-based resource sizing and cost optimization guardrails
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title">AWS Native</h3>
+            <p class="feature-description">
+              Built on AWS CDK for type safety and seamless AWS integration
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3 class="feature-title">Automated Threat Modeling</h3>
+            <p class="feature-description">
+              STRIDE analysis and security reports generated automatically at deployment time
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Comprehensive Monitoring</h3>
+            <p class="feature-description">
+              Role-based dashboards and environment-aware alarms for all infrastructure
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3 class="feature-title">Cross-Account Deployment</h3>
+            <p class="feature-description">
+              Deploy across multiple AWS accounts with built-in governance and security
+            </p>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Pricing Section -->
     <section id="pricing" class="pricing">
-        <div class="container">
-            <div class="pricing-header">
-                <h2 class="section-title">Choose Your Infrastructure Journey</h2>
-                <p class="section-subtitle">
-                    From prototype to enterprise scale - Lattice grows with your startup
-                </p>
-            </div>
-            
-            <div class="pricing-grid">
-                <!-- Starter Package -->
-                <div class="pricing-card starter">
-                    <div class="pricing-badge">Most Popular</div>
-                    <div class="pricing-header-card">
-                        <h3 class="pricing-title">Starter</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$299</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for early-stage startups (2-10 developers) building their first production infrastructure</p>
-                    </div>
-                    
-                    <div class="pricing-features">
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Infrastructure</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Up to 3 environments (dev, staging, prod)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Single AWS region deployment</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>5 core modules (Network, Storage, Database, Identity, Compute)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Built-in security & cost guardrails</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Automated threat modeling & compliance docs</span>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Support & Services</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Initial architecture consultation (2 hours)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Email support (48h response)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Monthly infrastructure health check</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Monthly cost optimization report</span>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Monitoring & Optimization</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Auto-generated CloudWatch dashboards</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Environment-aware alarms & monitoring</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Automated backup strategies</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-cta">
-                        <a href="interactive-demo.html" class="btn btn-primary btn-full">Start Free Trial</a>
-                        <p class="pricing-note">14-day free trial • No credit card required</p>
-                    </div>
-                </div>
-
-                <!-- Growth Package -->
-                <div class="pricing-card growth">
-                    <div class="pricing-header-card">
-                        <h3 class="pricing-title">Growth</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$799</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p class="pricing-description">For scaling startups (10-50 developers) expanding globally and building complex systems</p>
-                    </div>
-                    
-                    <div class="pricing-features">
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Infrastructure</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Unlimited environments</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Multi-region deployment</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Cross-account deployment patterns</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Custom escape hatches & extensions</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Advanced queue & website modules</span>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Support & Services</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Dedicated solutions architect (4 hours/month)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Priority support (24h response)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Quarterly architecture reviews</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Advanced threat modeling & SOC2 prep</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Team training sessions (2 per quarter)</span>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Monitoring & Optimization</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Role-based dashboards (Dev, SRE, CTO, Security)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Weekly cost optimization insights</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Performance optimization recommendations</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Disaster recovery planning</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-cta">
-                        <a href="#contact" class="btn btn-primary btn-full">Schedule Demo</a>
-                        <p class="pricing-note">Custom onboarding included</p>
-                    </div>
-                </div>
-
-                <!-- Enterprise Package -->
-                <div class="pricing-card enterprise">
-                    <div class="pricing-header-card">
-                        <h3 class="pricing-title">Enterprise</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">Custom</span>
-                            <span class="price-period">pricing</span>
-                        </div>
-                        <p class="pricing-description">For large organizations requiring standardization and compliance across teams</p>
-                    </div>
-                    
-                    <div class="pricing-features">
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Infrastructure</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Multi-account AWS organization setup</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Custom governance policies</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Private Lattice modules & extensions</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Integration with existing CI/CD</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>On-premises hybrid connectivity</span>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Support & Services</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Dedicated customer success manager</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>24/7 priority support (4h response)</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Monthly executive business reviews</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Full compliance certification support</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Unlimited team training & workshops</span>
-                            </div>
-                        </div>
-                        
-                        <div class="feature-group">
-                            <h4 class="feature-group-title">Enterprise Features</h4>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Advanced security & audit logging</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Custom SLA agreements</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Professional services for migration</span>
-                            </div>
-                            <div class="feature-item">
-                                <span class="feature-check">✅</span>
-                                <span>Volume discounts on AWS costs</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-cta">
-                        <a href="#contact" class="btn btn-secondary btn-full">Contact Sales</a>
-                        <p class="pricing-note">Custom implementation & migration included</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Pricing FAQ -->
-            <div class="pricing-faq">
-                <h3 class="faq-title">Frequently Asked Questions</h3>
-                <div class="faq-grid">
-                    <div class="faq-item">
-                        <h4 class="faq-question">What about AWS costs?</h4>
-                        <p class="faq-answer">Lattice pricing is separate from your AWS infrastructure costs. We help optimize your AWS spending through environment-appropriate sizing and cost monitoring, typically saving 30-50% on AWS bills.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h4 class="faq-question">How does this compare to hiring a DevOps engineer?</h4>
-                        <p class="faq-answer">Hiring a DevOps engineer costs $120k-180k/year plus 3-6 months recruitment time, then another 3-6 months for them to build production infrastructure. That's 6-12 months and $150k+ before you're production-ready. Lattice gets you there in 1 week for $299/month, letting you focus your budget and timeline on building your product instead.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h4 class="faq-question">What if we need to scale globally?</h4>
-                        <p class="faq-answer">Traditional global expansion requires senior infrastructure architects ($200k-300k/year) and 12-18 months of complex multi-region setup. Our Growth package includes global deployment patterns and dedicated architectural guidance for $799/month - you'll be live in multiple regions within weeks, not months.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h4 class="faq-question">Do you offer custom solutions?</h4>
-                        <p class="faq-answer">Yes! Our Growth and Enterprise plans include custom modules and escape hatches for unique requirements. We've never met a use case we couldn't handle with our flexible architecture.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h4 class="faq-question">What's included in support?</h4>
-                        <p class="faq-answer">All plans include infrastructure consultation, health checks, and ongoing optimization. Higher tiers get dedicated architects, faster response times, and comprehensive training sessions.</p>
-                    </div>
-                </div>
-            </div>
+      <div class="container">
+        <div class="pricing-header">
+          <h2 class="section-title">Choose Your Infrastructure Journey</h2>
+          <p class="section-subtitle">
+            From prototype to enterprise scale - Lattice grows with your startup
+          </p>
         </div>
+
+        <div class="pricing-grid">
+          <!-- Starter Package -->
+          <div class="pricing-card starter">
+            <div class="pricing-badge">Most Popular</div>
+            <div class="pricing-header-card">
+              <h3 class="pricing-title">Starter</h3>
+              <div class="pricing-price">
+                <span class="price-amount">$299</span>
+                <span class="price-period">/month</span>
+              </div>
+              <p class="pricing-description">
+                Perfect for early-stage startups (2-10 developers) building their first production
+                infrastructure
+              </p>
+            </div>
+
+            <div class="pricing-features">
+              <div class="feature-group">
+                <h4 class="feature-group-title">Infrastructure</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Up to 3 environments (dev, staging, prod)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Single AWS region deployment</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>5 core modules (Network, Storage, Database, Identity, Compute)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Built-in security & cost guardrails</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Automated threat modeling & compliance docs</span>
+                </div>
+              </div>
+
+              <div class="feature-group">
+                <h4 class="feature-group-title">Support & Services</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Initial architecture consultation (2 hours)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Email support (48h response)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Monthly infrastructure health check</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Monthly cost optimization report</span>
+                </div>
+              </div>
+
+              <div class="feature-group">
+                <h4 class="feature-group-title">Monitoring & Optimization</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Auto-generated CloudWatch dashboards</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Environment-aware alarms & monitoring</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Automated backup strategies</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pricing-cta">
+              <a href="interactive-demo.html" class="btn btn-primary btn-full">Start Free Trial</a>
+              <p class="pricing-note">14-day free trial • No credit card required</p>
+            </div>
+          </div>
+
+          <!-- Growth Package -->
+          <div class="pricing-card growth">
+            <div class="pricing-header-card">
+              <h3 class="pricing-title">Growth</h3>
+              <div class="pricing-price">
+                <span class="price-amount">$799</span>
+                <span class="price-period">/month</span>
+              </div>
+              <p class="pricing-description">
+                For scaling startups (10-50 developers) expanding globally and building complex
+                systems
+              </p>
+            </div>
+
+            <div class="pricing-features">
+              <div class="feature-group">
+                <h4 class="feature-group-title">Infrastructure</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Unlimited environments</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Multi-region deployment</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Cross-account deployment patterns</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Custom escape hatches & extensions</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Advanced queue & website modules</span>
+                </div>
+              </div>
+
+              <div class="feature-group">
+                <h4 class="feature-group-title">Support & Services</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Dedicated solutions architect (4 hours/month)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Priority support (24h response)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Quarterly architecture reviews</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Advanced threat modeling & SOC2 prep</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Team training sessions (2 per quarter)</span>
+                </div>
+              </div>
+
+              <div class="feature-group">
+                <h4 class="feature-group-title">Monitoring & Optimization</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Role-based dashboards (Dev, SRE, CTO, Security)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Weekly cost optimization insights</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Performance optimization recommendations</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Disaster recovery planning</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pricing-cta">
+              <a href="#contact" class="btn btn-primary btn-full">Schedule Demo</a>
+              <p class="pricing-note">Custom onboarding included</p>
+            </div>
+          </div>
+
+          <!-- Enterprise Package -->
+          <div class="pricing-card enterprise">
+            <div class="pricing-header-card">
+              <h3 class="pricing-title">Enterprise</h3>
+              <div class="pricing-price">
+                <span class="price-amount">Custom</span>
+                <span class="price-period">pricing</span>
+              </div>
+              <p class="pricing-description">
+                For large organizations requiring standardization and compliance across teams
+              </p>
+            </div>
+
+            <div class="pricing-features">
+              <div class="feature-group">
+                <h4 class="feature-group-title">Infrastructure</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Multi-account AWS organization setup</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Custom governance policies</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Private Lattice modules & extensions</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Integration with existing CI/CD</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>On-premises hybrid connectivity</span>
+                </div>
+              </div>
+
+              <div class="feature-group">
+                <h4 class="feature-group-title">Support & Services</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Dedicated customer success manager</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>24/7 priority support (4h response)</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Monthly executive business reviews</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Full compliance certification support</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Unlimited team training & workshops</span>
+                </div>
+              </div>
+
+              <div class="feature-group">
+                <h4 class="feature-group-title">Enterprise Features</h4>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Advanced security & audit logging</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Custom SLA agreements</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Professional services for migration</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✅</span>
+                  <span>Volume discounts on AWS costs</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pricing-cta">
+              <a href="#contact" class="btn btn-secondary btn-full">Contact Sales</a>
+              <p class="pricing-note">Custom implementation & migration included</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing FAQ -->
+        <div class="pricing-faq">
+          <h3 class="faq-title">Frequently Asked Questions</h3>
+          <div class="faq-grid">
+            <div class="faq-item">
+              <h4 class="faq-question">What about AWS costs?</h4>
+              <p class="faq-answer">
+                Lattice pricing is separate from your AWS infrastructure costs. We help optimize
+                your AWS spending through environment-appropriate sizing and cost monitoring,
+                typically saving 30-50% on AWS bills.
+              </p>
+            </div>
+            <div class="faq-item">
+              <h4 class="faq-question">How does this compare to hiring a DevOps engineer?</h4>
+              <p class="faq-answer">
+                Hiring a DevOps engineer costs $120k-180k/year plus 3-6 months recruitment time,
+                then another 3-6 months for them to build production infrastructure. That's 6-12
+                months and $150k+ before you're production-ready. Lattice gets you there in 1 week
+                for $299/month, letting you focus your budget and timeline on building your product
+                instead.
+              </p>
+            </div>
+            <div class="faq-item">
+              <h4 class="faq-question">What if we need to scale globally?</h4>
+              <p class="faq-answer">
+                Traditional global expansion requires senior infrastructure architects
+                ($200k-300k/year) and 12-18 months of complex multi-region setup. Our Growth package
+                includes global deployment patterns and dedicated architectural guidance for
+                $799/month - you'll be live in multiple regions within weeks, not months.
+              </p>
+            </div>
+            <div class="faq-item">
+              <h4 class="faq-question">Do you offer custom solutions?</h4>
+              <p class="faq-answer">
+                Yes! Our Growth and Enterprise plans include custom modules and escape hatches for
+                unique requirements. We've never met a use case we couldn't handle with our flexible
+                architecture.
+              </p>
+            </div>
+            <div class="faq-item">
+              <h4 class="faq-question">What's included in support?</h4>
+              <p class="faq-answer">
+                All plans include infrastructure consultation, health checks, and ongoing
+                optimization. Higher tiers get dedicated architects, faster response times, and
+                comprehensive training sessions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Social Proof Section -->
     <section class="social-proof">
-        <div class="container">
-            <h2 class="section-title">Trusted by Growing Startups</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p>"Lattice let us deploy production infrastructure in our first week. We went from idea to paying customers without hiring a DevOps engineer."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-info">
-                            <h4 class="author-name">Sarah Chen</h4>
-                            <p class="author-title">CTO, TechFlow (YC S23)</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p>"The built-in security and compliance features saved us months of work. We passed our SOC2 audit on the first try."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-info">
-                            <h4 class="author-name">Marcus Rodriguez</h4>
-                            <p class="author-title">Founder, DataSync Pro</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p>"Scaling to 5 AWS regions was seamless with Lattice. Our infrastructure costs stayed predictable even as we grew 10x."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-info">
-                            <h4 class="author-name">Emily Watson</h4>
-                            <p class="author-title">VP Engineering, CloudScale</p>
-                        </div>
-                    </div>
-                </div>
+      <div class="container">
+        <h2 class="section-title">Trusted by Growing Startups</h2>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <p>
+                "Lattice let us deploy production infrastructure in our first week. We went from
+                idea to paying customers without hiring a DevOps engineer."
+              </p>
             </div>
+            <div class="testimonial-author">
+              <div class="author-info">
+                <h4 class="author-name">Sarah Chen</h4>
+                <p class="author-title">CTO, TechFlow (YC S23)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <p>
+                "The built-in security and compliance features saved us months of work. We passed
+                our SOC2 audit on the first try."
+              </p>
+            </div>
+            <div class="testimonial-author">
+              <div class="author-info">
+                <h4 class="author-name">Marcus Rodriguez</h4>
+                <p class="author-title">Founder, DataSync Pro</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <p>
+                "Scaling to 5 AWS regions was seamless with Lattice. Our infrastructure costs stayed
+                predictable even as we grew 10x."
+              </p>
+            </div>
+            <div class="testimonial-author">
+              <div class="author-info">
+                <h4 class="author-name">Emily Watson</h4>
+                <p class="author-title">VP Engineering, CloudScale</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- CTA Section -->
     <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2 class="cta-title">Ready to Build Production Infrastructure?</h2>
-                <p class="cta-description">
-                    Join hundreds of startups using Lattice to deploy secure, scalable AWS infrastructure without DevOps expertise
-                </p>
-                <div class="cta-actions">
-                    <a href="interactive-demo.html" class="btn btn-primary btn-large">Start Free Trial</a>
-                    <a href="#contact" class="btn btn-secondary btn-large">Schedule Demo</a>
-                </div>
-                <div class="cta-features">
-                    <div class="cta-feature">
-                        <span class="cta-feature-icon">⚡</span>
-                        <span>Deploy in minutes, not months</span>
-                    </div>
-                    <div class="cta-feature">
-                        <span class="cta-feature-icon">🛡️</span>
-                        <span>Security & compliance built-in</span>
-                    </div>
-                    <div class="cta-feature">
-                        <span class="cta-feature-icon">💰</span>
-                        <span>Optimize AWS costs automatically</span>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title">Ready to Build Production Infrastructure?</h2>
+          <p class="cta-description">
+            Join hundreds of startups using Lattice to deploy secure, scalable AWS infrastructure
+            without DevOps expertise
+          </p>
+          <div class="cta-actions">
+            <a href="interactive-demo.html" class="btn btn-primary btn-large">Start Free Trial</a>
+            <a href="#contact" class="btn btn-secondary btn-large">Schedule Demo</a>
+          </div>
+          <div class="cta-features">
+            <div class="cta-feature">
+              <span class="cta-feature-icon">⚡</span>
+              <span>Deploy in minutes, not months</span>
             </div>
+            <div class="cta-feature">
+              <span class="cta-feature-icon">🛡️</span>
+              <span>Security & compliance built-in</span>
+            </div>
+            <div class="cta-feature">
+              <span class="cta-feature-icon">💰</span>
+              <span>Optimize AWS costs automatically</span>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="contact">
-        <div class="container">
-            <div class="contact-content">
-                <h2 class="section-title">Get Started Today</h2>
-                <p class="section-subtitle">Ready to transform your infrastructure? Let's talk.</p>
-                
-                <div class="contact-grid">
-                    <div class="contact-info">
-                        <h3>Contact Information</h3>
-                        <div class="contact-item">
-                            <span class="contact-icon">📧</span>
-                            <div class="contact-details">
-                                <h4>Email</h4>
-                                <p>bhavdeepsachdeva@gmail.com</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">🌐</span>
-                            <div class="contact-details">
-                                <h4>Website</h4>
-                                <p>https://bhavdeep98.github.io</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">⚡</span>
-                            <div class="contact-details">
-                                <h4>Response Time</h4>
-                                <p>Within 24 hours</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-form">
-                        <form class="demo-request-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" id="name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="company">Company</label>
-                                <input type="text" id="company" name="company" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="plan">Interested Plan</label>
-                                <select id="plan" name="plan" required>
-                                    <option value="">Select a plan</option>
-                                    <option value="starter">Starter ($299/month)</option>
-                                    <option value="growth">Growth ($799/month)</option>
-                                    <option value="enterprise">Enterprise (Custom)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="message">Tell us about your infrastructure needs</label>
-                                <textarea id="message" name="message" rows="4" placeholder="What are you looking to build? What's your current setup?"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-full">Request Demo</button>
-                        </form>
-                    </div>
+      <div class="container">
+        <div class="contact-content">
+          <h2 class="section-title">Get Started Today</h2>
+          <p class="section-subtitle">Ready to transform your infrastructure? Let's talk.</p>
+
+          <div class="contact-grid">
+            <div class="contact-info">
+              <h3>Contact Information</h3>
+              <div class="contact-item">
+                <span class="contact-icon">📧</span>
+                <div class="contact-details">
+                  <h4>Email</h4>
+                  <p>bhavdeepsachdeva@gmail.com</p>
                 </div>
+              </div>
+              <div class="contact-item">
+                <span class="contact-icon">🌐</span>
+                <div class="contact-details">
+                  <h4>Website</h4>
+                  <p>https://bhavdeep98.github.io</p>
+                </div>
+              </div>
+              <div class="contact-item">
+                <span class="contact-icon">⚡</span>
+                <div class="contact-details">
+                  <h4>Response Time</h4>
+                  <p>Within 24 hours</p>
+                </div>
+              </div>
             </div>
+
+            <div class="contact-form">
+              <form
+                class="demo-request-form"
+                action="https://formspree.io/f/YOUR_FORM_ID"
+                method="POST"
+              >
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name" required />
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" required />
+                </div>
+                <div class="form-group">
+                  <label for="company">Company</label>
+                  <input type="text" id="company" name="company" required />
+                </div>
+                <div class="form-group">
+                  <label for="plan">Interested Plan</label>
+                  <select id="plan" name="plan" required>
+                    <option value="">Select a plan</option>
+                    <option value="starter">Starter ($299/month)</option>
+                    <option value="growth">Growth ($799/month)</option>
+                    <option value="enterprise">Enterprise (Custom)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="message">Tell us about your infrastructure needs</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="4"
+                    placeholder="What are you looking to build? What's your current setup?"
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Request Demo</button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Outer hexagon structure -->
-                        <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="rgba(255,255,255,0.7)" stroke-width="2" fill="none"/>
-                        <!-- Inner cube structure -->
-                        <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#60a5fa" stroke-width="2.5" fill="none"/>
-                        <!-- Connecting lines -->
-                        <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-                        <!-- Center connections -->
-                        <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#60a5fa" stroke-width="1.5"/>
-                        <circle cx="50" cy="40" r="2" fill="#60a5fa"/>
-                    </svg>
-                    <span class="logo-text">Lattice</span>
-                </div>
-                <div class="footer-links">
-                    <a href="documentation.html">Documentation</a>
-                    <a href="https://github.com/bhavdeep98/lattice-aws-cdk">GitHub</a>
-                    <a href="#examples">Examples</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Lattice AWS CDK by Bhavdeep Singh Sachdeva. Business Source License 1.1.</p>
-            </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <svg
+              class="logo-icon"
+              width="32"
+              height="32"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <!-- Outer hexagon structure -->
+              <path
+                d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+                stroke="rgba(255,255,255,0.7)"
+                stroke-width="2"
+                fill="none"
+              />
+              <!-- Inner cube structure -->
+              <path
+                d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+                stroke="#60a5fa"
+                stroke-width="2.5"
+                fill="none"
+              />
+              <!-- Connecting lines -->
+              <path
+                d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+                stroke="rgba(255,255,255,0.5)"
+                stroke-width="1.5"
+              />
+              <!-- Center connections -->
+              <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#60a5fa" stroke-width="1.5" />
+              <circle cx="50" cy="40" r="2" fill="#60a5fa" />
+            </svg>
+            <span class="logo-text">Lattice</span>
+          </div>
+          <div class="footer-links">
+            <a href="documentation.html">Documentation</a>
+            <a href="https://github.com/bhavdeep98/lattice-aws-cdk">GitHub</a>
+            <a href="#examples">Examples</a>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>
+            &copy; 2026 Lattice AWS CDK by Bhavdeep Singh Sachdeva. Business Source License 1.1.
+          </p>
+        </div>
+      </div>
     </footer>
 
     <script src="script.js"></script>
-</body>
-
+  </body>
 </html>

@@ -12,19 +12,19 @@ The Lattice AWS CDK library provides enterprise-grade cross-account deployment c
 graph TB
     subgraph "AWS Organization"
         MA[Management Account<br/>Root Account]
-        
+
         subgraph "Core Accounts"
             TA[Tooling Account<br/>CI/CD Hub]
             SA[Security Account<br/>Compliance & Audit]
             SS[Shared Services<br/>DNS, Monitoring]
         end
-        
+
         subgraph "Environment Accounts"
             DA[Development Account<br/>Feature Testing]
             STA[Staging Account<br/>Pre-Production]
             PA[Production Account<br/>Live Workloads]
         end
-        
+
         MA --> TA
         MA --> SA
         MA --> SS
@@ -32,11 +32,11 @@ graph TB
         MA --> STA
         MA --> PA
     end
-    
+
     subgraph "External"
         GH[GitHub Actions<br/>CI/CD Pipeline]
     end
-    
+
     GH -.->|OIDC| TA
     TA -.->|AssumeRole| DA
     TA -.->|AssumeRole| STA
@@ -52,7 +52,7 @@ sequenceDiagram
     participant TR as Tooling Role
     participant TAR as Target Account Role
     participant AWS as AWS Resources
-    
+
     GH->>OIDC: Request OIDC Token
     OIDC->>GH: Return JWT Token
     GH->>TR: AssumeRole with JWT
@@ -68,6 +68,7 @@ sequenceDiagram
 ### Step 1: Account Setup
 
 1. **Create AWS Accounts**
+
    ```bash
    # Use AWS Organizations to create accounts
    aws organizations create-account --email tooling@company.com --account-name "Lattice Tooling"
@@ -89,13 +90,14 @@ sequenceDiagram
          // ... configuration
        },
        // ... other accounts
-     }
+     },
    };
    ```
 
 ### Step 2: OIDC Provider Setup
 
 1. **Deploy Tooling Account Infrastructure**
+
    ```bash
    # Deploy to tooling account
    npx cdk deploy LatticeToolingAccount \
@@ -111,16 +113,17 @@ sequenceDiagram
 ### Step 3: Target Account Configuration
 
 1. **Bootstrap Target Accounts**
+
    ```bash
    # Bootstrap each target account
    npx cdk bootstrap aws://DEV-ACCOUNT-ID/us-east-1 \
      --trust TOOLING-ACCOUNT-ID \
      --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess
-   
+
    npx cdk bootstrap aws://STAGING-ACCOUNT-ID/us-east-1 \
      --trust TOOLING-ACCOUNT-ID \
      --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess
-   
+
    npx cdk bootstrap aws://PROD-ACCOUNT-ID/us-east-1 \
      --trust TOOLING-ACCOUNT-ID \
      --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess
@@ -306,15 +309,17 @@ const alertThresholds = {
 ### Common Issues
 
 1. **Role Assumption Failures**
+
    ```bash
    # Check trust relationship
    aws iam get-role --role-name LatticeDeploymentRole-dev
-   
+
    # Verify organization membership
    aws organizations describe-account --account-id YOUR_TARGET_ACCOUNT_ID
    ```
 
 2. **Permission Denied Errors**
+
    ```bash
    # Check effective permissions
    aws iam simulate-principal-policy \

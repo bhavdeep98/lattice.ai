@@ -5,7 +5,12 @@ Contract-First AWS Infrastructure with CDK - AI generates simple JSON "intents",
 ## 🚀 Quick Start
 
 ```typescript
-import { LatticeNetwork, LatticeBucket, LatticeDatabase, applyLatticeAspects } from 'lattice-aws-cdk';
+import {
+  LatticeNetwork,
+  LatticeBucket,
+  LatticeDatabase,
+  applyLatticeAspects,
+} from 'lattice-aws-cdk';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -17,7 +22,7 @@ export class MyStack extends Stack {
     applyLatticeAspects(this, {
       environment: 'prod',
       projectName: 'MyApp',
-      owner: 'DevTeam'
+      owner: 'DevTeam',
     });
 
     // AI generates this simple JSON
@@ -37,14 +42,14 @@ export class MyStack extends Stack {
       name: 'app-db',
       environment: 'prod',
       engine: 'postgres',
-      size: 'large'
+      size: 'large',
     };
 
     // Lattice handles the rest + aspects ensure security
     const network = new LatticeNetwork(this, 'Network', networkIntent);
     const storage = new LatticeBucket(this, 'Storage', storageIntent);
     const database = new LatticeDatabase(this, 'Database', databaseIntent);
-    
+
     // ✅ Automatically secured, cost-controlled, monitored, and backed up!
   }
 }
@@ -81,12 +86,13 @@ applyLatticeAspects(this, {
   threatModel: {
     enabled: true,
     formats: ['md', 'json'],
-    projectName: 'Customer API'
-  }
+    projectName: 'Customer API',
+  },
 });
 ```
 
 **Features:**
+
 - **Workload Detection**: Automatically identifies serverless-api, data-pipeline, genai-rag patterns
 - **STRIDE Analysis**: Complete threat coverage across all 6 categories
 - **AWS-Specific**: Contextual mitigations using AWS services
@@ -94,6 +100,7 @@ applyLatticeAspects(this, {
 - **CI/CD Ready**: Deterministic output for security automation
 
 **Outputs:**
+
 - `cdk.out/THREAT_MODEL.md` - Security report for humans
 - `cdk.out/threat-model.json` - Data for automation/CI gates
 
@@ -109,13 +116,14 @@ const database = new LatticeDatabase(this, 'DB', {
   name: 'app-database',
   environment: 'prod', // Enables comprehensive monitoring
   engine: 'postgres',
-  size: 'large'
+  size: 'large',
 });
 
 // Result: 4+ alarms + 4 role-based dashboards created automatically
 ```
 
 **Features:**
+
 - **Automatic Alarms**: CPU, memory, errors, duration for all resource types
 - **Role-Based Dashboards**: Developer, SRE, CTO, and Security views
 - **Environment-Aware Thresholds**: Strict for prod, relaxed for dev
@@ -123,6 +131,7 @@ const database = new LatticeDatabase(this, 'DB', {
 - **SNS Integration**: Custom notification topics
 
 **Resource Coverage:**
+
 - **Compute**: EC2, ECS, Lambda monitoring with performance alarms
 - **Database**: RDS monitoring with connection and storage alarms
 - **Storage**: S3 monitoring with request rate and error alarms
@@ -139,18 +148,19 @@ Lattice ensures your data is protected with environment-aware policies:
 const bucket = new LatticeBucket(this, 'CriticalData', {
   name: 'customer-data',
   environment: 'prod', // RETAIN policy + backups enabled
-  encryption: true
+  encryption: true,
 });
 
 // Development uses cost-optimized policies
 const devBucket = new LatticeBucket(this, 'DevData', {
   name: 'dev-data',
   environment: 'dev', // DESTROY policy + no backups
-  encryption: true
+  encryption: true,
 });
 ```
 
 **Features:**
+
 - **Environment-Aware Removal Policies**: RETAIN for prod, DESTROY for dev
 - **Comprehensive Backup Strategy**: Daily, weekly, monthly backups
 - **Cross-Region Disaster Recovery**: Production backup replication
@@ -158,6 +168,7 @@ const devBucket = new LatticeBucket(this, 'DevData', {
 - **Compliance Reporting**: Automatic audit trail generation
 
 **Protection Levels:**
+
 - **Production**: RETAIN/SNAPSHOT policies, comprehensive backups, maximum protection
 - **Staging**: RETAIN policies, moderate backups, balanced protection
 - **Development**: DESTROY policies, minimal backups, cost-optimized
@@ -171,11 +182,12 @@ Lattice includes a production-ready CI/CD pipeline with security-first deploymen
 ```yaml
 # Automatic triggers
 - Pull Request → Deploy to Development
-- Push to main → Deploy to Staging  
+- Push to main → Deploy to Staging
 - Release tag → Deploy to Production (with approval)
 ```
 
 **Pipeline Features:**
+
 - 🔍 **Automated Security Analysis**: Every deployment includes threat modeling
 - 💰 **Cost Controls**: Environment-specific limits and optimization
 - 🧪 **Multi-Environment**: Dev, staging, production with different policies
@@ -184,11 +196,15 @@ Lattice includes a production-ready CI/CD pipeline with security-first deploymen
 - ⚡ **Fast Feedback**: Complete validation in ~5-10 minutes
 
 **Example Pipeline Output:**
+
 ```markdown
 ## 🚀 Development Deployment Complete
+
 **Environment:** Development (PR #123)
 **Estimated Cost:** $45/month
+
 ### 🔒 Security Analysis
+
 - ✅ No critical threats detected
 - ⚠️ 2 Security warnings - See threat model
 ```
@@ -212,7 +228,7 @@ Need advanced AWS features? Lattice provides full access to underlying CDK const
 const bucket = new LatticeBucket(this, 'DataBucket', {
   name: 'analytics-data',
   environment: 'prod',
-  encryption: true
+  encryption: true,
 });
 
 // Escape hatch: Add advanced S3 features
@@ -220,19 +236,22 @@ bucket.instance.addCorsRule({
   allowedOrigins: ['https://admin.myapp.com'],
   allowedMethods: [s3.HttpMethods.PUT, s3.HttpMethods.DELETE],
   allowedHeaders: ['x-amz-server-side-encryption'],
-  maxAge: 3600
+  maxAge: 3600,
 });
 
 bucket.instance.addLifecycleRule({
   id: 'IntelligentTiering',
-  transitions: [{
-    storageClass: s3.StorageClass.INTELLIGENT_TIERING,
-    transitionAfter: Duration.days(1)
-  }]
+  transitions: [
+    {
+      storageClass: s3.StorageClass.INTELLIGENT_TIERING,
+      transitionAfter: Duration.days(1),
+    },
+  ],
 });
 ```
 
 **Benefits:**
+
 - **Progressive Enhancement**: Start simple, add complexity when needed
 - **Zero Lock-in**: Full access to AWS CDK features
 - **Team Productivity**: Junior devs use simple interface, seniors access advanced features
@@ -242,11 +261,13 @@ See [docs/escape-hatch-pattern.md](docs/escape-hatch-pattern.md) for complete do
 ## 🚦 Getting Started
 
 1. Install dependencies:
+
 ```bash
 npm install lattice-aws-cdk
 ```
 
 2. Build your first stack:
+
 ```typescript
 import { LatticeBucket, applyLatticeAspects } from 'lattice-aws-cdk';
 
@@ -258,7 +279,7 @@ export class MyStack extends Stack {
     applyLatticeAspects(this, {
       environment: 'prod',
       projectName: 'MyApp',
-      owner: 'DevTeam'
+      owner: 'DevTeam',
     });
 
     // Create infrastructure with simple JSON
@@ -266,13 +287,14 @@ export class MyStack extends Stack {
       name: 'my-app-data',
       environment: 'prod',
       encryption: true,
-      versioning: true
+      versioning: true,
     });
   }
 }
 ```
 
 3. Deploy your infrastructure:
+
 ```bash
 npm run build
 npm run deploy
@@ -281,6 +303,7 @@ npm run deploy
 ## 📚 Documentation
 
 ### Core Documentation
+
 - [Threat Modeling](docs/threat-modeling.md) - Automated security analysis
 - [Observability & Alarms](docs/observability-alarms.md) - Monitoring and alerting
 - [Operations & Statefulness](docs/operations-statefulness.md) - Data protection and backups
@@ -289,6 +312,7 @@ npm run deploy
 - [Testing Strategy](docs/testing-strategy.md) - Comprehensive testing approach
 
 ### Examples
+
 - [Simple Test Stack](examples/simple-test-stack.ts) - Basic usage patterns
 - [AI-Friendly Demo](examples/ai-friendly-demo.ts) - AI code generation examples
 - [Observability Example](examples/observability-example.ts) - Monitoring setup
@@ -306,7 +330,7 @@ Lattice AWS CDK is available under the Business Source License 1.1:
 ### Commercial License Options
 
 - **Startup License**: $99/month - Up to 10 developers
-- **Business License**: $299/month - Up to 50 developers  
+- **Business License**: $299/month - Up to 50 developers
 - **Enterprise License**: Custom pricing - Unlimited developers + support
 
 For commercial licensing inquiries, contact: bhavdeepsachdeva@gmail.com
@@ -314,6 +338,7 @@ For commercial licensing inquiries, contact: bhavdeepsachdeva@gmail.com
 ## 👨‍💻 Author
 
 **Bhavdeep Singh Sachdeva**
+
 - Website: [https://bhavdeep98.github.io](https://bhavdeep98.github.io)
 - Email: bhavdeepsachdeva@gmail.com
 

@@ -16,7 +16,7 @@ describe('LatticeBucket', () => {
     test('should create S3 bucket with default security settings', () => {
       const bucket = new LatticeBucket(stack, 'TestBucket', {
         name: 'test-bucket',
-        environment: 'dev'
+        environment: 'dev',
       });
 
       expect(bucket).toBeDefined();
@@ -28,7 +28,7 @@ describe('LatticeBucket', () => {
       const bucket = new LatticeBucket(stack, 'EncryptedBucket', {
         name: 'encrypted-bucket',
         environment: 'dev',
-        encryption: true
+        encryption: true,
       });
 
       expect(bucket.output).toBeDefined();
@@ -39,7 +39,7 @@ describe('LatticeBucket', () => {
       const bucket = new LatticeBucket(stack, 'PrivateBucket', {
         name: 'private-bucket',
         environment: 'dev',
-        publicRead: false
+        publicRead: false,
       });
 
       expect(bucket.output).toBeDefined();
@@ -50,7 +50,7 @@ describe('LatticeBucket', () => {
       const bucket = new LatticeBucket(stack, 'VersionedBucket', {
         name: 'versioned-bucket',
         environment: 'dev',
-        versioning: true
+        versioning: true,
       });
 
       expect(bucket.output).toBeDefined();
@@ -63,8 +63,8 @@ describe('LatticeBucket', () => {
         environment: 'dev',
         lifecycle: {
           archiveAfterDays: 30,
-          deleteAfterDays: 90
-        }
+          deleteAfterDays: 90,
+        },
       });
 
       expect(bucket.output).toBeDefined();
@@ -77,7 +77,7 @@ describe('LatticeBucket', () => {
       expect(() => {
         new LatticeBucket(stack, 'ValidBucket', {
           name: 'valid-bucket-name',
-          environment: 'dev'
+          environment: 'dev',
         });
       }).not.toThrow();
     });
@@ -88,7 +88,7 @@ describe('LatticeBucket', () => {
         environment: 'prod',
         encryption: true,
         versioning: true,
-        publicRead: false
+        publicRead: false,
       });
 
       expect(bucket.output).toBeDefined();

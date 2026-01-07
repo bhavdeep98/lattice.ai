@@ -12,6 +12,7 @@ Lattice AWS CDK is available under a dual license:
 ### Who Needs a Commercial License?
 
 You need a commercial license if you:
+
 - Use Lattice in a commercial product or service
 - Offer Lattice as a hosted service to third parties
 - Distribute Lattice as part of a commercial offering
@@ -20,12 +21,14 @@ You need a commercial license if you:
 ### Commercial License Options
 
 #### Startup License - $99/month
+
 - Up to 10 developers
 - All Lattice modules
 - Email support
 - Commercial use rights
 
-#### Business License - $299/month  
+#### Business License - $299/month
+
 - Up to 50 developers
 - All Lattice modules
 - Priority support
@@ -33,6 +36,7 @@ You need a commercial license if you:
 - Custom modules available
 
 #### Enterprise License - Custom Pricing
+
 - Unlimited developers
 - All Lattice modules
 - Dedicated support
@@ -43,6 +47,7 @@ You need a commercial license if you:
 ### Contact
 
 For commercial licensing inquiries:
+
 - Email: bhavdeepsachdeva@gmail.com
 - Website: https://bhavdeep98.github.io
 

@@ -72,16 +72,8 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
     });
 
     if (enhancedSecurity) {
-      this.securityGroup.addEgressRule(
-        ec2.Peer.anyIpv4(),
-        ec2.Port.tcp(443),
-        'HTTPS outbound'
-      );
-      this.securityGroup.addEgressRule(
-        ec2.Peer.anyIpv4(),
-        ec2.Port.tcp(80),
-        'HTTP outbound'
-      );
+      this.securityGroup.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443), 'HTTPS outbound');
+      this.securityGroup.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80), 'HTTP outbound');
       logger.info('Applied enhanced security rules');
     }
 
@@ -122,8 +114,8 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
     // Set output
     this.output = {
       vpcId: this.vpc.vpcId,
-      publicSubnetIds: this.vpc.publicSubnets.map(subnet => subnet.subnetId),
-      privateSubnetIds: this.vpc.privateSubnets.map(subnet => subnet.subnetId),
+      publicSubnetIds: this.vpc.publicSubnets.map((subnet) => subnet.subnetId),
+      privateSubnetIds: this.vpc.privateSubnets.map((subnet) => subnet.subnetId),
       securityGroupId: this.securityGroup.securityGroupId,
     };
   }
@@ -145,11 +137,7 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
   /**
    * Add a security group rule
    */
-  public addSecurityGroupRule(
-    peer: ec2.IPeer,
-    port: ec2.Port,
-    description?: string
-  ): void {
+  public addSecurityGroupRule(peer: ec2.IPeer, port: ec2.Port, description?: string): void {
     this.securityGroup.addIngressRule(peer, port, description);
   }
 }

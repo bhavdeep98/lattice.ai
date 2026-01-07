@@ -13,17 +13,17 @@ env:
   NODE_VERSION: '18'
   AWS_DEFAULT_REGION: us-east-1
   # Cross-Account Configuration - Using actual account IDs
-  TOOLING_ACCOUNT_ID: '618351925005'  # Tooling/CI-CD account (your main account)
-  DEV_ACCOUNT_ID: '618351925005'      # Development account (same as tooling for now)
-  STAGING_ACCOUNT_ID: '618351925005'  # Staging account (same as tooling for now)
-  PROD_ACCOUNT_ID: '618351925005'     # Production account (same as tooling for now)
+  TOOLING_ACCOUNT_ID: '618351925005' # Tooling/CI-CD account (your main account)
+  DEV_ACCOUNT_ID: '618351925005' # Development account (same as tooling for now)
+  STAGING_ACCOUNT_ID: '618351925005' # Staging account (same as tooling for now)
+  PROD_ACCOUNT_ID: '618351925005' # Production account (same as tooling for now)
   GITHUB_ROLE_ARN: 'arn:aws:iam::618351925005:role/LatticeGitHubActions-CrossAccount'
 
 # Global permissions for OIDC
 permissions:
-  id-token: write   # Required for OIDC
-  contents: read    # Required for checkout
-  pull-requests: write  # Required for PR comments
+  id-token: write # Required for OIDC
+  contents: read # Required for checkout
+  pull-requests: write # Required for PR comments
 
 jobs:
   # Phase 1: Code Quality & Security Validation
@@ -35,7 +35,7 @@ jobs:
       critical-threats: ${{ steps.threat-analysis.outputs.critical-threats }}
       security-warnings: ${{ steps.threat-analysis.outputs.security-warnings }}
       estimated-cost: ${{ steps.cost-analysis.outputs.estimated-cost }}
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "🔄 Final CDK synthesis..."
           npm run synth 2>&1 | tee synth-output.log
-          
+
           if [ -f "cdk.out/THREAT_MODEL.md" ]; then
             echo "✅ Threat model generated successfully"
             echo "threat-model-generated=true" >> $GITHUB_OUTPUT
@@ -107,7 +107,7 @@ jobs:
         if: steps.cdk-synth.outputs.threat-model-generated == 'true'
         run: |
           echo "🔍 Analyzing threat model..."
-          
+
           # Count critical threats
           if [ -f "cdk.out/threat-model.json" ]; then
             CRITICAL_THREATS=$(jq '[.threats[] | select(.risk == "Critical")] | length' cdk.out/threat-model.json)
@@ -139,10 +139,10 @@ jobs:
         id: cost-analysis
         run: |
           echo "💰 Analyzing infrastructure costs..."
-          
+
           # Simple cost estimation based on resources
           RESOURCE_COUNT=$(find cdk.out -name "*.template.json" -exec jq '.Resources | length' {} \; | awk '{sum += $1} END {print sum}')
-          
+
           # Rough cost estimation (this would integrate with AWS Pricing API in production)
           if [ "$RESOURCE_COUNT" -lt 10 ]; then
             ESTIMATED_COST="50-100"
@@ -151,7 +151,7 @@ jobs:
           else
             ESTIMATED_COST="300-800"
           fi
-          
+
           echo "estimated-cost=$ESTIMATED_COST" >> $GITHUB_OUTPUT
           echo "📊 Estimated monthly cost: \$$ESTIMATED_COST"
           echo "📦 Total resources: $RESOURCE_COUNT"
@@ -160,7 +160,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           echo "🔍 Analyzing infrastructure changes..."
-          
+
           # This would show what changes in a real deployment
           echo "📝 Infrastructure diff would be shown here"
           echo "   (Requires AWS credentials for actual diff)"
@@ -182,10 +182,10 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment: 
+    environment:
       name: development
       url: https://dev-${{ github.event.number }}.lattice-demo.com
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -214,14 +214,14 @@ jobs:
           echo "   Environment: dev-pr-${{ github.event.number }}"
           echo "   Cost Limit: \$100/month"
           echo "   Instance Sizes: Limited to small/medium"
-          
+
           # In a real implementation, this would run:
           # npx cdk deploy --all \
           #   --require-approval never \
           #   --context environment=dev \
           #   --context prNumber=${{ github.event.number }} \
           #   --context costLimits='{"maxInstanceSize":"medium","maxMonthlyCost":100}'
-          
+
           echo "✅ Development deployment completed"
           echo "deployment-url=https://dev-pr-${{ github.event.number }}.lattice-demo.com" >> $GITHUB_OUTPUT
 
@@ -241,40 +241,40 @@ jobs:
             const securityWarnings = '${{ needs.validate.outputs.security-warnings }}';
             const estimatedCost = '${{ needs.validate.outputs.estimated-cost }}';
             const deploymentUrl = '${{ steps.deploy-dev.outputs.deployment-url }}';
-            
+
             const body = `
             ## 🚀 Development Deployment Complete
-            
+
             **Environment:** Development (PR #${{ github.event.number }})
             **Deployment URL:** ${deploymentUrl}
             **Estimated Cost:** $${estimatedCost}/month
-            
+
             ### 🔒 Security Analysis
             ${criticalThreats > 0 ? `- 🔴 **${criticalThreats} Critical threats** - Review required` : '- ✅ No critical threats detected'}
             ${securityWarnings > 0 ? `- ⚠️ **${securityWarnings} Security warnings** - See threat model` : '- ✅ All security checks passed'}
-            
+
             ### 📊 Infrastructure Summary
             - ✅ All resources deployed successfully
             - ✅ Integration tests passed
             - ✅ Cost controls applied
             - ✅ Threat model generated
-            
+
             ### 📋 Next Steps
             1. Review the [threat model](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             2. Test your application at ${deploymentUrl}
             3. Address any security warnings before merging
-            
+
             <details>
             <summary>🔍 View Deployment Details</summary>
-            
+
             **Stack Name:** lattice-dev-pr-${{ github.event.number }}
             **Region:** ${{ env.AWS_DEFAULT_REGION }}
             **Cost Limit:** $100/month
             **Auto-cleanup:** 7 days after PR close
-            
+
             </details>
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -292,7 +292,7 @@ jobs:
     environment:
       name: staging
       url: https://staging.lattice-demo.com
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -315,13 +315,13 @@ jobs:
           echo "   Environment: staging"
           echo "   Cost Limit: \$500/month"
           echo "   Instance Sizes: Up to large"
-          
+
           # In a real implementation:
           # npx cdk deploy --all \
           #   --require-approval never \
           #   --context environment=staging \
           #   --context costLimits='{"maxInstanceSize":"large","maxMonthlyCost":500}'
-          
+
           echo "✅ Staging deployment completed"
 
       - name: 🧪 Run Smoke Tests
@@ -349,7 +349,7 @@ jobs:
     environment:
       name: production
       url: https://lattice-demo.com
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -369,14 +369,14 @@ jobs:
       - name: 🔒 Security Gate
         run: |
           echo "🔒 Production security gate..."
-          
+
           CRITICAL_THREATS="${{ needs.validate.outputs.critical-threats }}"
           if [ "$CRITICAL_THREATS" -gt 0 ]; then
             echo "❌ Cannot deploy to production with $CRITICAL_THREATS critical threats"
             echo "   Please resolve all critical security issues first"
             exit 1
           fi
-          
+
           echo "✅ Security gate passed"
 
       - name: 🚀 Deploy to Production
@@ -385,14 +385,14 @@ jobs:
           echo "   Environment: production"
           echo "   Version: ${{ github.event.release.tag_name }}"
           echo "   Cost Limit: \$2000/month"
-          
+
           # In a real implementation:
           # npx cdk deploy --all \
           #   --require-approval never \
           #   --context environment=production \
           #   --context version=${{ github.event.release.tag_name }} \
           #   --context costLimits='{"maxInstanceSize":"xlarge","maxMonthlyCost":2000}'
-          
+
           echo "✅ Production deployment completed"
 
       - name: 🧪 Production Health Check
@@ -416,8 +416,8 @@ jobs:
         run: |
           echo "🧹 Cleaning up dev environment for PR #${{ github.event.number }}"
           echo "   Destroying stack: lattice-dev-pr-${{ github.event.number }}"
-          
+
           # In a real implementation:
           # npx cdk destroy lattice-dev-pr-${{ github.event.number }} --force
-          
+
           echo "✅ Environment cleanup completed"

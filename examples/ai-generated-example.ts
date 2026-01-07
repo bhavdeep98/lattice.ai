@@ -75,8 +75,8 @@ export class AIGeneratedStack extends Stack {
       projectName: 'WebApp',
       owner: 'ProductTeam',
       additionalTags: {
-        'Application': 'WebApp',
-        'Tier': 'Production',
+        Application: 'WebApp',
+        Tier: 'Production',
       },
     });
 

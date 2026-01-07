@@ -21,7 +21,7 @@ jobs:
     name: 🔒 Security Scan
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
         if: github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == 'infrastructure'
         run: |
           echo "🔒 Scanning infrastructure for security issues..."
-          
+
           if [ -f "cdk.out/threat-model.json" ]; then
             CRITICAL_THREATS=$(jq '[.threats[] | select(.risk == "Critical")] | length' cdk.out/threat-model.json)
             HIGH_THREATS=$(jq '[.threats[] | select(.risk == "High")] | length' cdk.out/threat-model.json)

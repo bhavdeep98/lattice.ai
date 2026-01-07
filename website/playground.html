@@ -1,484 +1,516 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lattice Playground - Test Your Infrastructure</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        .playground {
-            padding: 100px 0 50px;
-            background: #f8fafc;
-            min-height: 100vh;
-        }
-        
-        .playground-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .playground-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .playground-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
-        .playground-subtitle {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-        
-        .cost-warning {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .cost-warning h3 {
-            color: #92400e;
-            margin-bottom: 0.5rem;
-        }
-        
-        .cost-warning p {
-            color: #92400e;
-            margin: 0;
-        }
-        
+      .playground {
+        padding: 100px 0 50px;
+        background: #f8fafc;
+        min-height: 100vh;
+      }
+
+      .playground-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .playground-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .playground-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .playground-subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 2rem;
+      }
+
+      .cost-warning {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cost-warning h3 {
+        color: #92400e;
+        margin-bottom: 0.5rem;
+      }
+
+      .cost-warning p {
+        color: #92400e;
+        margin: 0;
+      }
+
+      .playground-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .input-panel,
+      .output-panel {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        background: #1a1a1a;
+        color: white;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+      }
+
+      .panel-content {
+        padding: 1.5rem;
+      }
+
+      .intent-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .form-group label {
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #007aff;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+      }
+
+      .generate-btn {
+        background: #007aff;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+      }
+
+      .generate-btn:hover {
+        background: #0056cc;
+        transform: translateY(-2px);
+      }
+
+      .generate-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .output-code {
+        background: #1a1a1a;
+        color: #e5e7eb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        max-height: 500px;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .output-code pre {
+        margin: 0;
+        white-space: pre;
+        overflow-x: auto;
+      }
+
+      .output-code code {
+        display: block;
+        white-space: pre;
+        font-family: inherit;
+      }
+
+      .copy-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #374151;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background 0.3s ease;
+        z-index: 10;
+      }
+
+      .copy-button:hover {
+        background: #4b5563;
+      }
+
+      .infrastructure-preview {
+        background: #f0f9ff;
+        border: 1px solid #0ea5e9;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .infrastructure-preview h4 {
+        color: #0369a1;
+        margin-bottom: 0.5rem;
+      }
+
+      .preview-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #0369a1;
+      }
+
+      .aws-resource {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 4px;
+        border-left: 3px solid #0ea5e9;
+      }
+
+      .resource-icon {
+        font-size: 1.2rem;
+      }
+
+      .cost-estimate {
+        background: #ecfdf5;
+        border: 1px solid #10b981;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .cost-estimate h4 {
+        color: #047857;
+        margin-bottom: 0.5rem;
+      }
+
+      .cost-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.9rem;
+        color: #047857;
+      }
+
+      .deploy-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .deploy-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .deploy-step {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: left;
+      }
+
+      .step-number {
+        background: #007aff;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .step-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .step-code {
+        background: #1a1a1a;
+        color: #e5e7eb;
+        padding: 0.75rem;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
         .playground-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
+          grid-template-columns: 1fr;
         }
-        
-        .input-panel, .output-panel {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-        
-        .panel-header {
-            background: #1a1a1a;
-            color: white;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-        }
-        
-        .panel-content {
-            padding: 1.5rem;
-        }
-        
-        .intent-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .form-group label {
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .form-group input, .form-group select {
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #007AFF;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-        }
-        
-        .generate-btn {
-            background: #007AFF;
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-        
-        .generate-btn:hover {
-            background: #0056CC;
-            transform: translateY(-2px);
-        }
-        
-        .generate-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .output-code {
-            background: #1a1a1a;
-            color: #e5e7eb;
-            padding: 1.5rem;
-            border-radius: 8px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            overflow-x: auto;
-            max-height: 500px;
-            overflow-y: auto;
-            position: relative;
-        }
-        
-        .output-code pre {
-            margin: 0;
-            white-space: pre;
-            overflow-x: auto;
-        }
-        
-        .output-code code {
-            display: block;
-            white-space: pre;
-            font-family: inherit;
-        }
-        
-        .copy-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: #374151;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.3s ease;
-            z-index: 10;
-        }
-        
-        .copy-button:hover {
-            background: #4b5563;
-        }
-        
-        .infrastructure-preview {
-            background: #f0f9ff;
-            border: 1px solid #0ea5e9;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .infrastructure-preview h4 {
-            color: #0369a1;
-            margin-bottom: 0.5rem;
-        }
-        
-        .preview-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: #0369a1;
-        }
-        
-        .aws-resource {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-            border-left: 3px solid #0ea5e9;
-        }
-        
-        .resource-icon {
-            font-size: 1.2rem;
-        }
-        
-        .cost-estimate {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .cost-estimate h4 {
-            color: #047857;
-            margin-bottom: 0.5rem;
-        }
-        
-        .cost-breakdown {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            font-size: 0.9rem;
-            color: #047857;
-        }
-        
-        .deploy-section {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 2rem;
-            text-align: center;
-        }
-        
+
         .deploy-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
+          grid-template-columns: 1fr;
         }
-        
-        .deploy-step {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: left;
-        }
-        
-        .step-number {
-            background: #007AFF;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .step-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .step-code {
-            background: #1a1a1a;
-            color: #e5e7eb;
-            padding: 0.75rem;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .playground-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .deploy-steps {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer hexagon structure -->
-                    <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="#18181b" stroke-width="2" fill="none"/>
-                    <!-- Inner cube structure -->
-                    <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#18181b" stroke-width="2.5" fill="none"/>
-                    <!-- Connecting lines -->
-                    <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="#71717a" stroke-width="1.5"/>
-                    <!-- Center connections -->
-                    <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5"/>
-                    <circle cx="50" cy="40" r="2" fill="#18181b"/>
-                </svg>
-                <span class="logo-text">Lattice</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="index.html#platform">Platform</a>
-                <a href="index.html#features">Features</a>
-                <a href="index.html#pricing">Pricing</a>
-                <a href="documentation.html">Docs</a>
-                <a href="interactive-demo.html" class="nav-cta">Try Demo</a>
-            </div>
-            <div class="nav-mobile">
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg
+            class="logo-icon"
+            width="32"
+            height="32"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Outer hexagon structure -->
+            <path
+              d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+              stroke="#18181b"
+              stroke-width="2"
+              fill="none"
+            />
+            <!-- Inner cube structure -->
+            <path
+              d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+              stroke="#18181b"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <!-- Connecting lines -->
+            <path
+              d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+              stroke="#71717a"
+              stroke-width="1.5"
+            />
+            <!-- Center connections -->
+            <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5" />
+            <circle cx="50" cy="40" r="2" fill="#18181b" />
+          </svg>
+          <span class="logo-text">Lattice</span>
         </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#platform">Platform</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="documentation.html">Docs</a>
+          <a href="interactive-demo.html" class="nav-cta">Try Demo</a>
+        </div>
+        <div class="nav-mobile">
+          <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- Playground Section -->
     <section id="playground" class="playground">
-        <div class="playground-container">
-            <div class="playground-header">
-                <h1 class="playground-title">Lattice Playground</h1>
-                <p class="playground-subtitle">
-                    Generate AWS CDK code from simple JSON intents - see the magic happen!
-                </p>
-                
-                <div class="cost-warning">
-                    <h3>💰 Cost-Safe Testing</h3>
-                    <p>This playground generates code only. No AWS resources are created. Deploy the generated code in your AWS account when ready.</p>
-                </div>
-            </div>
+      <div class="playground-container">
+        <div class="playground-header">
+          <h1 class="playground-title">Lattice Playground</h1>
+          <p class="playground-subtitle">
+            Generate AWS CDK code from simple JSON intents - see the magic happen!
+          </p>
 
-            <div class="playground-grid">
-                <!-- Input Panel -->
-                <div class="input-panel">
-                    <div class="panel-header">
-                        🎯 Your Intent (Simple JSON)
-                    </div>
-                    <div class="panel-content">
-                        <form class="intent-form" id="intentForm">
-                            <div class="form-group">
-                                <label for="resourceType">Resource Type</label>
-                                <select id="resourceType" name="resourceType">
-                                    <option value="storage">Storage (S3 Bucket)</option>
-                                    <option value="database">Database (RDS)</option>
-                                    <option value="compute">Compute (Lambda)</option>
-                                    <option value="network">Network (VPC)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="resourceName">Resource Name</label>
-                                <input type="text" id="resourceName" name="resourceName" placeholder="my-app-data" value="my-app-data">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="environment">Environment</label>
-                                <select id="environment" name="environment">
-                                    <option value="dev">Development (Cost-optimized)</option>
-                                    <option value="staging">Staging (Balanced)</option>
-                                    <option value="prod">Production (High-availability)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group" id="storageOptions">
-                                <label for="encryption">Encryption</label>
-                                <select id="encryption" name="encryption">
-                                    <option value="true">Enabled (Recommended)</option>
-                                    <option value="false">Disabled</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group" id="databaseOptions" style="display: none;">
-                                <label for="engine">Database Engine</label>
-                                <select id="engine" name="engine">
-                                    <option value="postgres">PostgreSQL</option>
-                                    <option value="mysql">MySQL</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group" id="computeOptions" style="display: none;">
-                                <label for="runtime">Runtime</label>
-                                <select id="runtime" name="runtime">
-                                    <option value="nodejs">Node.js</option>
-                                    <option value="python">Python</option>
-                                    <option value="java">Java</option>
-                                </select>
-                            </div>
-                            
-                            <button type="submit" class="generate-btn" id="generateBtn">
-                                ⚡ Generate Lattice Code
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Output Panel -->
-                <div class="output-panel">
-                    <div class="panel-header">
-                        🚀 Generated AWS CDK Code
-                    </div>
-                    <div class="panel-content">
-                        <div class="output-code" id="outputCode">
-                            <button class="copy-button" id="copyButton" style="display: none;">Copy Code</button>
-                            <div style="color: #6b7280; text-align: center; padding: 2rem;">
-                                👆 Configure your intent and click "Generate" to see the magic!
-                            </div>
-                        </div>
-                        
-                        <div class="cost-estimate" id="costEstimate" style="display: none;">
-                            <h4>💰 Estimated Monthly Cost</h4>
-                            <div class="cost-breakdown" id="costBreakdown">
-                                <!-- Cost details will be populated here -->
-                            </div>
-                        </div>
-                        
-                        <div class="infrastructure-preview" id="infrastructurePreview" style="display: none;">
-                            <h4>🏗️ Infrastructure Preview</h4>
-                            <div class="preview-content" id="previewContent">
-                                <!-- Infrastructure diagram will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Deployment Instructions -->
-            <div class="deploy-section">
-                <h2>🚀 Ready to Deploy?</h2>
-                <p>Follow these steps to deploy your generated infrastructure to AWS:</p>
-                
-                <div class="deploy-steps">
-                    <div class="deploy-step">
-                        <div class="step-number">1</div>
-                        <div class="step-title">Install Lattice</div>
-                        <p>Add Lattice to your project</p>
-                        <div class="step-code">npm install lattice-aws-cdk</div>
-                    </div>
-                    
-                    <div class="deploy-step">
-                        <div class="step-number">2</div>
-                        <div class="step-title">Copy Generated Code</div>
-                        <p>Use the code from the playground in your CDK stack</p>
-                        <div class="step-code">// Copy from playground above</div>
-                    </div>
-                    
-                    <div class="deploy-step">
-                        <div class="step-number">3</div>
-                        <div class="step-title">Deploy to AWS</div>
-                        <p>Deploy with standard CDK commands</p>
-                        <div class="step-code">cdk deploy</div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem;">
-                    <a href="mailto:bhavdeepsachdeva@gmail.com" class="btn btn-primary">
-                        Need Help? Contact Support
-                    </a>
-                </div>
-            </div>
+          <div class="cost-warning">
+            <h3>💰 Cost-Safe Testing</h3>
+            <p>
+              This playground generates code only. No AWS resources are created. Deploy the
+              generated code in your AWS account when ready.
+            </p>
+          </div>
         </div>
+
+        <div class="playground-grid">
+          <!-- Input Panel -->
+          <div class="input-panel">
+            <div class="panel-header">🎯 Your Intent (Simple JSON)</div>
+            <div class="panel-content">
+              <form class="intent-form" id="intentForm">
+                <div class="form-group">
+                  <label for="resourceType">Resource Type</label>
+                  <select id="resourceType" name="resourceType">
+                    <option value="storage">Storage (S3 Bucket)</option>
+                    <option value="database">Database (RDS)</option>
+                    <option value="compute">Compute (Lambda)</option>
+                    <option value="network">Network (VPC)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="resourceName">Resource Name</label>
+                  <input
+                    type="text"
+                    id="resourceName"
+                    name="resourceName"
+                    placeholder="my-app-data"
+                    value="my-app-data"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="environment">Environment</label>
+                  <select id="environment" name="environment">
+                    <option value="dev">Development (Cost-optimized)</option>
+                    <option value="staging">Staging (Balanced)</option>
+                    <option value="prod">Production (High-availability)</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="storageOptions">
+                  <label for="encryption">Encryption</label>
+                  <select id="encryption" name="encryption">
+                    <option value="true">Enabled (Recommended)</option>
+                    <option value="false">Disabled</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="databaseOptions" style="display: none">
+                  <label for="engine">Database Engine</label>
+                  <select id="engine" name="engine">
+                    <option value="postgres">PostgreSQL</option>
+                    <option value="mysql">MySQL</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="computeOptions" style="display: none">
+                  <label for="runtime">Runtime</label>
+                  <select id="runtime" name="runtime">
+                    <option value="nodejs">Node.js</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                  </select>
+                </div>
+
+                <button type="submit" class="generate-btn" id="generateBtn">
+                  ⚡ Generate Lattice Code
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Output Panel -->
+          <div class="output-panel">
+            <div class="panel-header">🚀 Generated AWS CDK Code</div>
+            <div class="panel-content">
+              <div class="output-code" id="outputCode">
+                <button class="copy-button" id="copyButton" style="display: none">Copy Code</button>
+                <div style="color: #6b7280; text-align: center; padding: 2rem">
+                  👆 Configure your intent and click "Generate" to see the magic!
+                </div>
+              </div>
+
+              <div class="cost-estimate" id="costEstimate" style="display: none">
+                <h4>💰 Estimated Monthly Cost</h4>
+                <div class="cost-breakdown" id="costBreakdown">
+                  <!-- Cost details will be populated here -->
+                </div>
+              </div>
+
+              <div class="infrastructure-preview" id="infrastructurePreview" style="display: none">
+                <h4>🏗️ Infrastructure Preview</h4>
+                <div class="preview-content" id="previewContent">
+                  <!-- Infrastructure diagram will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deployment Instructions -->
+        <div class="deploy-section">
+          <h2>🚀 Ready to Deploy?</h2>
+          <p>Follow these steps to deploy your generated infrastructure to AWS:</p>
+
+          <div class="deploy-steps">
+            <div class="deploy-step">
+              <div class="step-number">1</div>
+              <div class="step-title">Install Lattice</div>
+              <p>Add Lattice to your project</p>
+              <div class="step-code">npm install lattice-aws-cdk</div>
+            </div>
+
+            <div class="deploy-step">
+              <div class="step-number">2</div>
+              <div class="step-title">Copy Generated Code</div>
+              <p>Use the code from the playground in your CDK stack</p>
+              <div class="step-code">// Copy from playground above</div>
+            </div>
+
+            <div class="deploy-step">
+              <div class="step-number">3</div>
+              <div class="step-title">Deploy to AWS</div>
+              <p>Deploy with standard CDK commands</p>
+              <div class="step-code">cdk deploy</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem">
+            <a href="mailto:bhavdeepsachdeva@gmail.com" class="btn btn-primary">
+              Need Help? Contact Support
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <script src="playground.js"></script>
-</body>
+  </body>
 </html>

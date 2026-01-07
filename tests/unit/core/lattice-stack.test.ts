@@ -18,11 +18,11 @@ describe('LatticeStack', () => {
       const manifest: LatticeManifest = {
         appName: 'test-app',
         environment: 'dev',
-        capabilities: {}
+        capabilities: {},
       };
 
       const stack = new LatticeStack(app, 'TestStack', manifest);
-      
+
       expect(stack).toBeDefined();
       expect(stack.stackName).toBe('TestStack');
     });
@@ -34,12 +34,12 @@ describe('LatticeStack', () => {
         capabilities: {},
         threatModel: {
           enabled: true,
-          projectName: 'secure-app'
-        }
+          projectName: 'secure-app',
+        },
       };
 
       const stack = new LatticeStack(app, 'SecureStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
   });
@@ -54,13 +54,13 @@ describe('LatticeStack', () => {
             name: 'app-bucket',
             environment: 'dev',
             encryption: true,
-            versioning: true
-          }
-        }
+            versioning: true,
+          },
+        },
       };
 
       const stack = new LatticeStack(app, 'StorageStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
 
@@ -73,13 +73,13 @@ describe('LatticeStack', () => {
             name: 'api-function',
             environment: 'dev',
             type: 'serverless',
-            size: 'small'
-          }
-        }
+            size: 'small',
+          },
+        },
       };
 
       const stack = new LatticeStack(app, 'APIStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
 
@@ -92,13 +92,13 @@ describe('LatticeStack', () => {
             name: 'app-db',
             environment: 'dev',
             engine: 'postgres',
-            size: 'small'
-          }
-        }
+            size: 'small',
+          },
+        },
       };
 
       const stack = new LatticeStack(app, 'DatabaseStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
   });
@@ -113,27 +113,27 @@ describe('LatticeStack', () => {
             name: 'api-service',
             environment: 'staging',
             type: 'serverless',
-            size: 'medium'
+            size: 'medium',
           },
           storage: {
             name: 'data-bucket',
             environment: 'staging',
-            encryption: true
+            encryption: true,
           },
           database: {
             name: 'user-db',
             environment: 'staging',
             engine: 'postgres',
-            size: 'medium'
-          }
+            size: 'medium',
+          },
         },
         threatModel: {
-          enabled: true
-        }
+          enabled: true,
+        },
       };
 
       const stack = new LatticeStack(app, 'ComplexStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
   });
@@ -146,13 +146,13 @@ describe('LatticeStack', () => {
         capabilities: {
           storage: {
             name: 'dev-bucket',
-            environment: 'dev'
-          }
-        }
+            environment: 'dev',
+          },
+        },
       };
 
       const stack = new LatticeStack(app, 'DevStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
 
@@ -165,17 +165,17 @@ describe('LatticeStack', () => {
             name: 'prod-bucket',
             environment: 'prod',
             encryption: true,
-            versioning: true
-          }
+            versioning: true,
+          },
         },
         threatModel: {
           enabled: true,
-          projectName: 'Production Application'
-        }
+          projectName: 'Production Application',
+        },
       };
 
       const stack = new LatticeStack(app, 'ProdStack', manifest);
-      
+
       expect(stack).toBeDefined();
     });
   });

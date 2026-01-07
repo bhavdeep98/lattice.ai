@@ -3,7 +3,12 @@
  * Sends structured logs to AWS CloudWatch Logs
  */
 
-import { CloudWatchLogsClient, PutLogEventsCommand, CreateLogGroupCommand, CreateLogStreamCommand } from '@aws-sdk/client-cloudwatch-logs';
+import {
+  CloudWatchLogsClient,
+  PutLogEventsCommand,
+  CreateLogGroupCommand,
+  CreateLogStreamCommand,
+} from '@aws-sdk/client-cloudwatch-logs';
 import { LatticeLogEntry, LogLevel } from './logger';
 import { LoggingConfig } from '../config/logging';
 
@@ -25,13 +30,13 @@ export class CloudWatchLogger {
     if (!config) {
       throw new Error('CloudWatch configuration is required');
     }
-    
+
     this.config = config;
     this.client = new CloudWatchLogsClient({ region: config.region });
-    
+
     // Initialize log group and stream
     this.initializeLogGroup();
-    
+
     // Start periodic flush
     this.startPeriodicFlush();
   }
@@ -39,9 +44,11 @@ export class CloudWatchLogger {
   private async initializeLogGroup(): Promise<void> {
     try {
       // Create log group if it doesn't exist
-      await this.client.send(new CreateLogGroupCommand({
-        logGroupName: this.config!.logGroupName
-      }));
+      await this.client.send(
+        new CreateLogGroupCommand({
+          logGroupName: this.config!.logGroupName,
+        })
+      );
     } catch (error: any) {
       // Log group might already exist
       if (error.name !== 'ResourceAlreadyExistsException') {
@@ -51,10 +58,12 @@ export class CloudWatchLogger {
 
     try {
       // Create log stream if it doesn't exist
-      await this.client.send(new CreateLogStreamCommand({
-        logGroupName: this.config!.logGroupName,
-        logStreamName: this.config!.logStreamName
-      }));
+      await this.client.send(
+        new CreateLogStreamCommand({
+          logGroupName: this.config!.logGroupName,
+          logStreamName: this.config!.logStreamName,
+        })
+      );
     } catch (error: any) {
       // Log stream might already exist
       if (error.name !== 'ResourceAlreadyExistsException') {
@@ -66,7 +75,7 @@ export class CloudWatchLogger {
   public async log(entry: LatticeLogEntry): Promise<void> {
     const logEvent: CloudWatchLogEvent = {
       timestamp: new Date(entry.timestamp).getTime(),
-      message: JSON.stringify(entry)
+      message: JSON.stringify(entry),
     };
 
     this.logBuffer.push(logEvent);
@@ -90,23 +99,22 @@ export class CloudWatchLogger {
         logGroupName: this.config!.logGroupName,
         logStreamName: this.config!.logStreamName,
         logEvents: sortedEvents,
-        sequenceToken: this.sequenceToken
+        sequenceToken: this.sequenceToken,
       });
 
       const response = await this.client.send(command);
       this.sequenceToken = response.nextSequenceToken;
-      
+
       // Clear buffer after successful send
       this.logBuffer = [];
-      
     } catch (error: any) {
       console.error('Failed to send logs to CloudWatch:', error.message);
-      
+
       // If sequence token is invalid, reset it
       if (error.name === 'InvalidSequenceTokenException') {
         this.sequenceToken = undefined;
       }
-      
+
       // Keep logs in buffer for retry (but limit buffer size)
       if (this.logBuffer.length > this.maxBufferSize * 2) {
         this.logBuffer = this.logBuffer.slice(-this.maxBufferSize);
@@ -125,7 +133,7 @@ export class CloudWatchLogger {
       clearInterval(this.flushInterval);
       this.flushInterval = null;
     }
-    
+
     // Flush remaining logs
     await this.flush();
   }
@@ -141,8 +149,8 @@ export class CloudWatchMetrics {
   }
 
   public async putMetric(
-    metricName: string, 
-    value: number, 
+    metricName: string,
+    value: number,
     unit: string = 'Count',
     dimensions?: Record<string, string>
   ): Promise<void> {
@@ -155,7 +163,7 @@ export class CloudWatchMetrics {
         message: `Metric: ${metricName}`,
         context: {
           operation: 'metric-collection',
-          resourceType: 'metric'
+          resourceType: 'metric',
         },
         metadata: {
           metricName,
@@ -163,30 +171,26 @@ export class CloudWatchMetrics {
           unit,
           dimensions,
           namespace: this.namespace,
-          isMetric: true
-        }
+          isMetric: true,
+        },
       };
 
       console.log(JSON.stringify(metricEntry));
-      
     } catch (error) {
       console.error('Failed to put CloudWatch metric:', error);
     }
   }
 
-  public async putCustomMetrics(metrics: Array<{
-    name: string;
-    value: number;
-    unit?: string;
-    dimensions?: Record<string, string>;
-  }>): Promise<void> {
+  public async putCustomMetrics(
+    metrics: Array<{
+      name: string;
+      value: number;
+      unit?: string;
+      dimensions?: Record<string, string>;
+    }>
+  ): Promise<void> {
     for (const metric of metrics) {
-      await this.putMetric(
-        metric.name, 
-        metric.value, 
-        metric.unit, 
-        metric.dimensions
-      );
+      await this.putMetric(metric.name, metric.value, metric.unit, metric.dimensions);
     }
   }
 }
@@ -224,15 +228,15 @@ export async function logInfrastructureEvent(
     context: {
       operation: 'infrastructure-event',
       resourceType,
-      resourceId
+      resourceId,
     },
     metadata: {
       eventType,
       resourceType,
       resourceId,
       ...metadata,
-      isInfrastructureEvent: true
-    }
+      isInfrastructureEvent: true,
+    },
   };
 
   if (cloudWatchLogger) {
@@ -255,14 +259,14 @@ export async function logSecurityEvent(
     message: `Security event: ${eventType}`,
     context: {
       operation: 'security-event',
-      resourceType: 'security'
+      resourceType: 'security',
     },
     metadata: {
       eventType,
       severity,
       ...metadata,
-      isSecurityEvent: true
-    }
+      isSecurityEvent: true,
+    },
   };
 
   if (cloudWatchLogger) {

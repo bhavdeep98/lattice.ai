@@ -2,7 +2,7 @@
  * JSON threat model renderer
  */
 
-import { ThreatModelDoc } from "../model";
+import { ThreatModelDoc } from '../model';
 
 export function renderThreatModelJson(model: ThreatModelDoc): string {
   // Ensure stable output by sorting arrays
@@ -12,10 +12,12 @@ export function renderThreatModelJson(model: ThreatModelDoc): string {
     entryPoints: [...model.entryPoints].sort((a, b) => a.id.localeCompare(b.id)),
     dataStores: [...model.dataStores].sort((a, b) => a.id.localeCompare(b.id)),
     boundaries: [...model.boundaries].sort((a, b) => a.id.localeCompare(b.id)),
-    flows: [...model.flows].sort((a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to)),
+    flows: [...model.flows].sort(
+      (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to)
+    ),
     threats: [...model.threats].sort((a, b) => a.id.localeCompare(b.id)),
     checklist: [...model.checklist].sort((a, b) => a.item.localeCompare(b.item)),
-    openQuestions: [...model.openQuestions].sort()
+    openQuestions: [...model.openQuestions].sort(),
   };
 
   return JSON.stringify(sortedModel, null, 2);

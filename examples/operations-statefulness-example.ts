@@ -8,10 +8,10 @@ import { createStatefulnessPolicy } from '../src/core/statefulness';
 
 /**
  * Example demonstrating Operations & Statefulness best practices in Lattice.
- * 
+ *
  * The Problem: Naive implementations can cause data loss during stack deletion.
  * The Solution: Environment-aware removal policies and comprehensive backup strategies.
- * 
+ *
  * Key Features:
  * 1. Automatic retention policies based on environment
  * 2. AWS Backup integration with compliance reporting

@@ -8,7 +8,7 @@ export enum LogLevel {
   INFO = 'info',
   WARN = 'warn',
   ERROR = 'error',
-  AUDIT = 'audit'
+  AUDIT = 'audit',
 }
 
 export interface LatticeLogEntry {
@@ -130,18 +130,23 @@ export class LatticeLogger {
   // Simplified context methods (no-op for minimal logging)
   public setContext(context?: Record<string, any>): void {}
   public clearContext(): void {}
-  
+
   public startOperation(operation: string, metadata?: Record<string, any>): string {
     this.start(operation);
     return Date.now().toString();
   }
-  
+
   public endOperation(id: string, success: boolean, metadata?: any): void {
     const icon = success ? '✅' : '❌';
     console.log(`${icon} LATTICE Operation ${success ? 'completed' : 'failed'}`);
   }
 
-  public logPerformanceMetric(metric?: string, value?: number, unit?: string, metadata?: Record<string, any>): void {} // No-op for minimal logging
+  public logPerformanceMetric(
+    metric?: string,
+    value?: number,
+    unit?: string,
+    metadata?: Record<string, any>
+  ): void {} // No-op for minimal logging
 }
 
 // Export singleton instance
@@ -156,16 +161,16 @@ export function withLogging<T>(
   return new Promise(async (resolve, reject) => {
     const correlationId = logger.startOperation(operation);
     const startTime = Date.now();
-    
+
     try {
       const result = await fn();
       const duration = Date.now() - startTime;
-      
+
       logger.endOperation(correlationId, true, { duration });
       resolve(result);
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       logger.error(`Operation failed: ${operation}`, error as Error);
       logger.endOperation(correlationId, false, { duration });
       reject(error);
@@ -184,18 +189,18 @@ export function logExecutionTime<T>(
     const startTime = Date.now();
     const className = this.constructor.name;
     const methodName = propertyName;
-    
+
     logger.debug(`Executing ${className}.${methodName}`);
-    
+
     try {
       const result = await originalMethod.apply(this, args);
       const duration = Date.now() - startTime;
-      
+
       logger.debug(`Completed ${className}.${methodName} in ${duration}ms`);
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       logger.error(`Failed ${className}.${methodName} after ${duration}ms`, error as Error);
       throw error;
     }

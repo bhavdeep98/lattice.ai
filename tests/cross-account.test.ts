@@ -16,7 +16,11 @@ describe('Cross-Account Architecture', () => {
       const stack = new CrossAccountStack(app, 'ToolingAccount', {
         env: { account: process.env.CDK_DEFAULT_ACCOUNT || 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID', 'YOUR_STAGING_ACCOUNT_ID', 'YOUR_PROD_ACCOUNT_ID'],
+        targetAccountIds: [
+          'YOUR_DEV_ACCOUNT_ID',
+          'YOUR_STAGING_ACCOUNT_ID',
+          'YOUR_PROD_ACCOUNT_ID',
+        ],
         environment: 'tooling',
         organizationId: 'o-example123456',
       });
@@ -134,17 +138,20 @@ describe('Cross-Account Architecture', () => {
         RoleName: 'LatticeDeploymentRole-prod',
         Description: 'Role for deploying Lattice infrastructure in prod',
       });
-      
+
       // Check that production restrictions exist in the policy
       const templateJson = template.toJSON();
-      const roles = Object.values(templateJson.Resources).filter((resource: any) => 
-        resource.Type === 'AWS::IAM::Role' && 
-        resource.Properties?.RoleName === 'LatticeDeploymentRole-prod'
+      const roles = Object.values(templateJson.Resources).filter(
+        (resource: any) =>
+          resource.Type === 'AWS::IAM::Role' &&
+          resource.Properties?.RoleName === 'LatticeDeploymentRole-prod'
       );
       expect(roles).toHaveLength(1);
       const prodRole = roles[0] as any;
       const policyStatements = prodRole.Properties.Policies[0].PolicyDocument.Statement;
-      const restrictionStatement = policyStatements.find((stmt: any) => stmt.Sid === 'ProductionRestrictions');
+      const restrictionStatement = policyStatements.find(
+        (stmt: any) => stmt.Sid === 'ProductionRestrictions'
+      );
       expect(restrictionStatement).toBeDefined();
       expect(restrictionStatement.Effect).toBe('Deny');
     });
@@ -162,16 +169,19 @@ describe('Cross-Account Architecture', () => {
 
       // Check for organization condition in role assumption
       const templateJson = template.toJSON();
-      const roles = Object.values(templateJson.Resources).filter((resource: any) => 
-        resource.Type === 'AWS::IAM::Role' && 
-        resource.Properties?.RoleName === 'LatticeDeploymentRole-dev'
+      const roles = Object.values(templateJson.Resources).filter(
+        (resource: any) =>
+          resource.Type === 'AWS::IAM::Role' &&
+          resource.Properties?.RoleName === 'LatticeDeploymentRole-dev'
       );
       expect(roles).toHaveLength(1);
       const devRole = roles[0] as any;
       const assumeRolePolicy = devRole.Properties.AssumeRolePolicyDocument;
       const denyStatement = assumeRolePolicy.Statement.find((stmt: any) => stmt.Effect === 'Deny');
       expect(denyStatement).toBeDefined();
-      expect(denyStatement.Condition?.StringNotEquals?.['aws:PrincipalOrgID']).toBe('o-example123456');
+      expect(denyStatement.Condition?.StringNotEquals?.['aws:PrincipalOrgID']).toBe(
+        'o-example123456'
+      );
     });
 
     test('creates proper outputs for integration', () => {
@@ -462,7 +472,7 @@ describe('Cross-Account Architecture', () => {
       toolingTemplate.resourceCountIs('AWS::IAM::Role', 2); // GitHub Actions role + custom resource provider role
       toolingTemplate.resourceCountIs('AWS::S3::Bucket', 1); // Artifact bucket
       toolingTemplate.resourceCountIs('AWS::KMS::Key', 1); // KMS key
-      
+
       // Should have deployment role in target account
       targetTemplate.resourceCountIs('AWS::IAM::Role', 1); // Deployment role
       targetTemplate.resourceCountIs('AWS::S3::Bucket', 1); // Artifact bucket
@@ -473,7 +483,11 @@ describe('Cross-Account Architecture', () => {
       const stack = new CrossAccountStack(app, 'MultiTarget', {
         env: { account: 'YOUR_ACCOUNT_ID', region: 'us-east-1' },
         githubRepository: 'test-org/test-repo',
-        targetAccountIds: ['YOUR_DEV_ACCOUNT_ID', 'YOUR_STAGING_ACCOUNT_ID', 'YOUR_PROD_ACCOUNT_ID'],
+        targetAccountIds: [
+          'YOUR_DEV_ACCOUNT_ID',
+          'YOUR_STAGING_ACCOUNT_ID',
+          'YOUR_PROD_ACCOUNT_ID',
+        ],
         environment: 'tooling',
       });
 
@@ -484,17 +498,20 @@ describe('Cross-Account Architecture', () => {
         RoleName: 'LatticeGitHubActions-MultiTarget',
         Description: 'Role for GitHub Actions to deploy Lattice infrastructure',
       });
-      
+
       // Verify the policy contains the target account ARNs
       const templateJson = template.toJSON();
-      const githubRole = Object.values(templateJson.Resources).find((resource: any) => 
-        resource.Type === 'AWS::IAM::Role' && 
-        resource.Properties?.RoleName === 'LatticeGitHubActions-MultiTarget'
+      const githubRole = Object.values(templateJson.Resources).find(
+        (resource: any) =>
+          resource.Type === 'AWS::IAM::Role' &&
+          resource.Properties?.RoleName === 'LatticeGitHubActions-MultiTarget'
       ) as any;
-      
+
       expect(githubRole).toBeDefined();
       const policyStatements = githubRole.Properties.Policies[0].PolicyDocument.Statement;
-      const assumeRoleStatement = policyStatements.find((stmt: any) => stmt.Sid === 'AssumeTargetAccountRoles');
+      const assumeRoleStatement = policyStatements.find(
+        (stmt: any) => stmt.Sid === 'AssumeTargetAccountRoles'
+      );
       expect(assumeRoleStatement).toBeDefined();
       expect(assumeRoleStatement.Resource).toEqual([
         'arn:aws:iam::YOUR_DEV_ACCOUNT_ID:role/LatticeDeploymentRole-*',

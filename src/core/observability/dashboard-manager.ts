@@ -1,12 +1,12 @@
 import { Construct } from 'constructs';
 import { Duration } from 'aws-cdk-lib';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
-import { 
-  ObservabilityConfig, 
+import {
+  ObservabilityConfig,
   ObservabilityRole,
   DashboardWidget,
   RoleDashboardConfig,
-  MetricDefinition 
+  MetricDefinition,
 } from './types';
 
 /**
@@ -20,12 +20,12 @@ export class LatticeObservabilityDashboard extends Construct {
 
   constructor(scope: Construct, id: string, config: ObservabilityConfig) {
     super(scope, id);
-    
+
     this.config = config;
-    
+
     // Initialize widget collections for each role
     this.initializeRoleWidgets();
-    
+
     // Create dashboards if enabled
     if (this.shouldCreateDashboards()) {
       this.createRoleDashboards();
@@ -77,21 +77,21 @@ export class LatticeObservabilityDashboard extends Construct {
 
   private initializeRoleWidgets(): void {
     const roles: ObservabilityRole[] = this.config.roles || ['developer', 'sre', 'cto', 'security'];
-    roles.forEach(role => {
+    roles.forEach((role) => {
       this.widgets.set(role, []);
     });
   }
 
   private createRoleDashboards(): void {
     const roles: ObservabilityRole[] = this.config.roles || ['developer', 'sre', 'cto', 'security'];
-    
-    roles.forEach(role => {
+
+    roles.forEach((role) => {
       const dashboardName = this.generateDashboardName(role);
       const dashboard = new cloudwatch.Dashboard(this, `${role}Dashboard`, {
         dashboardName,
         defaultInterval: Duration.minutes(5),
       });
-      
+
       this.dashboards.set(role, dashboard);
     });
   }
@@ -99,8 +99,8 @@ export class LatticeObservabilityDashboard extends Construct {
   private refreshDashboards(): void {
     this.dashboards.forEach((dashboard, role) => {
       const widgets = this.widgets.get(role) || [];
-      const cloudwatchWidgets = widgets.map(widget => this.createCloudWatchWidget(widget));
-      
+      const cloudwatchWidgets = widgets.map((widget) => this.createCloudWatchWidget(widget));
+
       // Clear existing widgets and add new ones
       dashboard.addWidgets(...cloudwatchWidgets);
     });
@@ -114,7 +114,7 @@ export class LatticeObservabilityDashboard extends Construct {
   }
 
   private createCloudWatchWidget(widget: DashboardWidget): cloudwatch.IWidget {
-    const metrics = widget.metrics.map(metric => this.createCloudWatchMetric(metric));
+    const metrics = widget.metrics.map((metric) => this.createCloudWatchMetric(metric));
 
     switch (widget.type) {
       case 'line':
@@ -151,11 +151,7 @@ export class LatticeObservabilityDashboard extends Construct {
           logGroupNames: ['/aws/lambda/default'], // Default log group, would be customized based on resource
           width: widget.width || 12,
           height: widget.height || 6,
-          queryLines: [
-            'fields @timestamp, @message',
-            'sort @timestamp desc',
-            'limit 100'
-          ],
+          queryLines: ['fields @timestamp, @message', 'sort @timestamp desc', 'limit 100'],
         });
 
       default:
@@ -190,16 +186,21 @@ export class LatticeObservabilityDashboard extends Construct {
       metrics: [
         {
           metricName: 'CPUUtilization',
-          namespace: computeType === 'lambda' ? 'AWS/Lambda' : computeType === 'ecs' ? 'AWS/ECS' : 'AWS/EC2',
+          namespace:
+            computeType === 'lambda' ? 'AWS/Lambda' : computeType === 'ecs' ? 'AWS/ECS' : 'AWS/EC2',
           dimensionMap: this.getComputeDimensions(resourceId, computeType),
           label: 'CPU %',
         },
-        ...(computeType !== 'lambda' ? [{
-          metricName: 'MemoryUtilization',
-          namespace: computeType === 'ecs' ? 'AWS/ECS' : 'CWAgent',
-          dimensionMap: this.getComputeDimensions(resourceId, computeType),
-          label: 'Memory %',
-        }] : []),
+        ...(computeType !== 'lambda'
+          ? [
+              {
+                metricName: 'MemoryUtilization',
+                namespace: computeType === 'ecs' ? 'AWS/ECS' : 'CWAgent',
+                dimensionMap: this.getComputeDimensions(resourceId, computeType),
+                label: 'Memory %',
+              },
+            ]
+          : []),
       ],
       width: 12,
       height: 6,
@@ -243,7 +244,8 @@ export class LatticeObservabilityDashboard extends Construct {
       metrics: [
         {
           metricName: 'CPUUtilization',
-          namespace: computeType === 'lambda' ? 'AWS/Lambda' : computeType === 'ecs' ? 'AWS/ECS' : 'AWS/EC2',
+          namespace:
+            computeType === 'lambda' ? 'AWS/Lambda' : computeType === 'ecs' ? 'AWS/ECS' : 'AWS/EC2',
           dimensionMap: this.getComputeDimensions(resourceId, computeType),
           label: 'Avg CPU %',
         },

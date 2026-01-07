@@ -22,8 +22,8 @@ export class ExampleStack extends Stack {
       projectName: 'LatticeExample',
       owner: 'Engineering',
       additionalTags: {
-        'CostCenter': '12345',
-        'Team': 'Platform',
+        CostCenter: '12345',
+        Team: 'Platform',
       },
       costLimits: {
         maxInstanceSize: 'large',
@@ -66,7 +66,7 @@ export class ExampleStack extends Stack {
 
     // Lattice handles the complex AWS implementation
     const network = new LatticeNetwork(this, 'Network', networkIntent);
-    
+
     const storage = new LatticeBucket(this, 'Storage', storageIntent);
 
     const identity = new LatticeIdentity(this, 'Identity', identityIntent);
@@ -101,7 +101,7 @@ export class ExampleStack extends Stack {
     // 🛡️ Secured (encryption, versioning, access controls)
     // 💰 Cost-controlled (appropriate sizes for environment)
     // 🏷️ Tagged (project, owner, environment, cost center)
-    
+
     // Log resource information for verification
     console.log(`✅ Infrastructure deployed successfully:`);
     console.log(`   🌐 VPC: ${network.output.vpcId}`);

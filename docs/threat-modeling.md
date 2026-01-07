@@ -25,8 +25,8 @@ applyLatticeAspects(stack, {
   threatModel: {
     enabled: true,
     formats: ['md', 'json'],
-    projectName: 'Customer API'
-  }
+    projectName: 'Customer API',
+  },
 });
 ```
 
@@ -37,6 +37,7 @@ cdk synth
 ```
 
 Find your threat models in:
+
 - `cdk.out/THREAT_MODEL.md` - Human-readable report
 - `cdk.out/threat-model.json` - Machine-readable data
 
@@ -45,18 +46,22 @@ Find your threat models in:
 Lattice automatically detects and applies specialized threat templates for:
 
 ### 🚀 Serverless API
+
 **Pattern:** API Gateway + Lambda + DynamoDB
 **Key Threats:** Authentication bypass, injection attacks, rate limiting, privilege escalation
 
-### 📊 Data Pipeline  
+### 📊 Data Pipeline
+
 **Pattern:** S3 + Glue/EMR + Step Functions + Redshift
 **Key Threats:** Data tampering, PII exposure, source spoofing, resource exhaustion
 
 ### 🤖 GenAI/RAG
+
 **Pattern:** Bedrock/SageMaker + Vector Store + S3
 **Key Threats:** Prompt injection, cross-tenant leakage, vector poisoning, cost abuse
 
 ### 🏗️ General Cloud App
+
 **Fallback:** Any other architecture pattern
 **Key Threats:** Basic cloud security fundamentals
 
@@ -65,28 +70,35 @@ Lattice automatically detects and applies specialized threat templates for:
 Each generated threat model includes:
 
 ### 📋 Executive Summary
+
 - Risk distribution (Critical/High/Medium/Low)
 - Architecture overview
 - Resource inventory
 
 ### 🛡️ STRIDE Analysis
+
 Threats organized by category:
+
 - **Spoofing** - Identity verification failures
-- **Tampering** - Data integrity violations  
+- **Tampering** - Data integrity violations
 - **Repudiation** - Audit trail gaps
 - **Information Disclosure** - Data exposure risks
 - **Denial of Service** - Availability threats
 - **Elevation of Privilege** - Access control bypasses
 
 ### ✅ Security Checklist
+
 Automated checks for:
+
 - Encryption at rest status
 - Public endpoint security
 - CloudTrail logging
 - IAM policy compliance
 
 ### ❓ Open Questions
+
 Context-aware questions for security review:
+
 - Data classification requirements
 - Compliance framework applicability
 - Incident response procedures
@@ -105,6 +117,7 @@ threatModel: {
 ## Integration with CI/CD
 
 ### Basic Integration
+
 ```bash
 # Generate threat models during build
 cdk synth
@@ -117,10 +130,11 @@ fi
 ```
 
 ### Advanced Integration
+
 ```javascript
 // Parse JSON for automated security gates
 const threatModel = JSON.parse(fs.readFileSync('cdk.out/threat-model.json'));
-const criticalThreats = threatModel.threats.filter(t => t.risk === 'Critical');
+const criticalThreats = threatModel.threats.filter((t) => t.risk === 'Critical');
 
 if (criticalThreats.length > 0) {
   console.error(`❌ ${criticalThreats.length} critical threats found`);
@@ -131,13 +145,15 @@ if (criticalThreats.length > 0) {
 ## Examples
 
 See `examples/threat-model-examples.ts` for complete examples of:
+
 - Serverless API with authentication threats
-- Data pipeline with PII exposure risks  
+- Data pipeline with PII exposure risks
 - GenAI RAG with prompt injection concerns
 
 ## Customization
 
 The threat modeling system is designed to be:
+
 - **Deterministic** - Same architecture = same threats
 - **Extensible** - Add custom threat templates
 - **Stable** - Consistent output for diffing/automation
@@ -155,6 +171,7 @@ For custom threat templates or advanced configuration, see the source code in `s
 ## Limitations
 
 Current limitations (contributions welcome!):
+
 - Heuristic-based workload detection (not perfect)
 - Limited to AWS CDK constructs (no runtime analysis)
 - Generic threat templates (not application-specific)

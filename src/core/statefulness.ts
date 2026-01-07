@@ -76,7 +76,7 @@ export class StatefulnessPolicy {
     if (this.config.enableBackups !== undefined) {
       return this.config.enableBackups;
     }
-    
+
     // Default: enable backups for prod and staging
     return this.config.environment === 'prod' || this.config.environment === 'staging';
   }
@@ -123,7 +123,7 @@ export class StatefulnessPolicy {
     if (this.config.forceRetain) {
       return false;
     }
-    
+
     return this.config.environment === 'dev';
   }
 
@@ -136,14 +136,14 @@ export class StatefulnessPolicy {
       if (this.config.enableBackups === false) {
         throw new Error(
           'CRITICAL: Backups cannot be disabled for production environment. ' +
-          'This violates data protection requirements.'
+            'This violates data protection requirements.'
         );
       }
 
       if (this.config.backupRetentionDays !== undefined && this.config.backupRetentionDays < 7) {
         throw new Error(
           'CRITICAL: Production backup retention must be at least 7 days. ' +
-          'Current setting violates data protection requirements.'
+            'Current setting violates data protection requirements.'
         );
       }
     }

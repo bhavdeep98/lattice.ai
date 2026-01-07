@@ -1,411 +1,468 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Lattice Demo - AI Infrastructure Assistant</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        .real-demo {
-            padding: 100px 0 50px;
-            background: #fafafa;
-            min-height: 100vh;
-            color: #1a1a1a;
+      .real-demo {
+        padding: 100px 0 50px;
+        background: #fafafa;
+        min-height: 100vh;
+        color: #1a1a1a;
+      }
+
+      .demo-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .demo-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .demo-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1a1a1a;
+      }
+
+      .demo-subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+
+      .demo-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 2rem;
+      }
+
+      .input-panel {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+      }
+
+      .output-panel {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+      }
+
+      .panel-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #1a1a1a;
+      }
+
+      .input-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .input-textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 1rem;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+      }
+
+      .input-textarea:focus {
+        outline: none;
+        border-color: #007aff;
+      }
+
+      .generate-btn {
+        background: #007aff;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .generate-btn:hover {
+        background: #0056cc;
+        transform: translateY(-2px);
+      }
+
+      .generate-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .example-prompts {
+        margin-top: 1rem;
+      }
+
+      .example-prompt {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 0.5rem 1rem;
+        margin: 0.5rem 0.5rem 0.5rem 0;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+        display: inline-block;
+      }
+
+      .example-prompt:hover {
+        background: #007aff;
+        color: white;
+        transform: translateY(-1px);
+      }
+
+      .output-section {
+        margin-bottom: 2rem;
+      }
+
+      .section-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1a1a1a;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .code-block {
+        background: #1a1a1a;
+        color: #e5e7eb;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        overflow-x: auto;
+        position: relative;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: #374151;
+        color: white;
+        border: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: background 0.3s ease;
+      }
+
+      .copy-btn:hover {
+        background: #4b5563;
+      }
+
+      .copy-btn.copied {
+        background: #10b981;
+      }
+
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: #666;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e5e7eb;
+        border-top: 2px solid #007aff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
-        
-        .demo-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        100% {
+          transform: rotate(360deg);
         }
-        
-        .demo-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .demo-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #1a1a1a;
-        }
-        
-        .demo-subtitle {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-        
+      }
+
+      .error {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #fecaca;
+      }
+
+      .success {
+        background: #f0fdf4;
+        color: #16a34a;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #bbf7d0;
+      }
+
+      .step-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .step-number {
+        background: #007aff;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .step-title {
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .capabilities-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .capability-tag {
+        background: #e0f2fe;
+        color: #0277bd;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin: 0.25rem 0.25rem 0.25rem 0;
+        display: inline-block;
+        cursor: help;
+      }
+
+      .analysis-summary {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .confidence-high {
+        background: #f0fdf4;
+        border-left: 4px solid #10b981;
+      }
+
+      .confidence-medium {
+        background: #fefce8;
+        border-left: 4px solid #f59e0b;
+      }
+
+      .confidence-low {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+      }
+
+      @media (max-width: 1024px) {
         .demo-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin-top: 2rem;
+          grid-template-columns: 1fr;
+          gap: 2rem;
         }
-        
-        .input-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e7eb;
-        }
-        
-        .output-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e7eb;
-        }
-        
-        .panel-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: #1a1a1a;
-        }
-        
-        .input-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .input-textarea {
-            width: 100%;
-            min-height: 120px;
-            padding: 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 1rem;
-            resize: vertical;
-            transition: border-color 0.3s ease;
-        }
-        
-        .input-textarea:focus {
-            outline: none;
-            border-color: #007AFF;
-        }
-        
-        .generate-btn {
-            background: #007AFF;
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .generate-btn:hover {
-            background: #0056CC;
-            transform: translateY(-2px);
-        }
-        
-        .generate-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .example-prompts {
-            margin-top: 1rem;
-        }
-        
-        .example-prompt {
-            background: #f3f4f6;
-            color: #374151;
-            padding: 0.5rem 1rem;
-            margin: 0.5rem 0.5rem 0.5rem 0;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
-            display: inline-block;
-        }
-        
-        .example-prompt:hover {
-            background: #007AFF;
-            color: white;
-            transform: translateY(-1px);
-        }
-        
-        .output-section {
-            margin-bottom: 2rem;
-        }
-        
-        .section-header {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .code-block {
-            background: #1a1a1a;
-            color: #e5e7eb;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            overflow-x: auto;
-            position: relative;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: #374151;
-            color: white;
-            border: none;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            transition: background 0.3s ease;
-        }
-        
-        .copy-btn:hover {
-            background: #4b5563;
-        }
-        
-        .copy-btn.copied {
-            background: #10b981;
-        }
-        
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            color: #666;
-        }
-        
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #007AFF;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .error {
-            background: #fef2f2;
-            color: #dc2626;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #fecaca;
-        }
-        
-        .success {
-            background: #f0fdf4;
-            color: #16a34a;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #bbf7d0;
-        }
-        
-        .step-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .step-number {
-            background: #007AFF;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .step-title {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-        
-        .capabilities-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .capability-tag {
-            background: #e0f2fe;
-            color: #0277bd;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin: 0.25rem 0.25rem 0.25rem 0;
-            display: inline-block;
-            cursor: help;
-        }
-        
-        .analysis-summary {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .confidence-high {
-            background: #f0fdf4;
-            border-left: 4px solid #10b981;
-        }
-        
-        .confidence-medium {
-            background: #fefce8;
-            border-left: 4px solid #f59e0b;
-        }
-        
-        .confidence-low {
-            background: #fef2f2;
-            border-left: 4px solid #ef4444;
-        }
-        
-        @media (max-width: 1024px) {
-            .demo-layout {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer hexagon structure -->
-                    <path d="M50 5L85 25V75L50 95L15 75V25L50 5Z" stroke="#18181b" stroke-width="2" fill="none"/>
-                    <!-- Inner cube structure -->
-                    <path d="M35 30L50 20L65 30V50L50 60L35 50V30Z" stroke="#18181b" stroke-width="2.5" fill="none"/>
-                    <!-- Connecting lines -->
-                    <path d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95" stroke="#71717a" stroke-width="1.5"/>
-                    <!-- Center connections -->
-                    <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5"/>
-                    <circle cx="50" cy="40" r="2" fill="#18181b"/>
-                </svg>
-                <span class="logo-text">Lattice</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="index.html#platform">Platform</a>
-                <a href="index.html#features">Features</a>
-                <a href="index.html#pricing">Pricing</a>
-                <a href="documentation.html">Docs</a>
-                <a href="real-lattice-demo.html" class="nav-cta">Real Demo</a>
-            </div>
-            <div class="nav-mobile">
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg
+            class="logo-icon"
+            width="32"
+            height="32"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Outer hexagon structure -->
+            <path
+              d="M50 5L85 25V75L50 95L15 75V25L50 5Z"
+              stroke="#18181b"
+              stroke-width="2"
+              fill="none"
+            />
+            <!-- Inner cube structure -->
+            <path
+              d="M35 30L50 20L65 30V50L50 60L35 50V30Z"
+              stroke="#18181b"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <!-- Connecting lines -->
+            <path
+              d="M35 30L15 25M65 30L85 25M35 50L15 75M65 50L85 75M50 20L50 5M50 60L50 95"
+              stroke="#71717a"
+              stroke-width="1.5"
+            />
+            <!-- Center connections -->
+            <path d="M35 30L50 40L65 30M35 50L50 40L65 50" stroke="#18181b" stroke-width="1.5" />
+            <circle cx="50" cy="40" r="2" fill="#18181b" />
+          </svg>
+          <span class="logo-text">Lattice</span>
         </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#platform">Platform</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="documentation.html">Docs</a>
+          <a href="real-lattice-demo.html" class="nav-cta">Real Demo</a>
+        </div>
+        <div class="nav-mobile">
+          <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- Real Demo Section -->
     <section class="real-demo">
-        <div class="demo-container">
-            <div class="demo-header">
-                <h1 class="demo-title">Real Lattice Framework Demo</h1>
-                <p class="demo-subtitle">
-                    Experience the actual Lattice framework in action. This demo uses the real Lattice CDK library 
-                    to generate production-ready AWS infrastructure from your natural language requirements.
-                </p>
-            </div>
-
-            <div class="demo-layout">
-                <!-- Input Panel -->
-                <div class="input-panel">
-                    <h2 class="panel-title">🎯 Describe Your Application</h2>
-                    
-                    <form class="input-form" id="demoForm">
-                        <textarea 
-                            class="input-textarea" 
-                            id="userInput" 
-                            placeholder="Describe what you want to build... (e.g., 'I need a healthcare platform with claims processing, user authentication, and secure data storage')"
-                            rows="6"
-                        ></textarea>
-                        
-                        <button type="submit" class="generate-btn" id="generateBtn">
-                            <span>🚀 Generate with Lattice</span>
-                        </button>
-                    </form>
-                    
-                    <div class="example-prompts">
-                        <p style="font-weight: 500; margin-bottom: 0.5rem;">Try these examples:</p>
-                        <div class="example-prompt" onclick="useExample('I need a healthcare platform with claims processing, patient data management, and HIPAA compliance')">
-                            🏥 Healthcare Platform
-                        </div>
-                        <div class="example-prompt" onclick="useExample('Build an e-commerce platform with product catalog, payment processing, and order management')">
-                            🛒 E-commerce Platform
-                        </div>
-                        <div class="example-prompt" onclick="useExample('Create a blog platform with user authentication, content management, and file uploads')">
-                            📝 Blog Platform
-                        </div>
-                        <div class="example-prompt" onclick="useExample('I want a data analytics platform with real-time processing and dashboard')">
-                            📊 Analytics Platform
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Output Panel -->
-                <div class="output-panel">
-                    <h2 class="panel-title">⚡ Lattice Framework Output</h2>
-                    
-                    <div id="outputContent">
-                        <div style="text-align: center; padding: 3rem; color: #666;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
-                            <p>Enter your requirements on the left to see the Lattice framework in action!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="demo-container">
+        <div class="demo-header">
+          <h1 class="demo-title">Real Lattice Framework Demo</h1>
+          <p class="demo-subtitle">
+            Experience the actual Lattice framework in action. This demo uses the real Lattice CDK
+            library to generate production-ready AWS infrastructure from your natural language
+            requirements.
+          </p>
         </div>
+
+        <div class="demo-layout">
+          <!-- Input Panel -->
+          <div class="input-panel">
+            <h2 class="panel-title">🎯 Describe Your Application</h2>
+
+            <form class="input-form" id="demoForm">
+              <textarea
+                class="input-textarea"
+                id="userInput"
+                placeholder="Describe what you want to build... (e.g., 'I need a healthcare platform with claims processing, user authentication, and secure data storage')"
+                rows="6"
+              ></textarea>
+
+              <button type="submit" class="generate-btn" id="generateBtn">
+                <span>🚀 Generate with Lattice</span>
+              </button>
+            </form>
+
+            <div class="example-prompts">
+              <p style="font-weight: 500; margin-bottom: 0.5rem">Try these examples:</p>
+              <div
+                class="example-prompt"
+                onclick="
+                  useExample(
+                    'I need a healthcare platform with claims processing, patient data management, and HIPAA compliance'
+                  )
+                "
+              >
+                🏥 Healthcare Platform
+              </div>
+              <div
+                class="example-prompt"
+                onclick="
+                  useExample(
+                    'Build an e-commerce platform with product catalog, payment processing, and order management'
+                  )
+                "
+              >
+                🛒 E-commerce Platform
+              </div>
+              <div
+                class="example-prompt"
+                onclick="
+                  useExample(
+                    'Create a blog platform with user authentication, content management, and file uploads'
+                  )
+                "
+              >
+                📝 Blog Platform
+              </div>
+              <div
+                class="example-prompt"
+                onclick="
+                  useExample(
+                    'I want a data analytics platform with real-time processing and dashboard'
+                  )
+                "
+              >
+                📊 Analytics Platform
+              </div>
+            </div>
+          </div>
+
+          <!-- Output Panel -->
+          <div class="output-panel">
+            <h2 class="panel-title">⚡ Lattice Framework Output</h2>
+
+            <div id="outputContent">
+              <div style="text-align: center; padding: 3rem; color: #666">
+                <div style="font-size: 3rem; margin-bottom: 1rem">🎯</div>
+                <p>Enter your requirements on the left to see the Lattice framework in action!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <script src="real-lattice-demo.js"></script>
-</body>
+  </body>
 </html>

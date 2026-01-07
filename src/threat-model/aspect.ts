@@ -2,10 +2,10 @@
  * CDK Aspect for threat model data collection
  */
 
-import { IAspect } from "aws-cdk-lib";
-import { IConstruct } from "constructs";
-import { CfnResource } from "aws-cdk-lib";
-import { ThreatFactsCollector } from "./collectors/collect-inventory";
+import { IAspect } from 'aws-cdk-lib';
+import { IConstruct } from 'constructs';
+import { CfnResource } from 'aws-cdk-lib';
+import { ThreatFactsCollector } from './collectors/collect-inventory';
 
 export class ThreatModelAspect implements IAspect {
   constructor(private readonly collector: ThreatFactsCollector) {}

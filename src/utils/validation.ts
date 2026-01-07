@@ -16,13 +16,13 @@ export function validateCidr(cidr: string): boolean {
 
   const [ip, prefix] = cidr.split('/');
   const prefixNum = parseInt(prefix, 10);
-  
+
   if (prefixNum < 8 || prefixNum > 28) {
     return false;
   }
 
   const octets = ip.split('.').map(Number);
-  return octets.every(octet => octet >= 0 && octet <= 255);
+  return octets.every((octet) => octet >= 0 && octet <= 255);
 }
 
 export function validateResourceName(name: string): boolean {
@@ -33,11 +33,13 @@ export function validateResourceName(name: string): boolean {
 export function validateBucketName(name: string): boolean {
   // S3 bucket naming rules
   const bucketRegex = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
-  return bucketRegex.test(name) && 
-         name.length >= 3 && 
-         name.length <= 63 && 
-         !name.includes('..') &&
-         !name.match(/^\d+\.\d+\.\d+\.\d+$/);
+  return (
+    bucketRegex.test(name) &&
+    name.length >= 3 &&
+    name.length <= 63 &&
+    !name.includes('..') &&
+    !name.match(/^\d+\.\d+\.\d+\.\d+$/)
+  );
 }
 
 export function validatePort(port: number): boolean {

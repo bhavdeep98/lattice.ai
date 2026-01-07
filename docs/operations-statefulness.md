@@ -19,15 +19,16 @@ Lattice implements comprehensive **Operations & Statefulness** management that:
 
 Lattice automatically sets appropriate removal policies based on the environment:
 
-| Environment | S3 Buckets | RDS Databases | Rationale |
-|-------------|------------|---------------|-----------|
-| `prod` | `RETAIN` | `SNAPSHOT` | Maximum data protection |
-| `staging` | `RETAIN` | `SNAPSHOT` | Staging data may be valuable |
-| `dev` | `DESTROY` | `DESTROY` | Fast iteration, cost optimization |
+| Environment | S3 Buckets | RDS Databases | Rationale                         |
+| ----------- | ---------- | ------------- | --------------------------------- |
+| `prod`      | `RETAIN`   | `SNAPSHOT`    | Maximum data protection           |
+| `staging`   | `RETAIN`   | `SNAPSHOT`    | Staging data may be valuable      |
+| `dev`       | `DESTROY`  | `DESTROY`     | Fast iteration, cost optimization |
 
 ### 2. AWS Backup Integration
 
 Production and staging environments automatically get:
+
 - **Daily backups** with configurable retention
 - **Weekly backups** (production only) for long-term retention
 - **Monthly backups** (production only) for compliance
@@ -38,6 +39,7 @@ Production and staging environments automatically get:
 ### 3. Configuration Validation
 
 Lattice prevents unsafe configurations:
+
 - ❌ Cannot disable backups for production environments
 - ❌ Cannot set backup retention below 7 days for production
 - ❌ Cannot use `DESTROY` removal policy for production stateful resources
@@ -86,7 +88,9 @@ const prodDatabase = new LatticeDatabase(this, 'ProdDatabase', {
   engine: 'postgres',
   size: 'large',
   highAvailability: true,
-  network: { /* ... */ },
+  network: {
+    /* ... */
+  },
   enableBackups: true, // AWS Backup integration
   backupRetentionDays: 365, // 1 year retention
 });
@@ -158,18 +162,21 @@ backupManager.addResource(database.instanceArn, 'rds-postgres');
 ### Backup Rules by Environment
 
 #### Development
+
 - **Daily backups**: 7-day retention
 - **No cross-region backup**
 - **No compliance reporting**
 - **Backups disabled by default** (can be enabled)
 
 #### Staging
+
 - **Daily backups**: 14-day retention
 - **No cross-region backup**
 - **No compliance reporting**
 - **Backups enabled by default**
 
 #### Production
+
 - **Daily backups**: 30-day retention with cold storage transition
 - **Weekly backups**: 1-year retention
 - **Monthly backups**: 7-year retention
@@ -182,8 +189,9 @@ backupManager.addResource(database.instanceArn, 'rds-postgres');
 ### 1. Environment Naming
 
 Use consistent environment names:
+
 - `dev` - Development environment
-- `staging` - Staging/testing environment  
+- `staging` - Staging/testing environment
 - `prod` - Production environment
 
 ### 2. Critical Resource Protection
@@ -276,7 +284,9 @@ const database = new LatticeDatabase(this, 'Database', {
   environment: 'prod',
   engine: 'postgres',
   size: 'large',
-  network: { /* ... */ },
+  network: {
+    /* ... */
+  },
   // ✅ Automatic AWS Backup integration with best practices
 });
 ```
@@ -336,6 +346,7 @@ aws backup get-backup-plan --backup-plan-id <plan-id>
 Lattice's Operations & Statefulness system ensures that your AWS infrastructure is production-ready from day one. By automatically applying environment-appropriate policies and comprehensive backup strategies, you can focus on building features instead of worrying about data loss.
 
 The system is designed to be:
+
 - **Safe by default**: Production resources are protected automatically
 - **Cost-effective**: Development resources use minimal backup strategies
 - **Compliant**: Built-in reporting for regulatory requirements

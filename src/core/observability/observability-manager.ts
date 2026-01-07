@@ -16,7 +16,7 @@ export class LatticeObservabilityManager extends Construct {
 
   constructor(scope: Construct, id: string, config: ObservabilityConfig) {
     super(scope, id);
-    
+
     this.config = config;
 
     // Create alarm manager
@@ -30,7 +30,7 @@ export class LatticeObservabilityManager extends Construct {
    * Add observability for a compute resource
    */
   public addComputeObservability(
-    resourceId: string, 
+    resourceId: string,
     resourceType: 'ec2' | 'ecs' | 'lambda',
     additionalData?: any
   ): {
@@ -150,7 +150,11 @@ export class LatticeObservabilityManager extends Construct {
   /**
    * Create a notification topic for alarms if not provided
    */
-  public static createNotificationTopic(scope: Construct, id: string, topicName?: string): sns.Topic {
+  public static createNotificationTopic(
+    scope: Construct,
+    id: string,
+    topicName?: string
+  ): sns.Topic {
     return new sns.Topic(scope, id, {
       // Don't specify topicName to let CDK generate unique names, or use environment-specific naming
       topicName: topicName, // Only use provided topicName, don't default to a fixed name
@@ -162,13 +166,13 @@ export class LatticeObservabilityManager extends Construct {
    * Factory method to create observability manager with sensible defaults
    */
   public static create(
-    scope: Construct, 
-    id: string, 
+    scope: Construct,
+    id: string,
     config: Partial<ObservabilityConfig> & { environment: string }
   ): LatticeObservabilityManager {
     // Create notification topic if not provided
     let notificationTopic = config.notificationTopic;
-    
+
     if (!notificationTopic) {
       // Try to find existing topic first to avoid duplicates
       try {
@@ -176,10 +180,10 @@ export class LatticeObservabilityManager extends Construct {
       } catch (error) {
         // Topic doesn't exist, create new one
       }
-      
+
       if (!notificationTopic) {
         notificationTopic = LatticeObservabilityManager.createNotificationTopic(
-          scope, 
+          scope,
           'ObservabilityNotificationTopic'
         );
       }

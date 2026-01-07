@@ -15,8 +15,8 @@ describe('LatticeCompute', () => {
     stack = new Stack(app, 'TestStack', {
       env: {
         account: '123456789012',
-        region: 'us-east-1'
-      }
+        region: 'us-east-1',
+      },
     });
   });
 
@@ -30,8 +30,8 @@ describe('LatticeCompute', () => {
           size: 'small',
           network: {
             vpcId: 'vpc-12345',
-            subnetIds: ['subnet-12345']
-          }
+            subnetIds: ['subnet-12345'],
+          },
         });
       }).toThrow('Unsupported compute type');
     });
@@ -45,8 +45,8 @@ describe('LatticeCompute', () => {
           size: 'small',
           network: {
             vpcId: 'vpc-12345',
-            subnetIds: ['subnet-12345']
-          }
+            subnetIds: ['subnet-12345'],
+          },
         });
       }).not.toThrow();
     });
@@ -55,8 +55,8 @@ describe('LatticeCompute', () => {
   describe('Compute Configuration', () => {
     test('should support different compute sizes', () => {
       const sizes = ['small', 'medium', 'large', 'xlarge'];
-      
-      sizes.forEach(size => {
+
+      sizes.forEach((size) => {
         expect(() => {
           new LatticeCompute(stack, `${size}Compute`, {
             name: `test-${size}`,
@@ -65,8 +65,8 @@ describe('LatticeCompute', () => {
             size: size as any,
             network: {
               vpcId: 'vpc-12345',
-              subnetIds: ['subnet-12345']
-            }
+              subnetIds: ['subnet-12345'],
+            },
           });
         }).not.toThrow();
       });
@@ -82,9 +82,9 @@ describe('LatticeCompute', () => {
           autoScaling: true,
           network: {
             vpcId: 'vpc-12345',
-            subnetIds: ['subnet-12345']
+            subnetIds: ['subnet-12345'],
           },
-          containerImage: 'my-app:latest'
+          containerImage: 'my-app:latest',
         });
       }).not.toThrow();
     });
@@ -93,8 +93,8 @@ describe('LatticeCompute', () => {
   describe('Environment Handling', () => {
     test('should handle different environments', () => {
       const environments = ['dev', 'staging', 'prod'];
-      
-      environments.forEach(env => {
+
+      environments.forEach((env) => {
         expect(() => {
           new LatticeCompute(stack, `${env}Compute`, {
             name: `test-${env}`,
@@ -103,8 +103,8 @@ describe('LatticeCompute', () => {
             size: 'small',
             network: {
               vpcId: 'vpc-12345',
-              subnetIds: ['subnet-12345']
-            }
+              subnetIds: ['subnet-12345'],
+            },
           });
         }).not.toThrow();
       });
@@ -121,8 +121,8 @@ describe('LatticeCompute', () => {
         network: {
           vpcId: 'vpc-12345',
           subnetIds: ['subnet-12345', 'subnet-67890'],
-          securityGroupIds: ['sg-12345']
-        }
+          securityGroupIds: ['sg-12345'],
+        },
       });
 
       expect(compute).toBeDefined();

@@ -4,38 +4,38 @@
  */
 
 export type Stride =
-  | "Spoofing"
-  | "Tampering"
-  | "Repudiation"
-  | "InformationDisclosure"
-  | "DenialOfService"
-  | "ElevationOfPrivilege";
+  | 'Spoofing'
+  | 'Tampering'
+  | 'Repudiation'
+  | 'InformationDisclosure'
+  | 'DenialOfService'
+  | 'ElevationOfPrivilege';
 
 export interface ResourceRef {
-  id: string;                // construct.node.path
-  type: string;              // e.g., "AWS::Lambda::Function"
-  service: string;           // e.g., "lambda"
+  id: string; // construct.node.path
+  type: string; // e.g., "AWS::Lambda::Function"
+  service: string; // e.g., "lambda"
   props?: Record<string, any>; // small, curated subset (no giant blobs)
 }
 
 export interface EntryPoint {
   id: string;
-  kind: "apigw" | "alb" | "cloudfront" | "public-s3-website" | "other";
+  kind: 'apigw' | 'alb' | 'cloudfront' | 'public-s3-website' | 'other';
   isPublic: boolean;
   notes?: string;
 }
 
 export interface DataStore {
   id: string;
-  kind: "s3" | "dynamodb" | "rds" | "redshift" | "opensearch" | "efs" | "other";
+  kind: 's3' | 'dynamodb' | 'rds' | 'redshift' | 'opensearch' | 'efs' | 'other';
   containsSensitiveDataLikely: boolean; // heuristic
-  encryptionAtRest?: "kms" | "aws-managed" | "none" | "unknown";
+  encryptionAtRest?: 'kms' | 'aws-managed' | 'none' | 'unknown';
 }
 
 export interface TrustBoundary {
   id: string;
   name: string;
-  type: "InternetToAWS" | "VPCBoundary" | "AccountBoundary" | "ServiceToService";
+  type: 'InternetToAWS' | 'VPCBoundary' | 'AccountBoundary' | 'ServiceToService';
   description: string;
 }
 
@@ -51,9 +51,9 @@ export interface ThreatItem {
   title: string;
   scenario: string;
   affectedAssets: string[];
-  likelihood: "Low" | "Medium" | "High";
-  impact: "Low" | "Medium" | "High";
-  risk: "Low" | "Medium" | "High" | "Critical";
+  likelihood: 'Low' | 'Medium' | 'High';
+  impact: 'Low' | 'Medium' | 'High';
+  risk: 'Low' | 'Medium' | 'High' | 'Critical';
   mitigations: { control: string; awsServices?: string[] }[];
   detections: { signal: string; awsServices?: string[] }[];
 }
@@ -70,7 +70,7 @@ export interface ThreatModelDoc {
   boundaries: TrustBoundary[];
   flows: DataFlow[];
   threats: ThreatItem[];
-  checklist: { item: string; status: "Pass" | "Warn" | "Unknown"; details?: string }[];
+  checklist: { item: string; status: 'Pass' | 'Warn' | 'Unknown'; details?: string }[];
   openQuestions: string[];
   workloadType: string; // "data-pipeline" | "genai-rag" | ...
 }

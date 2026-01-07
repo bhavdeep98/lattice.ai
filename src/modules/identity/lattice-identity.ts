@@ -8,10 +8,10 @@ import { IdentityOutput } from '../../core/types';
  */
 export class LatticeIdentity extends Construct implements LatticeIdentityConstruct {
   public readonly output: IdentityOutput;
-  
+
   // Escape hatch: Direct access to underlying AWS CDK construct
   public readonly instance: iam.Role;
-  
+
   private readonly role: iam.Role;
 
   constructor(scope: Construct, id: string, props: LatticeIdentityProps) {
@@ -29,7 +29,11 @@ export class LatticeIdentity extends Construct implements LatticeIdentityConstru
     } = props;
 
     // Determine trusted principals based on role type and configuration
-    const trustedPrincipals = this.getTrustedPrincipals(roleType, trustedServices, programmaticAccess);
+    const trustedPrincipals = this.getTrustedPrincipals(
+      roleType,
+      trustedServices,
+      programmaticAccess
+    );
 
     // Create IAM role
     this.role = new iam.Role(this, 'Role', {
@@ -43,14 +47,14 @@ export class LatticeIdentity extends Construct implements LatticeIdentityConstru
     this.applyRoleBasedPolicies(roleType);
 
     // Apply additional managed policies
-    policies.forEach(policyArn => {
+    policies.forEach((policyArn) => {
       this.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName(policyArn));
     });
 
     // Apply custom policy statements
     if (customPolicyStatements.length > 0) {
       const customPolicy = new iam.Policy(this, 'CustomPolicy', {
-        statements: customPolicyStatements.map(stmt => iam.PolicyStatement.fromJson(stmt)),
+        statements: customPolicyStatements.map((stmt) => iam.PolicyStatement.fromJson(stmt)),
       });
       this.role.attachInlinePolicy(customPolicy);
     }
@@ -94,7 +98,7 @@ export class LatticeIdentity extends Construct implements LatticeIdentityConstru
     }
 
     // Add additional trusted services
-    trustedServices.forEach(service => {
+    trustedServices.forEach((service) => {
       principals.push(new iam.ServicePrincipal(service));
     });
 
@@ -105,44 +109,40 @@ export class LatticeIdentity extends Construct implements LatticeIdentityConstru
     switch (roleType) {
       case 'application':
         // Basic application permissions
-        this.role.addToPolicy(new iam.PolicyStatement({
-          effect: iam.Effect.ALLOW,
-          actions: [
-            'logs:CreateLogGroup',
-            'logs:CreateLogStream',
-            'logs:PutLogEvents',
-          ],
-          resources: ['*'],
-        }));
+        this.role.addToPolicy(
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
+            resources: ['*'],
+          })
+        );
         break;
 
       case 'service':
         // Service-specific permissions
-        this.role.addToPolicy(new iam.PolicyStatement({
-          effect: iam.Effect.ALLOW,
-          actions: [
-            'logs:CreateLogGroup',
-            'logs:CreateLogStream',
-            'logs:PutLogEvents',
-            'xray:PutTraceSegments',
-            'xray:PutTelemetryRecords',
-          ],
-          resources: ['*'],
-        }));
+        this.role.addToPolicy(
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: [
+              'logs:CreateLogGroup',
+              'logs:CreateLogStream',
+              'logs:PutLogEvents',
+              'xray:PutTraceSegments',
+              'xray:PutTelemetryRecords',
+            ],
+            resources: ['*'],
+          })
+        );
         break;
 
       case 'readonly':
         // Read-only access patterns
-        this.role.addManagedPolicy(
-          iam.ManagedPolicy.fromAwsManagedPolicyName('ReadOnlyAccess')
-        );
+        this.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('ReadOnlyAccess'));
         break;
 
       case 'admin':
         // Administrative access (use with caution)
-        this.role.addManagedPolicy(
-          iam.ManagedPolicy.fromAwsManagedPolicyName('PowerUserAccess')
-        );
+        this.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('PowerUserAccess'));
         break;
     }
   }
@@ -165,10 +165,12 @@ export class LatticeIdentity extends Construct implements LatticeIdentityConstru
    * Grant permissions to access a specific resource
    */
   public grantResourceAccess(resource: any, actions: string[]): void {
-    this.role.addToPolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions,
-      resources: [resource],
-    }));
+    this.role.addToPolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions,
+        resources: [resource],
+      })
+    );
   }
 }

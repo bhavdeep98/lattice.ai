@@ -4,8 +4,8 @@
 pipeline:
   # Global settings
   timeout_minutes: 30
-  node_version: "18"
-  
+  node_version: '18'
+
   # Environment configurations
   environments:
     development:
@@ -14,14 +14,14 @@ pipeline:
       max_instance_size: medium
       auto_cleanup_days: 7
       approval_required: false
-      
+
     staging:
       aws_region: us-east-1
       cost_limit: 500
       max_instance_size: large
       auto_cleanup_days: 30
       approval_required: false
-      
+
     production:
       aws_region: us-east-1
       cost_limit: 2000
@@ -32,17 +32,17 @@ pipeline:
 
   # Security gates
   security:
-    max_critical_threats: 0  # Fail if any critical threats in production
-    max_high_threats: 5      # Warn if more than 5 high threats
+    max_critical_threats: 0 # Fail if any critical threats in production
+    max_high_threats: 5 # Warn if more than 5 high threats
     max_security_warnings: 10
-    
+
     # Required security controls
     required_controls:
       - encryption_at_rest
       - network_isolation
       - iam_least_privilege
       - audit_logging
-    
+
     # Compliance frameworks to check
     compliance_frameworks:
       - SOC2
@@ -56,44 +56,44 @@ pipeline:
       development: 150
       staging: 750
       production: 3000
-    
+
     # Auto-shutdown for dev environments
     auto_shutdown:
       development:
         enabled: true
-        schedule: "0 22 * * 1-5"  # 10 PM weekdays
-        startup: "0 8 * * 1-5"   # 8 AM weekdays
-      
+        schedule: '0 22 * * 1-5' # 10 PM weekdays
+        startup: '0 8 * * 1-5' # 8 AM weekdays
+
   # Notification settings
   notifications:
     slack:
       enabled: false
-      webhook_url: ""  # Set via environment variable
+      webhook_url: '' # Set via environment variable
       channels:
-        success: "#deployments"
-        failure: "#alerts"
-        security: "#security"
-    
+        success: '#deployments'
+        failure: '#alerts'
+        security: '#security'
+
     email:
       enabled: false
       recipients:
-        - "devops@company.com"
-        - "security@company.com"
+        - 'devops@company.com'
+        - 'security@company.com'
 
   # Testing configuration
   testing:
     unit_tests:
       enabled: true
       coverage_threshold: 80
-      
+
     integration_tests:
       enabled: true
       timeout_minutes: 10
-      
+
     performance_tests:
       enabled: true
       environments: [staging, production]
-      
+
     security_tests:
       enabled: true
       tools:
@@ -103,18 +103,18 @@ pipeline:
 
   # Deployment strategies
   deployment:
-    strategy: rolling  # rolling, blue_green, canary
-    
+    strategy: rolling # rolling, blue_green, canary
+
     rollback:
       enabled: true
       auto_rollback_on_failure: true
       health_check_timeout: 300
-    
+
     # Blue/Green deployment settings
     blue_green:
       traffic_shift_percentage: 10
       shift_interval_minutes: 5
-      
+
     # Canary deployment settings
     canary:
       initial_percentage: 5

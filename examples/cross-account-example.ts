@@ -6,7 +6,7 @@ import { CrossAccountConfig } from '../src/core/cross-account/types';
 
 /**
  * Example: Cross-Account Deployment Setup
- * 
+ *
  * This example demonstrates how to set up enterprise-grade cross-account
  * AWS deployments using OIDC authentication and secure role assumption chains.
  */
@@ -15,7 +15,7 @@ import { CrossAccountConfig } from '../src/core/cross-account/types';
 const crossAccountConfig: CrossAccountConfig = {
   githubRepository: 'your-org/your-repo', // Replace with your GitHub repository
   organizationId: 'o-example123456', // Replace with your AWS Organization ID
-  
+
   accounts: {
     tooling: {
       accountId: 'YOUR_TOOLING_ACCOUNT_ID', // Replace with your tooling account ID
@@ -42,7 +42,7 @@ const crossAccountConfig: CrossAccountConfig = {
         enableConfig: true,
       },
     },
-    
+
     dev: {
       accountId: 'YOUR_DEV_ACCOUNT_ID', // Replace with your dev account ID
       alias: 'lattice-development',
@@ -68,7 +68,7 @@ const crossAccountConfig: CrossAccountConfig = {
         enableConfig: false,
       },
     },
-    
+
     staging: {
       accountId: 'YOUR_STAGING_ACCOUNT_ID', // Replace with your staging account ID
       alias: 'lattice-staging',
@@ -94,7 +94,7 @@ const crossAccountConfig: CrossAccountConfig = {
         enableConfig: true,
       },
     },
-    
+
     prod: {
       accountId: 'YOUR_PROD_ACCOUNT_ID', // Replace with your prod account ID
       alias: 'lattice-production',
@@ -120,7 +120,7 @@ const crossAccountConfig: CrossAccountConfig = {
         enableConfig: true,
       },
     },
-    
+
     security: {
       accountId: 'YOUR_SECURITY_ACCOUNT_ID', // Replace with your security account ID
       alias: 'lattice-security',
@@ -146,7 +146,7 @@ const crossAccountConfig: CrossAccountConfig = {
         enableConfig: true,
       },
     },
-    
+
     sharedServices: {
       accountId: 'YOUR_SHARED_SERVICES_ACCOUNT_ID', // Replace with your shared services account ID
       alias: 'lattice-shared-services',
@@ -173,7 +173,7 @@ const crossAccountConfig: CrossAccountConfig = {
       },
     },
   },
-  
+
   global: {
     primaryRegion: 'us-east-1',
     secondaryRegion: 'us-west-2',
@@ -214,16 +214,16 @@ if (crossAccount && targetAccountId) {
   console.log(`   Environment: ${environment}`);
   console.log(`   Target Account: ${targetAccountId}`);
   console.log(`   Tooling Account: ${toolingAccountId}`);
-  
+
   // Find account configuration
   const accountConfig = Object.values(crossAccountConfig.accounts).find(
-    account => account.accountId === targetAccountId
+    (account) => account.accountId === targetAccountId
   );
-  
+
   if (!accountConfig) {
     throw new Error(`Account configuration not found for ${targetAccountId}`);
   }
-  
+
   // Create cross-account stack in target account
   new CrossAccountStack(app, `LatticeCrossAccount-${accountConfig.environment}`, {
     env: {
@@ -242,12 +242,11 @@ if (crossAccount && targetAccountId) {
       DeploymentType: 'cross-account',
     },
   });
-  
 } else {
   // Setup mode - create infrastructure in all accounts
   console.log(`🏗️ Cross-account setup mode`);
   console.log(`   Creating infrastructure in all accounts`);
-  
+
   // Create tooling account stack
   new CrossAccountStack(app, 'LatticeToolingAccount', {
     env: {
@@ -270,13 +269,13 @@ if (crossAccount && targetAccountId) {
       Purpose: 'cicd-orchestration',
     },
   });
-  
+
   // Create target account stacks
   const targetEnvironments = ['dev', 'staging', 'prod'] as const;
-  
+
   for (const env of targetEnvironments) {
     const accountConfig = crossAccountConfig.accounts[env];
-    
+
     new CrossAccountStack(app, `LatticeTargetAccount-${env}`, {
       env: {
         account: accountConfig.accountId,

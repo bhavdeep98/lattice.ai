@@ -1,10 +1,10 @@
-import { 
-  CrossAccountConfig, 
-  DeploymentContext, 
-  AssumeRoleResult, 
+import {
+  CrossAccountConfig,
+  DeploymentContext,
+  AssumeRoleResult,
   DeploymentArtifact,
   DeploymentStatus,
-  BootstrapStatus 
+  BootstrapStatus,
 } from './types';
 
 // Mock AWS SDK interfaces for testing
@@ -46,23 +46,23 @@ interface MockStackDescription {
 
 /**
  * Cross-Account Deployment Manager
- * 
+ *
  * Handles secure cross-account deployments using role assumption chains
  * and OIDC authentication from GitHub Actions.
- * 
+ *
  * Note: This is a simplified implementation for testing. In production,
  * this would use the actual AWS SDK.
  */
 export class CrossAccountDeploymentManager {
   private readonly config: CrossAccountConfig;
-  
+
   constructor(config: CrossAccountConfig) {
     this.config = config;
   }
-  
+
   /**
    * Assume role in target account for deployment
-   * 
+   *
    * Note: This is a mock implementation for testing.
    * In production, this would use AWS STS.
    */
@@ -73,7 +73,7 @@ export class CrossAccountDeploymentManager {
   ): Promise<AssumeRoleResult> {
     const roleArn = `arn:aws:iam::${targetAccountId}:role/LatticeDeploymentRole-${environment}`;
     const sessionNameToUse = sessionName || `lattice-deployment-${Date.now()}`;
-    
+
     try {
       // Mock STS assume role response
       const mockResponse: MockAssumeRoleResponse = {
@@ -87,11 +87,11 @@ export class CrossAccountDeploymentManager {
           Arn: roleArn,
         },
       };
-      
+
       if (!mockResponse.Credentials) {
         throw new Error('Failed to assume role: No credentials returned');
       }
-      
+
       return {
         credentials: {
           accessKeyId: mockResponse.Credentials.AccessKeyId!,
@@ -106,10 +106,10 @@ export class CrossAccountDeploymentManager {
       throw new Error(`Failed to assume role ${roleArn}: ${error}`);
     }
   }
-  
+
   /**
    * Upload deployment artifacts to S3
-   * 
+   *
    * Note: This is a mock implementation for testing.
    * In production, this would use AWS S3 SDK.
    */
@@ -120,22 +120,22 @@ export class CrossAccountDeploymentManager {
   ): Promise<DeploymentArtifact[]> {
     const toolingAccount = this.config.accounts.tooling;
     const bucketName = `lattice-artifacts-tooling-${toolingAccount.accountId}-${this.config.global.primaryRegion}`;
-    
+
     const uploadedArtifacts: DeploymentArtifact[] = [];
-    
+
     for (const artifact of artifacts) {
       const key = `deployments/${deploymentId}/${artifact.type}/${Date.now()}-${artifact.path.split('/').pop()}`;
-      
+
       try {
         // Mock file content
         const fileContent = Buffer.from(`Mock content for ${artifact.path}`);
-        
+
         // Mock S3 upload response
         const mockUploadResult: MockS3UploadResponse = {
           ETag: '"mock-etag-12345"',
           VersionId: 'mock-version-id',
         };
-        
+
         uploadedArtifacts.push({
           type: artifact.type as any,
           s3Location: {
@@ -158,13 +158,13 @@ export class CrossAccountDeploymentManager {
         throw new Error(`Failed to upload artifact ${artifact.path}: ${error}`);
       }
     }
-    
+
     return uploadedArtifacts;
   }
-  
+
   /**
    * Deploy to target environment
-   * 
+   *
    * Note: This is a mock implementation for testing.
    * In production, this would use AWS CloudFormation SDK.
    */
@@ -173,14 +173,14 @@ export class CrossAccountDeploymentManager {
     artifacts: DeploymentArtifact[]
   ): Promise<DeploymentStatus> {
     const { environment, accountId, region } = context;
-    
+
     // Assume role in target account
     const roleResult = await this.assumeDeploymentRole(
       accountId,
       environment,
       `github-${context.github.runId}`
     );
-    
+
     const deploymentStatus: DeploymentStatus = {
       deploymentId: `${environment}-${context.github.runId}`,
       status: 'in-progress',
@@ -189,23 +189,19 @@ export class CrossAccountDeploymentManager {
       stacks: [],
       artifacts: artifacts,
     };
-    
+
     try {
       // Deploy each CloudFormation template
       for (const artifact of artifacts) {
         if (artifact.type === 'cloudformation-template') {
           const stackName = `lattice-${environment}-${artifact.s3Location.key.split('/').pop()?.replace('.json', '')}`;
-          
+
           // Download template from S3 (mock)
           const templateBody = await this.downloadArtifact(artifact);
-          
+
           // Deploy stack (mock)
-          const stackResult = await this.deployStack(
-            stackName,
-            templateBody,
-            context
-          );
-          
+          const stackResult = await this.deployStack(stackName, templateBody, context);
+
           deploymentStatus.stacks.push({
             name: stackName,
             status: stackResult.status,
@@ -213,19 +209,18 @@ export class CrossAccountDeploymentManager {
           });
         }
       }
-      
+
       deploymentStatus.status = 'succeeded';
       deploymentStatus.endTime = new Date().toISOString();
-      
     } catch (error) {
       deploymentStatus.status = 'failed';
       deploymentStatus.error = error instanceof Error ? error.message : String(error);
       deploymentStatus.endTime = new Date().toISOString();
     }
-    
+
     return deploymentStatus;
   }
-  
+
   /**
    * Download artifact from S3 (mock implementation)
    */
@@ -248,7 +243,7 @@ export class CrossAccountDeploymentManager {
       throw new Error(`Failed to download artifact: ${error}`);
     }
   }
-  
+
   /**
    * Deploy CloudFormation stack (mock implementation)
    */
@@ -262,24 +257,23 @@ export class CrossAccountDeploymentManager {
       console.log(`Mock deploying stack: ${stackName}`);
       console.log(`Template size: ${templateBody.length} characters`);
       console.log(`Environment: ${context.environment}`);
-      
+
       // Simulate deployment success
       const outputs: Record<string, string> = {
-        'StackName': stackName,
-        'Environment': context.environment,
-        'DeployedAt': new Date().toISOString(),
+        StackName: stackName,
+        Environment: context.environment,
+        DeployedAt: new Date().toISOString(),
       };
-      
+
       return {
         status: 'CREATE_COMPLETE',
         outputs,
       };
-      
     } catch (error) {
       throw new Error(`Failed to deploy stack ${stackName}: ${error}`);
     }
   }
-  
+
   /**
    * Check if account is bootstrapped for CDK (mock implementation)
    */
@@ -287,39 +281,40 @@ export class CrossAccountDeploymentManager {
     try {
       // Assume role to check bootstrap status (mock)
       const roleResult = await this.assumeDeploymentRole(accountId, 'tooling');
-      
+
       // Mock CloudFormation describe stacks
       const mockStackDescription: MockStackDescription = {
-        Stacks: [{
-          StackStatus: 'CREATE_COMPLETE',
-          Tags: [
-            { Key: 'CDKVersion', Value: '2.0.0' },
-            { Key: 'BootstrapVersion', Value: '21' },
-          ],
-          LastUpdatedTime: new Date(),
-        }],
+        Stacks: [
+          {
+            StackStatus: 'CREATE_COMPLETE',
+            Tags: [
+              { Key: 'CDKVersion', Value: '2.0.0' },
+              { Key: 'BootstrapVersion', Value: '21' },
+            ],
+            LastUpdatedTime: new Date(),
+          },
+        ],
       };
-      
+
       const stack = mockStackDescription.Stacks?.[0];
       if (stack && stack.StackStatus === 'CREATE_COMPLETE') {
         return {
           accountId,
           environment: 'tooling' as any,
           status: 'bootstrapped',
-          cdkVersion: stack.Tags?.find(tag => tag.Key === 'CDKVersion')?.Value,
+          cdkVersion: stack.Tags?.find((tag) => tag.Key === 'CDKVersion')?.Value,
           bootstrapVersion: parseInt(
-            stack.Tags?.find(tag => tag.Key === 'BootstrapVersion')?.Value || '0'
+            stack.Tags?.find((tag) => tag.Key === 'BootstrapVersion')?.Value || '0'
           ),
           lastUpdated: stack.LastUpdatedTime?.toISOString(),
         };
       }
-      
+
       return {
         accountId,
         environment: 'tooling' as any,
         status: 'not-bootstrapped',
       };
-      
     } catch (error) {
       return {
         accountId,
@@ -329,7 +324,7 @@ export class CrossAccountDeploymentManager {
       };
     }
   }
-  
+
   /**
    * Bootstrap account for CDK
    */
@@ -343,10 +338,10 @@ export class CrossAccountDeploymentManager {
       // In practice, this would be done via AWS CLI or CDK CLI
       console.log(`Bootstrapping account ${accountId} in region ${region}`);
       console.log(`Trusted accounts: ${trustedAccounts.join(', ')}`);
-      
+
       // Placeholder for actual bootstrap logic
       // cdk bootstrap aws://ACCOUNT-ID/REGION --trust TRUSTED-ACCOUNT-ID
-      
+
       return {
         accountId,
         environment: 'tooling' as any,
@@ -355,7 +350,6 @@ export class CrossAccountDeploymentManager {
         bootstrapVersion: 21,
         lastUpdated: new Date().toISOString(),
       };
-      
     } catch (error) {
       return {
         accountId,
@@ -365,30 +359,33 @@ export class CrossAccountDeploymentManager {
       };
     }
   }
-  
+
   /**
    * Validate deployment context
    */
   validateDeploymentContext(context: DeploymentContext): void {
     const accountConfig = Object.values(this.config.accounts).find(
-      account => account.accountId === context.accountId
+      (account) => account.accountId === context.accountId
     );
-    
+
     if (!accountConfig) {
       throw new Error(`Account ${context.accountId} not found in configuration`);
     }
-    
+
     if (!accountConfig.allowedRegions.includes(context.region)) {
       throw new Error(
         `Region ${context.region} not allowed for account ${context.accountId}. ` +
-        `Allowed regions: ${accountConfig.allowedRegions.join(', ')}`
+          `Allowed regions: ${accountConfig.allowedRegions.join(', ')}`
       );
     }
-    
-    if (context.costControls.maxMonthlyCost > this.config.global.costControls.maxMonthlyCost[context.environment]) {
+
+    if (
+      context.costControls.maxMonthlyCost >
+      this.config.global.costControls.maxMonthlyCost[context.environment]
+    ) {
       throw new Error(
         `Cost limit ${context.costControls.maxMonthlyCost} exceeds maximum allowed ` +
-        `for ${context.environment}: ${this.config.global.costControls.maxMonthlyCost[context.environment]}`
+          `for ${context.environment}: ${this.config.global.costControls.maxMonthlyCost[context.environment]}`
       );
     }
   }

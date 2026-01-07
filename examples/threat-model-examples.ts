@@ -23,15 +23,15 @@ export class ServerlessApiStack extends Stack {
       threatModel: {
         enabled: true,
         formats: ['md', 'json'],
-        projectName: 'E-commerce API'
-      }
+        projectName: 'E-commerce API',
+      },
     });
 
     // Create a typical serverless API architecture
     const table = new dynamodb.Table(this, 'UserTable', {
       partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
       encryption: dynamodb.TableEncryption.AWS_MANAGED,
-      pointInTimeRecovery: true
+      pointInTimeRecovery: true,
     });
 
     const handler = new lambda.Function(this, 'ApiHandler', {
@@ -44,15 +44,15 @@ export class ServerlessApiStack extends Stack {
       `),
       handler: 'index.handler',
       environment: {
-        TABLE_NAME: table.tableName
-      }
+        TABLE_NAME: table.tableName,
+      },
     });
 
     table.grantReadWriteData(handler);
 
     const api = new apigateway.RestApi(this, 'UserApi', {
       restApiName: 'User Service',
-      description: 'API for user management'
+      description: 'API for user management',
     });
 
     const integration = new apigateway.LambdaIntegration(handler);
@@ -74,24 +74,26 @@ export class DataPipelineStack extends Stack {
       threatModel: {
         enabled: true,
         formats: ['md', 'json'],
-        projectName: 'Customer Analytics Pipeline'
-      }
+        projectName: 'Customer Analytics Pipeline',
+      },
     });
 
     // Raw data bucket
     const rawDataBucket = new s3.Bucket(this, 'RawDataBucket', {
       encryption: s3.BucketEncryption.S3_MANAGED,
       versioned: true,
-      lifecycleRules: [{
-        id: 'DeleteOldVersions',
-        noncurrentVersionExpiration: { noncurrentDays: 30 }
-      }]
+      lifecycleRules: [
+        {
+          id: 'DeleteOldVersions',
+          noncurrentVersionExpiration: { noncurrentDays: 30 },
+        },
+      ],
     });
 
     // Processed data bucket
     const processedDataBucket = new s3.Bucket(this, 'ProcessedDataBucket', {
       encryption: s3.BucketEncryption.KMS_MANAGED,
-      versioned: true
+      versioned: true,
     });
 
     // Glue job for data processing
@@ -100,21 +102,21 @@ export class DataPipelineStack extends Stack {
       role: 'arn:aws:iam::YOUR_ACCOUNT_ID:role/GlueServiceRole', // Would be created properly
       command: {
         name: 'glueetl',
-        scriptLocation: 's3://my-scripts/etl-script.py'
+        scriptLocation: 's3://my-scripts/etl-script.py',
       },
       defaultArguments: {
         '--TempDir': 's3://my-temp-bucket/temp/',
-        '--job-bookmark-option': 'job-bookmark-enable'
-      }
+        '--job-bookmark-option': 'job-bookmark-enable',
+      },
     });
 
     // Step Functions for orchestration
     const stateMachine = new stepfunctions.StateMachine(this, 'DataPipelineOrchestrator', {
       definition: stepfunctions.Chain.start(
         new stepfunctions.Pass(this, 'StartProcessing', {
-          result: stepfunctions.Result.fromString('Pipeline started')
+          result: stepfunctions.Result.fromString('Pipeline started'),
         })
-      )
+      ),
     });
 
     // Log pipeline resources
@@ -140,22 +142,22 @@ export class GenAIRagStack extends Stack {
       threatModel: {
         enabled: true,
         formats: ['md', 'json'],
-        projectName: 'Document Q&A Assistant'
-      }
+        projectName: 'Document Q&A Assistant',
+      },
     });
 
     // Document storage
     const documentBucket = new s3.Bucket(this, 'DocumentBucket', {
       encryption: s3.BucketEncryption.KMS_MANAGED,
       versioned: true,
-      publicReadAccess: false
+      publicReadAccess: false,
     });
 
     // Vector store (using OpenSearch)
     // Note: This is a simplified example - real implementation would need proper OpenSearch domain
     const vectorStore = new s3.Bucket(this, 'VectorStore', {
       encryption: s3.BucketEncryption.KMS_MANAGED,
-      bucketName: 'vector-embeddings-store'
+      bucketName: 'vector-embeddings-store',
     });
 
     // API for RAG queries
@@ -180,8 +182,8 @@ def lambda_handler(event, context):
       handler: 'index.lambda_handler',
       environment: {
         DOCUMENT_BUCKET: documentBucket.bucketName,
-        VECTOR_STORE_BUCKET: vectorStore.bucketName
-      }
+        VECTOR_STORE_BUCKET: vectorStore.bucketName,
+      },
     });
 
     documentBucket.grantRead(ragHandler);
@@ -189,7 +191,7 @@ def lambda_handler(event, context):
 
     const ragApi = new apigateway.RestApi(this, 'RagApi', {
       restApiName: 'Document Q&A API',
-      description: 'RAG-powered document question answering'
+      description: 'RAG-powered document question answering',
     });
 
     const ragIntegration = new apigateway.LambdaIntegration(ragHandler);

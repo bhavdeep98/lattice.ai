@@ -36,7 +36,8 @@ export class LatticeBackupManager extends Construct {
 
     // Create backup vault with encryption
     this.backupVault = new backup.BackupVault(this, 'BackupVault', {
-      backupVaultName: config.backupVaultName || `lattice-backup-vault-${this.policy['config'].environment}`,
+      backupVaultName:
+        config.backupVaultName || `lattice-backup-vault-${this.policy['config'].environment}`,
       encryptionKey: undefined, // Use default AWS managed key
       accessPolicy: this.createBackupVaultAccessPolicy(),
       notificationTopic: config.notificationTopic,
@@ -78,9 +79,7 @@ export class LatticeBackupManager extends Construct {
           resources: ['*'],
           conditions: {
             StringNotEquals: {
-              'aws:PrincipalServiceName': [
-                'backup.amazonaws.com',
-              ],
+              'aws:PrincipalServiceName': ['backup.amazonaws.com'],
             },
           },
         }),
@@ -94,73 +93,85 @@ export class LatticeBackupManager extends Construct {
     // Daily backup rule
     const retentionDays = this.policy.getBackupRetentionDays();
     const enableContinuous = this.policy.shouldEnablePointInTimeRecovery();
-    
-    rules.push(new backup.BackupPlanRule({
-      ruleName: 'DailyBackups',
-      backupVault: this.backupVault,
-      scheduleExpression: events.Schedule.cron({
-        hour: '2', // 2 AM UTC
-        minute: '0',
-      }),
-      // Continuous backup has a 35-day limit, use separate rule for longer retention
-      deleteAfter: enableContinuous 
-        ? Duration.days(Math.min(retentionDays, 35))
-        : Duration.days(retentionDays),
-      // Only add cold storage transition if continuous backup is disabled
-      moveToColdStorageAfter: enableContinuous 
-        ? undefined 
-        : (this.policy['config'].environment === 'prod' ? Duration.days(30) : undefined),
-      enableContinuousBackup: enableContinuous,
-    }));
+
+    rules.push(
+      new backup.BackupPlanRule({
+        ruleName: 'DailyBackups',
+        backupVault: this.backupVault,
+        scheduleExpression: events.Schedule.cron({
+          hour: '2', // 2 AM UTC
+          minute: '0',
+        }),
+        // Continuous backup has a 35-day limit, use separate rule for longer retention
+        deleteAfter: enableContinuous
+          ? Duration.days(Math.min(retentionDays, 35))
+          : Duration.days(retentionDays),
+        // Only add cold storage transition if continuous backup is disabled
+        moveToColdStorageAfter: enableContinuous
+          ? undefined
+          : this.policy['config'].environment === 'prod'
+            ? Duration.days(30)
+            : undefined,
+        enableContinuousBackup: enableContinuous,
+      })
+    );
 
     // Weekly backup rule for longer retention (prod only)
     if (this.policy['config'].environment === 'prod') {
-      rules.push(new backup.BackupPlanRule({
-        ruleName: 'WeeklyBackups',
-        backupVault: this.backupVault,
-        scheduleExpression: events.Schedule.cron({
-          weekDay: 'SUN',
-          hour: '3',
-          minute: '0',
-        }),
-        deleteAfter: Duration.days(365), // Keep weekly backups for 1 year
-        moveToColdStorageAfter: Duration.days(90),
-      }));
+      rules.push(
+        new backup.BackupPlanRule({
+          ruleName: 'WeeklyBackups',
+          backupVault: this.backupVault,
+          scheduleExpression: events.Schedule.cron({
+            weekDay: 'SUN',
+            hour: '3',
+            minute: '0',
+          }),
+          deleteAfter: Duration.days(365), // Keep weekly backups for 1 year
+          moveToColdStorageAfter: Duration.days(90),
+        })
+      );
 
       // Monthly backup rule for compliance (prod only)
-      rules.push(new backup.BackupPlanRule({
-        ruleName: 'MonthlyBackups',
-        backupVault: this.backupVault,
-        scheduleExpression: events.Schedule.cron({
-          day: '1',
-          hour: '4',
-          minute: '0',
-        }),
-        deleteAfter: Duration.days(2555), // Keep monthly backups for 7 years
-        moveToColdStorageAfter: Duration.days(90),
-      }));
+      rules.push(
+        new backup.BackupPlanRule({
+          ruleName: 'MonthlyBackups',
+          backupVault: this.backupVault,
+          scheduleExpression: events.Schedule.cron({
+            day: '1',
+            hour: '4',
+            minute: '0',
+          }),
+          deleteAfter: Duration.days(2555), // Keep monthly backups for 7 years
+          moveToColdStorageAfter: Duration.days(90),
+        })
+      );
     }
 
     // Cross-region backup rule (prod only)
     if (config.enableCrossRegionBackup && config.destinationRegion) {
-      rules.push(new backup.BackupPlanRule({
-        ruleName: 'CrossRegionBackups',
-        backupVault: this.backupVault,
-        scheduleExpression: events.Schedule.cron({
-          hour: '5',
-          minute: '0',
-        }),
-        deleteAfter: Duration.days(this.policy.getBackupRetentionDays()),
-        copyActions: [{
-          destinationBackupVault: backup.BackupVault.fromBackupVaultName(
-            this,
-            'CrossRegionVault',
-            `lattice-backup-vault-${this.policy['config'].environment}-${config.destinationRegion}`
-          ),
+      rules.push(
+        new backup.BackupPlanRule({
+          ruleName: 'CrossRegionBackups',
+          backupVault: this.backupVault,
+          scheduleExpression: events.Schedule.cron({
+            hour: '5',
+            minute: '0',
+          }),
           deleteAfter: Duration.days(this.policy.getBackupRetentionDays()),
-          moveToColdStorageAfter: Duration.days(30),
-        }],
-      }));
+          copyActions: [
+            {
+              destinationBackupVault: backup.BackupVault.fromBackupVaultName(
+                this,
+                'CrossRegionVault',
+                `lattice-backup-vault-${this.policy['config'].environment}-${config.destinationRegion}`
+              ),
+              deleteAfter: Duration.days(this.policy.getBackupRetentionDays()),
+              moveToColdStorageAfter: Duration.days(30),
+            },
+          ],
+        })
+      );
     }
 
     return rules;
@@ -210,9 +221,7 @@ export class LatticeBackupManager extends Construct {
 
     new backup.BackupSelection(this, `BackupSelectionByTag-${tagKey}-${tagValue}`, {
       backupPlan: this.backupPlan,
-      resources: [
-        backup.BackupResource.fromTag(tagKey, tagValue),
-      ],
+      resources: [backup.BackupResource.fromTag(tagKey, tagValue)],
       allowRestores: true,
       backupSelectionName: `tag-based-selection-${tagKey}-${tagValue}`,
     });

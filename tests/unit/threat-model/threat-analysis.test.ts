@@ -19,13 +19,13 @@ describe('Threat Modeling System', () => {
   describe('ThreatModelAspect', () => {
     test('should analyze stack and generate threat model', () => {
       const aspect = new ThreatModelAspect(collector);
-      
+
       expect(aspect).toBeDefined();
     });
 
     test('should identify security vulnerabilities', () => {
       const aspect = new ThreatModelAspect(collector);
-      
+
       expect(aspect).toBeDefined();
     });
   });
@@ -36,12 +36,12 @@ describe('Threat Modeling System', () => {
       collector.inventory.push({
         id: 'test-lambda',
         type: 'AWS::Lambda::Function',
-        service: 'lambda'
+        service: 'lambda',
       });
       collector.inventory.push({
         id: 'test-api',
         type: 'AWS::ApiGateway::RestApi',
-        service: 'apigateway'
+        service: 'apigateway',
       });
 
       const threatModel = buildThreatModel(collector);
@@ -53,12 +53,12 @@ describe('Threat Modeling System', () => {
       collector.inventory.push({
         id: 'test-bucket',
         type: 'AWS::S3::Bucket',
-        service: 's3'
+        service: 's3',
       });
       collector.inventory.push({
         id: 'test-glue',
         type: 'AWS::Glue::Job',
-        service: 'glue'
+        service: 'glue',
       });
 
       const threatModel = buildThreatModel(collector);
@@ -70,12 +70,12 @@ describe('Threat Modeling System', () => {
       collector.inventory.push({
         id: 'test-opensearch',
         type: 'AWS::OpenSearchService::Domain',
-        service: 'opensearch'
+        service: 'opensearch',
       });
       collector.inventory.push({
         id: 'test-bedrock',
         type: 'AWS::Bedrock::KnowledgeBase',
-        service: 'bedrock'
+        service: 'bedrock',
       });
 
       const threatModel = buildThreatModel(collector);
@@ -86,21 +86,21 @@ describe('Threat Modeling System', () => {
   describe('STRIDE Analysis', () => {
     test('should identify spoofing threats', () => {
       const threatModel = buildThreatModel(collector);
-      
+
       const spoofingThreats = threatModel.threats.filter((t: any) => t.stride === 'Spoofing');
       expect(Array.isArray(spoofingThreats)).toBe(true);
     });
 
     test('should identify tampering threats', () => {
       const threatModel = buildThreatModel(collector);
-      
+
       const tamperingThreats = threatModel.threats.filter((t: any) => t.stride === 'Tampering');
       expect(Array.isArray(tamperingThreats)).toBe(true);
     });
 
     test('should assess risk levels correctly', () => {
       const threatModel = buildThreatModel(collector);
-      
+
       threatModel.threats.forEach((threat: any) => {
         expect(['Low', 'Medium', 'High', 'Critical']).toContain(threat.risk);
       });
@@ -110,21 +110,23 @@ describe('Threat Modeling System', () => {
   describe('Security Checklist', () => {
     test('should validate encryption at rest', () => {
       const threatModel = buildThreatModel(collector);
-      
+
       const encryptionCheck = threatModel.checklist.find((c: any) => c.item.includes('encryption'));
       expect(encryptionCheck).toBeDefined();
     });
 
     test('should validate public endpoints', () => {
       const threatModel = buildThreatModel(collector);
-      
-      const publicCheck = threatModel.checklist.find((c: any) => c.item.includes('Public endpoints'));
+
+      const publicCheck = threatModel.checklist.find((c: any) =>
+        c.item.includes('Public endpoints')
+      );
       expect(publicCheck).toBeDefined();
     });
 
     test('should validate CloudTrail logging', () => {
       const threatModel = buildThreatModel(collector);
-      
+
       const loggingCheck = threatModel.checklist.find((c: any) => c.item.includes('CloudTrail'));
       expect(loggingCheck).toBeDefined();
     });
@@ -133,7 +135,7 @@ describe('Threat Modeling System', () => {
   describe('Threat Model Generation', () => {
     test('should generate complete threat model document', () => {
       const threatModel = buildThreatModel(collector, {
-        projectName: 'Test Project'
+        projectName: 'Test Project',
       });
 
       expect(threatModel).toHaveProperty('meta');
@@ -147,7 +149,7 @@ describe('Threat Modeling System', () => {
 
     test('should include open questions for manual review', () => {
       const threatModel = buildThreatModel(collector);
-      
+
       expect(Array.isArray(threatModel.openQuestions)).toBe(true);
       expect(threatModel.openQuestions.length).toBeGreaterThan(0);
     });
@@ -155,7 +157,7 @@ describe('Threat Modeling System', () => {
     test('should handle empty inventory gracefully', () => {
       const emptyCollector = new ThreatFactsCollector();
       const threatModel = buildThreatModel(emptyCollector);
-      
+
       expect(threatModel).toBeDefined();
       expect(threatModel.workloadType).toBe('general');
       expect(Array.isArray(threatModel.threats)).toBe(true);

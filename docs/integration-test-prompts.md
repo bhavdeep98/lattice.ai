@@ -5,6 +5,7 @@ This document contains real-world AWS infrastructure scenarios based on common j
 ## 🏢 Enterprise Web Applications
 
 ### E-commerce Platform
+
 ```
 Create a scalable e-commerce platform with:
 - Frontend hosted on CloudFront and S3
@@ -17,6 +18,7 @@ Create a scalable e-commerce platform with:
 ```
 
 ### Multi-tenant SaaS Application
+
 ```
 Build a multi-tenant SaaS application infrastructure with:
 - Application Load Balancer with SSL termination
@@ -29,6 +31,7 @@ Build a multi-tenant SaaS application infrastructure with:
 ```
 
 ### Corporate Intranet Portal
+
 ```
 Design a corporate intranet portal with:
 - VPC with private and public subnets across 3 AZs
@@ -43,6 +46,7 @@ Design a corporate intranet portal with:
 ## 📊 Data & Analytics Platforms
 
 ### Real-time Analytics Pipeline
+
 ```
 Create a real-time analytics pipeline for processing user events:
 - Kinesis Data Streams for event ingestion
@@ -55,6 +59,7 @@ Create a real-time analytics pipeline for processing user events:
 ```
 
 ### IoT Data Processing Platform
+
 ```
 Build an IoT data processing platform with:
 - IoT Core for device connectivity
@@ -67,6 +72,7 @@ Build an IoT data processing platform with:
 ```
 
 ### Machine Learning Pipeline
+
 ```
 Design a machine learning pipeline infrastructure:
 - S3 for training data and model artifacts
@@ -81,6 +87,7 @@ Design a machine learning pipeline infrastructure:
 ## 🔒 Security & Compliance
 
 ### HIPAA Compliant Healthcare Platform
+
 ```
 Create a HIPAA compliant healthcare platform with:
 - VPC with strict network segmentation
@@ -94,6 +101,7 @@ Create a HIPAA compliant healthcare platform with:
 ```
 
 ### Financial Services Infrastructure
+
 ```
 Build a PCI DSS compliant financial services platform:
 - Multi-AZ VPC with DMZ, application, and database tiers
@@ -106,6 +114,7 @@ Build a PCI DSS compliant financial services platform:
 ```
 
 ### Government Cloud Infrastructure
+
 ```
 Design a FedRAMP compliant government cloud infrastructure:
 - GovCloud VPC with strict access controls
@@ -120,6 +129,7 @@ Design a FedRAMP compliant government cloud infrastructure:
 ## 🚀 DevOps & CI/CD
 
 ### Microservices Platform
+
 ```
 Create a microservices platform with:
 - EKS cluster with managed node groups
@@ -132,6 +142,7 @@ Create a microservices platform with:
 ```
 
 ### CI/CD Pipeline Infrastructure
+
 ```
 Build a comprehensive CI/CD pipeline with:
 - CodeCommit for source control
@@ -144,6 +155,7 @@ Build a comprehensive CI/CD pipeline with:
 ```
 
 ### Blue-Green Deployment Platform
+
 ```
 Design a blue-green deployment platform:
 - Route 53 for DNS-based traffic switching
@@ -158,6 +170,7 @@ Design a blue-green deployment platform:
 ## 🌐 Content & Media
 
 ### Video Streaming Platform
+
 ```
 Create a video streaming platform with:
 - CloudFront for global content delivery
@@ -170,6 +183,7 @@ Create a video streaming platform with:
 ```
 
 ### Content Management System
+
 ```
 Build a scalable CMS infrastructure:
 - CloudFront with custom origins
@@ -182,6 +196,7 @@ Build a scalable CMS infrastructure:
 ```
 
 ### Global News Website
+
 ```
 Design a global news website infrastructure:
 - Multi-region deployment with Route 53 latency routing
@@ -196,6 +211,7 @@ Design a global news website infrastructure:
 ## 🏭 Enterprise Integration
 
 ### Hybrid Cloud Architecture
+
 ```
 Create a hybrid cloud architecture with:
 - Direct Connect for dedicated network connection
@@ -208,6 +224,7 @@ Create a hybrid cloud architecture with:
 ```
 
 ### Legacy System Migration
+
 ```
 Design a legacy system migration platform:
 - Application Migration Service for server migration
@@ -220,6 +237,7 @@ Design a legacy system migration platform:
 ```
 
 ### API Integration Platform
+
 ```
 Build an API integration platform with:
 - API Gateway with custom authorizers
@@ -234,6 +252,7 @@ Build an API integration platform with:
 ## 💰 Cost Optimization Scenarios
 
 ### Development Environment Automation
+
 ```
 Create cost-optimized development environments:
 - EC2 Spot Instances with Auto Scaling
@@ -246,6 +265,7 @@ Create cost-optimized development environments:
 ```
 
 ### Multi-Environment Cost Management
+
 ```
 Design a multi-environment cost management system:
 - Separate AWS accounts for dev/staging/prod
@@ -260,6 +280,7 @@ Design a multi-environment cost management system:
 ## 🔧 Operational Excellence
 
 ### Disaster Recovery Platform
+
 ```
 Create a comprehensive disaster recovery solution:
 - Multi-region architecture with automated failover
@@ -272,6 +293,7 @@ Create a comprehensive disaster recovery solution:
 ```
 
 ### Monitoring and Alerting System
+
 ```
 Build a comprehensive monitoring system:
 - CloudWatch for metrics and logs
@@ -284,6 +306,7 @@ Build a comprehensive monitoring system:
 ```
 
 ### Backup and Archive Solution
+
 ```
 Design an enterprise backup and archive solution:
 - S3 with multiple storage classes
@@ -298,6 +321,7 @@ Design an enterprise backup and archive solution:
 ## 🎯 Industry-Specific Solutions
 
 ### Gaming Platform Infrastructure
+
 ```
 Create a gaming platform with:
 - GameLift for game server hosting
@@ -310,6 +334,7 @@ Create a gaming platform with:
 ```
 
 ### EdTech Learning Platform
+
 ```
 Build an educational technology platform:
 - CloudFront for global content delivery
@@ -322,6 +347,7 @@ Build an educational technology platform:
 ```
 
 ### Healthcare Data Platform
+
 ```
 Design a healthcare data platform with:
 - S3 with HIPAA compliance for medical records
@@ -336,6 +362,7 @@ Design a healthcare data platform with:
 ## 🧪 Testing Scenarios
 
 ### Load Testing Infrastructure
+
 ```
 Create a load testing infrastructure:
 - EC2 instances for load generation
@@ -348,6 +375,7 @@ Create a load testing infrastructure:
 ```
 
 ### Chaos Engineering Platform
+
 ```
 Build a chaos engineering platform:
 - Lambda for fault injection
@@ -402,4 +430,4 @@ Use these prompts to:
 
 ---
 
-*This document serves as a comprehensive test suite for validating AWS infrastructure generation capabilities across various real-world scenarios commonly encountered by AWS Infrastructure Engineers.*
+_This document serves as a comprehensive test suite for validating AWS infrastructure generation capabilities across various real-world scenarios commonly encountered by AWS Infrastructure Engineers._

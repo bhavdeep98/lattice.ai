@@ -17,13 +17,13 @@ import { logger, logExecutionTime } from '../../utils/logger';
  */
 export class LatticeBucket extends Construct implements LatticeBucketConstruct {
   public readonly output: StorageOutput;
-  
+
   // Escape hatch: Direct access to underlying AWS CDK construct
   public readonly instance: s3.Bucket;
-  
+
   // Observability: Alarms and dashboards for monitoring
   public readonly alarms: cloudwatch.Alarm[] = [];
-  
+
   private readonly bucket: s3.Bucket;
   private readonly observabilityManager?: LatticeObservabilityManager;
 
@@ -46,7 +46,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       operation: 'storage-creation',
       resourceType: 'storage',
       resourceId: name,
-      environment
+      environment,
     });
 
     logger.info(`Creating Lattice bucket: ${name}`, {
@@ -55,7 +55,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       publicRead,
       hasCors: !!cors,
       hasLifecycle: !!lifecycle,
-      hasNotifications: !!notifications
+      hasNotifications: !!notifications,
     });
 
     // Create statefulness policy for proper operations management
@@ -68,7 +68,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
 
     logger.info('Applied statefulness policy for bucket', {
       removalPolicy: statefulnessPolicy.getRemovalPolicy(),
-      shouldAutoDeleteObjects: statefulnessPolicy.shouldAutoDeleteObjects()
+      shouldAutoDeleteObjects: statefulnessPolicy.shouldAutoDeleteObjects(),
     });
 
     // Create observability manager if monitoring is enabled
@@ -88,14 +88,14 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       bucketName: `${name}-${environment}`,
       encryption: encryption ? s3.BucketEncryption.S3_MANAGED : undefined,
       versioned: versioning,
-      blockPublicAccess: publicRead ?
-        new s3.BlockPublicAccess({
-          blockPublicAcls: false,
-          blockPublicPolicy: false,
-          ignorePublicAcls: false,
-          restrictPublicBuckets: false,
-        }) :
-        s3.BlockPublicAccess.BLOCK_ALL,
+      blockPublicAccess: publicRead
+        ? new s3.BlockPublicAccess({
+            blockPublicAcls: false,
+            blockPublicPolicy: false,
+            ignorePublicAcls: false,
+            restrictPublicBuckets: false,
+          })
+        : s3.BlockPublicAccess.BLOCK_ALL,
       publicReadAccess: publicRead,
       // CRITICAL: Use statefulness policy to prevent accidental data loss
       removalPolicy: statefulnessPolicy.getRemovalPolicy(),
@@ -107,7 +107,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
     if (publicRead) {
       logger.logSecurityEvent('Public read access enabled for bucket', 'medium', {
         bucketName: `${name}-${environment}`,
-        reason: 'Explicitly configured for public access'
+        reason: 'Explicitly configured for public access',
       });
     }
 
@@ -121,20 +121,20 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       encryption,
       versioning,
       publicRead,
-      enforceSSL: true
+      enforceSSL: true,
     });
 
     // Configure CORS if specified
     if (cors) {
       logger.info('Configuring CORS for bucket', {
         allowedOrigins: cors.allowedOrigins?.length || 0,
-        allowedMethods: cors.allowedMethods?.length || 0
+        allowedMethods: cors.allowedMethods?.length || 0,
       });
-      
+
       this.bucket.addCorsRule({
         allowedOrigins: cors.allowedOrigins,
-        allowedMethods: cors.allowedMethods.map(method =>
-          s3.HttpMethods[method.toUpperCase() as keyof typeof s3.HttpMethods]
+        allowedMethods: cors.allowedMethods.map(
+          (method) => s3.HttpMethods[method.toUpperCase() as keyof typeof s3.HttpMethods]
         ),
         allowedHeaders: cors.allowedHeaders || ['*'],
       });
@@ -144,19 +144,21 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
     if (lifecycle) {
       logger.info('Configuring lifecycle rules for bucket', {
         archiveAfterDays: lifecycle.archiveAfterDays,
-        deleteAfterDays: lifecycle.deleteAfterDays
+        deleteAfterDays: lifecycle.deleteAfterDays,
       });
-      
+
       const lifecycleRules: s3.LifecycleRule[] = [];
 
       if (lifecycle.archiveAfterDays) {
         lifecycleRules.push({
           id: 'ArchiveRule',
           enabled: true,
-          transitions: [{
-            storageClass: s3.StorageClass.GLACIER,
-            transitionAfter: Duration.days(lifecycle.archiveAfterDays),
-          }],
+          transitions: [
+            {
+              storageClass: s3.StorageClass.GLACIER,
+              transitionAfter: Duration.days(lifecycle.archiveAfterDays),
+            },
+          ],
         });
       }
 
@@ -168,7 +170,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
         });
       }
 
-      lifecycleRules.forEach(rule => this.bucket.addLifecycleRule(rule));
+      lifecycleRules.forEach((rule) => this.bucket.addLifecycleRule(rule));
     }
 
     // Configure notifications if specified
@@ -186,11 +188,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       }
 
       if (notifications.sqsArn) {
-        const queue = sqs.Queue.fromQueueArn(
-          this,
-          'NotificationQueue',
-          notifications.sqsArn
-        );
+        const queue = sqs.Queue.fromQueueArn(this, 'NotificationQueue', notifications.sqsArn);
         this.bucket.addEventNotification(
           s3.EventType.OBJECT_CREATED,
           new s3n.SqsDestination(queue)
@@ -198,11 +196,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       }
 
       if (notifications.snsArn) {
-        const topic = sns.Topic.fromTopicArn(
-          this,
-          'NotificationTopic',
-          notifications.snsArn
-        );
+        const topic = sns.Topic.fromTopicArn(this, 'NotificationTopic', notifications.snsArn);
         this.bucket.addEventNotification(
           s3.EventType.OBJECT_CREATED,
           new s3n.SnsDestination(topic)
@@ -255,13 +249,10 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
 
     // Use the static bucket name to avoid token resolution issues
     // The actual bucket name will be used in the metric dimensions
-    const observability = this.observabilityManager.addStorageObservability(
+    const observability = this.observabilityManager.addStorageObservability(bucketName, {
       bucketName,
-      {
-        bucketName,
-        actualBucketName: this.bucket.bucketName, // Pass the actual bucket name for metrics
-      }
-    );
+      actualBucketName: this.bucket.bucketName, // Pass the actual bucket name for metrics
+    });
 
     // Store alarms for external access
     this.alarms.push(...observability.alarms);

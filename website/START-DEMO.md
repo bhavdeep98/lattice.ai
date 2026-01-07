@@ -12,6 +12,7 @@ Then visit: **http://localhost:8001/real-lattice-demo.html**
 ## Manual Start
 
 ### 1. Start Backend
+
 ```bash
 cd website
 npm install
@@ -19,12 +20,14 @@ node lattice-demo-backend.js
 ```
 
 ### 2. Start Frontend (in another terminal)
+
 ```bash
 cd website
 python3 -m http.server 8001
 ```
 
 ### 3. Open Demo
+
 Visit: **http://localhost:8001/real-lattice-demo.html**
 
 ## 🎯 What You'll See

@@ -7,21 +7,27 @@ import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as fs from 'fs';
 import * as path from 'path';
 import { LatticeAspectsConfig } from './types';
-import { ThreatFactsCollector, ThreatModelAspect, buildThreatModel, renderThreatModelMd, renderThreatModelJson } from '../threat-model';
+import {
+  ThreatFactsCollector,
+  ThreatModelAspect,
+  buildThreatModel,
+  renderThreatModelMd,
+  renderThreatModelJson,
+} from '../threat-model';
 import { logger } from '../utils/logger';
 /**
  * Security Aspect - The "Compliance Guard"
  * Automatically enforces security best practices
  */
 export class SecurityAspect implements IAspect {
-  constructor(private config: LatticeAspectsConfig) { }
+  constructor(private config: LatticeAspectsConfig) {}
 
   visit(node: IConstruct): void {
     // Set logging context for security aspect
     logger.setContext({
       operation: 'security-aspect-validation',
       resourceType: 'aspect',
-      environment: this.config.environment
+      environment: this.config.environment,
     });
 
     // Enforce S3 bucket encryption
@@ -31,13 +37,13 @@ export class SecurityAspect implements IAspect {
         const error = new Error(`S3 bucket ${node.node.id} must have encryption enabled`);
         logger.logSecurityEvent('S3 bucket encryption validation failed', 'critical', {
           bucketId: node.node.id,
-          violation: 'missing_encryption'
+          violation: 'missing_encryption',
         });
         throw error;
       } else {
         logger.logSecurityEvent('S3 bucket encryption validated', 'low', {
           bucketId: node.node.id,
-          compliance: 'encryption_enabled'
+          compliance: 'encryption_enabled',
         });
       }
     }
@@ -47,16 +53,18 @@ export class SecurityAspect implements IAspect {
       // Check the underlying CloudFormation resource
       const cfnDb = node.node.defaultChild as rds.CfnDBInstance;
       if (cfnDb && !cfnDb.storageEncrypted) {
-        const error = new Error(`RDS instance ${node.node.id} must have storage encryption enabled`);
+        const error = new Error(
+          `RDS instance ${node.node.id} must have storage encryption enabled`
+        );
         logger.logSecurityEvent('RDS encryption validation failed', 'critical', {
           instanceId: node.node.id,
-          violation: 'missing_storage_encryption'
+          violation: 'missing_storage_encryption',
         });
         throw error;
       } else {
         logger.logSecurityEvent('RDS encryption validated', 'low', {
           instanceId: node.node.id,
-          compliance: 'storage_encryption_enabled'
+          compliance: 'storage_encryption_enabled',
         });
       }
     }
@@ -64,16 +72,16 @@ export class SecurityAspect implements IAspect {
     // Enforce security group rules
     if (node instanceof ec2.SecurityGroup) {
       // Add default security validations
-      const rules = node.node.children.filter(child =>
+      const rules = node.node.children.filter((child) =>
         child.constructor.name.includes('SecurityGroupRule')
       );
 
       logger.info(`Validating security group rules for ${node.node.id}`, {
-        rulesCount: rules.length
+        rulesCount: rules.length,
       });
 
       // Check for overly permissive rules
-      rules.forEach(rule => {
+      rules.forEach((rule) => {
         // Check for overly permissive CIDR blocks
         const ruleNode = rule.node;
         if (ruleNode.tryFindChild('CidrIp')) {
@@ -83,9 +91,11 @@ export class SecurityAspect implements IAspect {
               securityGroupId: node.node.id,
               ruleId: rule.node.id,
               cidr: cidrIp,
-              violation: 'open_to_world'
+              violation: 'open_to_world',
             });
-            console.warn(`⚠️ Security warning: Rule ${rule.node.id} allows access from anywhere (0.0.0.0/0)`);
+            console.warn(
+              `⚠️ Security warning: Rule ${rule.node.id} allows access from anywhere (0.0.0.0/0)`
+            );
           }
         }
       });
@@ -98,7 +108,7 @@ export class SecurityAspect implements IAspect {
  * Prevents cost overruns by validating resource sizes
  */
 export class CostAspect implements IAspect {
-  constructor(private config: LatticeAspectsConfig) { }
+  constructor(private config: LatticeAspectsConfig) {}
 
   visit(node: IConstruct): void {
     const { environment, costLimits } = this.config;
@@ -107,7 +117,7 @@ export class CostAspect implements IAspect {
     logger.setContext({
       operation: 'cost-aspect-validation',
       resourceType: 'aspect',
-      environment
+      environment,
     });
 
     // Validate EC2 instance sizes
@@ -116,7 +126,7 @@ export class CostAspect implements IAspect {
 
       logger.info(`Validating EC2 instance size: ${instanceType}`, {
         instanceId: node.node.id,
-        environment
+        environment,
       });
 
       if (environment === 'dev' && instanceType && instanceType.includes('large')) {
@@ -125,15 +135,19 @@ export class CostAspect implements IAspect {
           instanceId: node.node.id,
           instanceType,
           environment,
-          violation: 'oversized_for_environment'
+          violation: 'oversized_for_environment',
         });
         throw error;
       }
 
-      if (costLimits?.maxInstanceSize && instanceType && instanceType.includes(costLimits.maxInstanceSize)) {
+      if (
+        costLimits?.maxInstanceSize &&
+        instanceType &&
+        instanceType.includes(costLimits.maxInstanceSize)
+      ) {
         logger.info('Instance size validated against cost limits', {
           instanceType,
-          maxAllowed: costLimits.maxInstanceSize
+          maxAllowed: costLimits.maxInstanceSize,
         });
       }
     }
@@ -144,16 +158,18 @@ export class CostAspect implements IAspect {
 
       logger.info(`Validating RDS instance size: ${instanceClass}`, {
         instanceId: node.node.id,
-        environment
+        environment,
       });
 
       if (environment === 'dev' && instanceClass && instanceClass.includes('large')) {
-        const error = new Error(`Large RDS instances not allowed in dev environment: ${instanceClass}`);
+        const error = new Error(
+          `Large RDS instances not allowed in dev environment: ${instanceClass}`
+        );
         logger.logSecurityEvent('Cost validation failed for RDS instance', 'medium', {
           instanceId: node.node.id,
           instanceClass,
           environment,
-          violation: 'oversized_for_environment'
+          violation: 'oversized_for_environment',
         });
         throw error;
       }
@@ -166,7 +182,7 @@ export class CostAspect implements IAspect {
  * Ensures consistent resource tagging
  */
 export class TaggingAspect implements IAspect {
-  constructor(private config: LatticeAspectsConfig) { }
+  constructor(private config: LatticeAspectsConfig) {}
 
   visit(node: IConstruct): void {
     const { environment, projectName, owner, additionalTags } = this.config;
@@ -175,7 +191,7 @@ export class TaggingAspect implements IAspect {
     logger.setContext({
       operation: 'tagging-aspect-application',
       resourceType: 'aspect',
-      environment
+      environment,
     });
 
     // Apply standard tags to all resources
@@ -191,7 +207,7 @@ export class TaggingAspect implements IAspect {
     logger.info(`Applying standard tags to resource: ${node.node.id}`, {
       resourceId: node.node.id,
       tagsCount: Object.keys(standardTags).length,
-      tags: standardTags
+      tags: standardTags,
     });
 
     // Apply tags using CDK Tags utility
@@ -202,7 +218,7 @@ export class TaggingAspect implements IAspect {
     logger.audit('Resource tags applied', {
       resourceId: node.node.id,
       resourceType: node.constructor.name,
-      appliedTags: standardTags
+      appliedTags: standardTags,
     });
 
     // Apply standard tags to all taggable resources
@@ -228,10 +244,12 @@ export class TaggingAspect implements IAspect {
 export class MonitoringAspect implements IAspect {
   private dashboard: cloudwatch.Dashboard | undefined;
 
-  constructor(private config: LatticeAspectsConfig) { }
+  constructor(private config: LatticeAspectsConfig) {}
 
   visit(node: IConstruct): void {
-    if (!this.config.enableMonitoring) {return;}
+    if (!this.config.enableMonitoring) {
+      return;
+    }
 
     // Create dashboard if it doesn't exist (only once per stack)
     if (!this.dashboard && node instanceof Stack) {
@@ -240,7 +258,9 @@ export class MonitoringAspect implements IAspect {
       });
     }
 
-    if (!this.dashboard) {return;}
+    if (!this.dashboard) {
+      return;
+    }
 
     // Add RDS metrics
     if (node instanceof rds.DatabaseInstance) {
@@ -306,27 +326,27 @@ export function applyLatticeAspects(stack: Stack, config: LatticeAspectsConfig):
         try {
           const model = buildThreatModel(collector, {
             projectName: config.threatModel?.projectName ?? config.projectName,
-            latticeVersion: "1.0.0" // TODO: get from package.json
+            latticeVersion: '1.0.0', // TODO: get from package.json
           });
 
-          const outDir = config.threatModel?.outputDir ?? "cdk.out";
+          const outDir = config.threatModel?.outputDir ?? 'cdk.out';
           if (!fs.existsSync(outDir)) {
             fs.mkdirSync(outDir, { recursive: true });
           }
 
-          const formats = config.threatModel?.formats ?? ["md"];
-          if (formats.includes("md")) {
+          const formats = config.threatModel?.formats ?? ['md'];
+          if (formats.includes('md')) {
             fs.writeFileSync(
-              path.join(outDir, "THREAT_MODEL.md"),
+              path.join(outDir, 'THREAT_MODEL.md'),
               renderThreatModelMd(model),
-              "utf8"
+              'utf8'
             );
           }
-          if (formats.includes("json")) {
+          if (formats.includes('json')) {
             fs.writeFileSync(
-              path.join(outDir, "threat-model.json"),
+              path.join(outDir, 'threat-model.json'),
               renderThreatModelJson(model),
-              "utf8"
+              'utf8'
             );
           }
 
@@ -335,7 +355,7 @@ export function applyLatticeAspects(stack: Stack, config: LatticeAspectsConfig):
           return [`Threat model generation failed: ${(e as Error).message}`];
         }
         return [];
-      }
+      },
     });
   }
 }

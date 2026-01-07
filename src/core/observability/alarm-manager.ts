@@ -3,12 +3,12 @@ import { Duration } from 'aws-cdk-lib';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
-import { 
-  ObservabilityConfig, 
-  AlarmDefinition, 
+import {
+  ObservabilityConfig,
+  AlarmDefinition,
   AlarmConfig,
   DEFAULT_ALARM_CONFIGS,
-  SEVERITY_CONFIGS 
+  SEVERITY_CONFIGS,
 } from './types';
 
 /**
@@ -22,7 +22,7 @@ export class LatticeAlarmManager extends Construct {
 
   constructor(scope: Construct, id: string, config: ObservabilityConfig) {
     super(scope, id);
-    
+
     this.config = config;
     this.notificationTopic = config.notificationTopic;
   }
@@ -30,7 +30,10 @@ export class LatticeAlarmManager extends Construct {
   /**
    * Create an alarm from definition
    */
-  public createAlarm(definition: AlarmDefinition, customConfig?: AlarmConfig): cloudwatch.Alarm | undefined {
+  public createAlarm(
+    definition: AlarmDefinition,
+    customConfig?: AlarmConfig
+  ): cloudwatch.Alarm | undefined {
     if (!this.shouldCreateAlarm()) {
       return undefined;
     }
@@ -39,7 +42,7 @@ export class LatticeAlarmManager extends Construct {
     // For critical alarms, severity should take precedence over environment
     const severityConfig = SEVERITY_CONFIGS[definition.severity] || {};
     const envConfig = DEFAULT_ALARM_CONFIGS[this.config.environment] || {};
-    
+
     let finalConfig: AlarmConfig;
     if (definition.severity === 'critical') {
       // Critical alarms: severity overrides environment
@@ -72,7 +75,9 @@ export class LatticeAlarmManager extends Construct {
     // Create alarm
     const alarm = new cloudwatch.Alarm(this, this.generateAlarmId(definition.alarmName), {
       alarmName: this.generateAlarmName(definition.alarmName),
-      alarmDescription: definition.alarmDescription || `${definition.alarmName} alarm for ${this.config.environment}`,
+      alarmDescription:
+        definition.alarmDescription ||
+        `${definition.alarmName} alarm for ${this.config.environment}`,
       metric,
       threshold: finalConfig.threshold ?? definition.threshold,
       comparisonOperator: finalConfig.comparisonOperator ?? definition.comparisonOperator,
@@ -94,16 +99,23 @@ export class LatticeAlarmManager extends Construct {
   /**
    * Create multiple alarms from definitions
    */
-  public createAlarms(definitions: AlarmDefinition[], customConfig?: AlarmConfig): cloudwatch.Alarm[] {
+  public createAlarms(
+    definitions: AlarmDefinition[],
+    customConfig?: AlarmConfig
+  ): cloudwatch.Alarm[] {
     return definitions
-      .map(def => this.createAlarm(def, customConfig))
+      .map((def) => this.createAlarm(def, customConfig))
       .filter((alarm): alarm is cloudwatch.Alarm => alarm !== undefined);
   }
 
   /**
    * Create compute-specific alarms
    */
-  public createComputeAlarms(resourceId: string, resourceType: 'ec2' | 'ecs' | 'lambda', additionalData?: any): cloudwatch.Alarm[] {
+  public createComputeAlarms(
+    resourceId: string,
+    resourceType: 'ec2' | 'ecs' | 'lambda',
+    additionalData?: any
+  ): cloudwatch.Alarm[] {
     // Use actual resource ID for metrics if provided
     const actualResourceId = additionalData?.actualResourceId || resourceId;
     const definitions = this.getComputeAlarmDefinitions(resourceId, resourceType, actualResourceId);
@@ -113,7 +125,11 @@ export class LatticeAlarmManager extends Construct {
   /**
    * Create database-specific alarms
    */
-  public createDatabaseAlarms(instanceId: string, engine: string, additionalData?: any): cloudwatch.Alarm[] {
+  public createDatabaseAlarms(
+    instanceId: string,
+    engine: string,
+    additionalData?: any
+  ): cloudwatch.Alarm[] {
     // Use actual instance ID for metrics if provided
     const actualInstanceId = additionalData?.actualInstanceId || instanceId;
     const definitions = this.getDatabaseAlarmDefinitions(instanceId, engine, actualInstanceId);
@@ -159,12 +175,16 @@ export class LatticeAlarmManager extends Construct {
     return `${prefix}-${this.config.environment}-${alarmName}`;
   }
 
-  private getComputeAlarmDefinitions(resourceId: string, resourceType: 'ec2' | 'ecs' | 'lambda', actualResourceId?: string): AlarmDefinition[] {
+  private getComputeAlarmDefinitions(
+    resourceId: string,
+    resourceType: 'ec2' | 'ecs' | 'lambda',
+    actualResourceId?: string
+  ): AlarmDefinition[] {
     // Use static resource name for alarm naming to avoid token resolution issues
     const staticResourceId = resourceId.replace(/\$\{.*?\}/g, 'resource');
     // Use actual resource ID for metrics, fallback to static name
     const metricResourceId = actualResourceId || resourceId;
-    
+
     switch (resourceType) {
       case 'ec2':
         return [
@@ -291,12 +311,16 @@ export class LatticeAlarmManager extends Construct {
     }
   }
 
-  private getDatabaseAlarmDefinitions(instanceId: string, engine: string, actualInstanceId?: string): AlarmDefinition[] {
+  private getDatabaseAlarmDefinitions(
+    instanceId: string,
+    engine: string,
+    actualInstanceId?: string
+  ): AlarmDefinition[] {
     // Use static instance name for alarm naming to avoid token resolution issues
     const staticInstanceId = instanceId.replace(/\$\{.*?\}/g, 'db-instance');
     // Use actual instance ID for metrics, fallback to static name
     const metricInstanceId = actualInstanceId || instanceId;
-    
+
     return [
       {
         alarmName: `${staticInstanceId}-HighCPU`,
@@ -349,12 +373,15 @@ export class LatticeAlarmManager extends Construct {
     ];
   }
 
-  private getStorageAlarmDefinitions(bucketName: string, actualBucketName?: string): AlarmDefinition[] {
+  private getStorageAlarmDefinitions(
+    bucketName: string,
+    actualBucketName?: string
+  ): AlarmDefinition[] {
     // Use static bucket name for alarm naming to avoid token resolution issues
     const staticBucketName = bucketName.replace(/\$\{.*?\}/g, 'bucket');
     // Use actual bucket name for metrics, fallback to static name
     const metricBucketName = actualBucketName || bucketName;
-    
+
     return [
       {
         alarmName: `${staticBucketName}-${this.config.environment}-HighRequestRate`,
@@ -391,7 +418,7 @@ export class LatticeAlarmManager extends Construct {
       natGatewayIds.forEach((natGatewayId, index) => {
         // Use static NAT Gateway name for alarm naming to avoid token resolution issues
         const staticNatGatewayId = `nat-gateway-${index}`;
-        
+
         definitions.push(
           {
             alarmName: `${staticNatGatewayId}-ErrorPortAllocation`,

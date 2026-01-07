@@ -33,9 +33,9 @@ class PipelineUtils {
    */
   analyzeThreatModel(environment = 'development') {
     console.log(`🔍 Analyzing threat model for ${environment} environment...`);
-    
+
     const threatModelPath = path.join(process.cwd(), 'cdk.out', 'threat-model.json');
-    
+
     if (!fs.existsSync(threatModelPath)) {
       console.log('⚠️ No threat model found - skipping security analysis');
       return { canDeploy: true, warnings: ['No threat model generated'] };
@@ -43,10 +43,10 @@ class PipelineUtils {
 
     try {
       const threatModel = JSON.parse(fs.readFileSync(threatModelPath, 'utf8'));
-      
-      const criticalThreats = threatModel.threats.filter(t => t.risk === 'Critical');
-      const highThreats = threatModel.threats.filter(t => t.risk === 'High');
-      const securityWarnings = threatModel.checklist.filter(c => c.status === 'Warn');
+
+      const criticalThreats = threatModel.threats.filter((t) => t.risk === 'Critical');
+      const highThreats = threatModel.threats.filter((t) => t.risk === 'High');
+      const securityWarnings = threatModel.checklist.filter((c) => c.status === 'Warn');
 
       console.log(`📊 Threat Analysis Results:`);
       console.log(`  🔴 Critical: ${criticalThreats.length}`);
@@ -60,7 +60,9 @@ class PipelineUtils {
       if (environment === 'production') {
         if (criticalThreats.length > 0) {
           canDeploy = false;
-          warnings.push(`❌ Cannot deploy to production with ${criticalThreats.length} critical threats`);
+          warnings.push(
+            `❌ Cannot deploy to production with ${criticalThreats.length} critical threats`
+          );
         }
         if (highThreats.length > 5) {
           warnings.push(`⚠️ High number of high-risk threats: ${highThreats.length}`);
@@ -83,15 +85,14 @@ class PipelineUtils {
         stats: {
           critical: criticalThreats.length,
           high: highThreats.length,
-          securityWarnings: securityWarnings.length
+          securityWarnings: securityWarnings.length,
         },
-        criticalThreats: criticalThreats.map(t => ({
+        criticalThreats: criticalThreats.map((t) => ({
           id: t.id,
           title: t.title,
-          scenario: t.scenario
-        }))
+          scenario: t.scenario,
+        })),
       };
-
     } catch (error) {
       console.error('❌ Error analyzing threat model:', error.message);
       return { canDeploy: false, warnings: ['Failed to analyze threat model'] };
@@ -103,31 +104,32 @@ class PipelineUtils {
    */
   estimateCosts() {
     console.log('💰 Estimating infrastructure costs...');
-    
+
     try {
       const cdkOutDir = path.join(process.cwd(), 'cdk.out');
-      const templateFiles = fs.readdirSync(cdkOutDir)
-        .filter(file => file.endsWith('.template.json'))
-        .filter(file => !file.includes('asset'));
+      const templateFiles = fs
+        .readdirSync(cdkOutDir)
+        .filter((file) => file.endsWith('.template.json'))
+        .filter((file) => !file.includes('asset'));
 
       let totalResources = 0;
       const resourceTypes = new Set();
 
-      templateFiles.forEach(file => {
+      templateFiles.forEach((file) => {
         const template = JSON.parse(fs.readFileSync(path.join(cdkOutDir, file), 'utf8'));
         const resources = template.Resources || {};
-        
+
         totalResources += Object.keys(resources).length;
-        
-        Object.values(resources).forEach(resource => {
+
+        Object.values(resources).forEach((resource) => {
           resourceTypes.add(resource.Type);
         });
       });
 
       // Simple cost estimation logic
       let estimatedMonthlyCost = 0;
-      
-      resourceTypes.forEach(type => {
+
+      resourceTypes.forEach((type) => {
         switch (true) {
           case type.includes('RDS'):
             estimatedMonthlyCost += 50; // Base RDS cost
@@ -161,9 +163,8 @@ class PipelineUtils {
         totalResources,
         resourceTypes: Array.from(resourceTypes),
         estimatedMonthlyCost,
-        breakdown: this.getCostBreakdown(resourceTypes)
+        breakdown: this.getCostBreakdown(resourceTypes),
       };
-
     } catch (error) {
       console.error('❌ Error estimating costs:', error.message);
       return { estimatedMonthlyCost: 0, error: error.message };
@@ -172,7 +173,7 @@ class PipelineUtils {
 
   getCostBreakdown(resourceTypes) {
     const breakdown = {};
-    resourceTypes.forEach(type => {
+    resourceTypes.forEach((type) => {
       const service = type.split('::')[1] || 'Unknown';
       breakdown[service] = breakdown[service] || 0;
       breakdown[service] += 1;
@@ -191,19 +192,19 @@ class PipelineUtils {
         canDeploy: threatAnalysis.canDeploy,
         criticalThreats: threatAnalysis.stats?.critical || 0,
         highThreats: threatAnalysis.stats?.high || 0,
-        securityWarnings: threatAnalysis.stats?.securityWarnings || 0
+        securityWarnings: threatAnalysis.stats?.securityWarnings || 0,
       },
       cost: {
         estimatedMonthlyCost: costEstimate.estimatedMonthlyCost,
-        totalResources: costEstimate.totalResources
+        totalResources: costEstimate.totalResources,
       },
-      warnings: threatAnalysis.warnings || []
+      warnings: threatAnalysis.warnings || [],
     };
 
     // Write summary to file
     const summaryPath = path.join(process.cwd(), 'deployment-summary.json');
     fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
-    
+
     console.log('📋 Deployment summary generated');
     return summary;
   }
@@ -215,19 +216,20 @@ class PipelineUtils {
     try {
       const changedFiles = execSync('git diff --name-only HEAD~1', { encoding: 'utf8' })
         .split('\n')
-        .filter(file => file.trim());
+        .filter((file) => file.trim());
 
       const docExtensions = ['.md', '.txt', '.rst', '.adoc'];
       const docPaths = ['docs/', 'README', 'CHANGELOG', 'LICENSE'];
 
-      const isDocOnly = changedFiles.every(file => {
-        return docExtensions.some(ext => file.endsWith(ext)) ||
-               docPaths.some(path => file.includes(path));
+      const isDocOnly = changedFiles.every((file) => {
+        return (
+          docExtensions.some((ext) => file.endsWith(ext)) ||
+          docPaths.some((path) => file.includes(path))
+        );
       });
 
       console.log(`📝 Documentation-only change: ${isDocOnly}`);
       return isDocOnly;
-
     } catch (error) {
       console.log('⚠️ Could not determine change type, assuming code changes');
       return false;

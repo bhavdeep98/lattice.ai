@@ -38,26 +38,29 @@ export class PerformanceMonitor {
 
   public startOperation(operationName: string, metadata?: Record<string, any>): string {
     const operationId = `${operationName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const metrics: PerformanceMetrics = {
       operationName,
       startTime: Date.now(),
       memoryBefore: process.memoryUsage(),
-      metadata
+      metadata,
     };
 
     this.activeOperations.set(operationId, metrics);
-    
+
     logger.logPerformanceMetric('operation_started', 1, 'count', {
       operationId,
       operationName,
-      memoryBefore: metrics.memoryBefore
+      memoryBefore: metrics.memoryBefore,
     });
 
     return operationId;
   }
 
-  public endOperation(operationId: string, metadata?: Record<string, any>): PerformanceMetrics | null {
+  public endOperation(
+    operationId: string,
+    metadata?: Record<string, any>
+  ): PerformanceMetrics | null {
     const metrics = this.activeOperations.get(operationId);
     if (!metrics) {
       logger.warn('Attempted to end unknown operation', { operationId });
@@ -67,13 +70,13 @@ export class PerformanceMonitor {
     metrics.endTime = Date.now();
     metrics.duration = metrics.endTime - metrics.startTime;
     metrics.memoryAfter = process.memoryUsage();
-    
+
     if (metrics.memoryBefore && metrics.memoryAfter) {
       metrics.memoryDelta = {
         heapUsed: metrics.memoryAfter.heapUsed - metrics.memoryBefore.heapUsed,
         heapTotal: metrics.memoryAfter.heapTotal - metrics.memoryBefore.heapTotal,
         external: metrics.memoryAfter.external - metrics.memoryBefore.external,
-        rss: metrics.memoryAfter.rss - metrics.memoryBefore.rss
+        rss: metrics.memoryAfter.rss - metrics.memoryBefore.rss,
       };
     }
 
@@ -85,12 +88,12 @@ export class PerformanceMonitor {
     logger.logPerformanceMetric('operation_duration', metrics.duration, 'milliseconds', {
       operationId,
       operationName: metrics.operationName,
-      memoryDelta: metrics.memoryDelta
+      memoryDelta: metrics.memoryDelta,
     });
 
     logger.logPerformanceMetric('memory_heap_delta', metrics.memoryDelta?.heapUsed || 0, 'bytes', {
       operationId,
-      operationName: metrics.operationName
+      operationName: metrics.operationName,
     });
 
     // Move to completed operations
@@ -121,8 +124,8 @@ export class PerformanceMonitor {
     maxDuration: number;
     totalMemoryDelta: number;
   } {
-    const operations = operationName 
-      ? this.completedOperations.filter(op => op.operationName === operationName)
+    const operations = operationName
+      ? this.completedOperations.filter((op) => op.operationName === operationName)
       : this.completedOperations;
 
     if (operations.length === 0) {
@@ -131,46 +134,46 @@ export class PerformanceMonitor {
         averageDuration: 0,
         minDuration: 0,
         maxDuration: 0,
-        totalMemoryDelta: 0
+        totalMemoryDelta: 0,
       };
     }
 
-    const durations = operations.map(op => op.duration || 0);
-    const memoryDeltas = operations.map(op => op.memoryDelta?.heapUsed || 0);
+    const durations = operations.map((op) => op.duration || 0);
+    const memoryDeltas = operations.map((op) => op.memoryDelta?.heapUsed || 0);
 
     return {
       count: operations.length,
       averageDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
       minDuration: Math.min(...durations),
       maxDuration: Math.max(...durations),
-      totalMemoryDelta: memoryDeltas.reduce((a, b) => a + b, 0)
+      totalMemoryDelta: memoryDeltas.reduce((a, b) => a + b, 0),
     };
   }
 
   public logSystemMetrics(): void {
     const memoryUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
-    
+
     logger.logPerformanceMetric('system_memory_heap_used', memoryUsage.heapUsed, 'bytes');
     logger.logPerformanceMetric('system_memory_heap_total', memoryUsage.heapTotal, 'bytes');
     logger.logPerformanceMetric('system_memory_rss', memoryUsage.rss, 'bytes');
     logger.logPerformanceMetric('system_memory_external', memoryUsage.external, 'bytes');
-    
+
     logger.logPerformanceMetric('system_cpu_user', cpuUsage.user, 'microseconds');
     logger.logPerformanceMetric('system_cpu_system', cpuUsage.system, 'microseconds');
-    
+
     logger.info('System metrics logged', {
       memoryUsage,
       cpuUsage,
       uptime: process.uptime(),
       activeOperations: this.activeOperations.size,
-      completedOperations: this.completedOperations.length
+      completedOperations: this.completedOperations.length,
     });
   }
 
   public startPeriodicMetrics(intervalMs: number = 60000): NodeJS.Timeout {
     logger.info('Starting periodic system metrics collection', { intervalMs });
-    
+
     return setInterval(() => {
       this.logSystemMetrics();
     }, intervalMs);
@@ -190,7 +193,7 @@ export function monitorPerformance(operationName?: string) {
       const operationId = performanceMonitor.startOperation(opName, {
         className: target.constructor.name,
         methodName: propertyName,
-        argsCount: args.length
+        argsCount: args.length,
       });
 
       try {
@@ -198,9 +201,9 @@ export function monitorPerformance(operationName?: string) {
         performanceMonitor.endOperation(operationId, { success: true });
         return result;
       } catch (error) {
-        performanceMonitor.endOperation(operationId, { 
-          success: false, 
-          error: (error as Error).message 
+        performanceMonitor.endOperation(operationId, {
+          success: false,
+          error: (error as Error).message,
         });
         throw error;
       }
@@ -217,15 +220,15 @@ export async function withPerformanceMonitoring<T>(
   metadata?: Record<string, any>
 ): Promise<T> {
   const operationId = performanceMonitor.startOperation(operationName, metadata);
-  
+
   try {
     const result = await fn();
     performanceMonitor.endOperation(operationId, { success: true });
     return result;
   } catch (error) {
-    performanceMonitor.endOperation(operationId, { 
-      success: false, 
-      error: (error as Error).message 
+    performanceMonitor.endOperation(operationId, {
+      success: false,
+      error: (error as Error).message,
     });
     throw error;
   }

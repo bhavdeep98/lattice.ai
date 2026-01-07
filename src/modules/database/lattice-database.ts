@@ -4,7 +4,12 @@ import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
-import { LatticeDatabaseProps, LatticeDatabaseConstruct, DatabaseEngine, DatabaseSize } from './types';
+import {
+  LatticeDatabaseProps,
+  LatticeDatabaseConstruct,
+  DatabaseEngine,
+  DatabaseSize,
+} from './types';
 import { DatabaseOutput } from '../../core/types';
 import { createStatefulnessPolicy } from '../../core/statefulness';
 import { LatticeBackupManager } from '../../core/backup-manager';
@@ -16,14 +21,14 @@ import { logger, logExecutionTime } from '../../utils/logger';
  */
 export class LatticeDatabase extends Construct implements LatticeDatabaseConstruct {
   public readonly output: DatabaseOutput;
-  
+
   // Escape hatch: Direct access to underlying AWS CDK constructs
   public readonly instance: rds.DatabaseInstance;
   public readonly securityGroup: ec2.SecurityGroup;
-  
+
   // Observability: Alarms and dashboards for monitoring
   public readonly alarms: cloudwatch.Alarm[] = [];
-  
+
   private readonly database: rds.DatabaseInstance;
   private readonly backupManager?: LatticeBackupManager;
   private readonly observabilityManager?: LatticeObservabilityManager;
@@ -78,9 +83,11 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     }
 
     // Get VPC from props or network configuration
-    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
-      vpcId: network.vpcId,
-    });
+    const vpc =
+      existingVpc ||
+      ec2.Vpc.fromLookup(this, 'Vpc', {
+        vpcId: network.vpcId,
+      });
 
     // Create security group for database
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
@@ -110,7 +117,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     // Add existing security groups if provided
     const securityGroups: ec2.ISecurityGroup[] = [this.securityGroup];
     if (network.securityGroupIds) {
-      network.securityGroupIds.forEach(sgId => {
+      network.securityGroupIds.forEach((sgId) => {
         securityGroups.push(
           ec2.SecurityGroup.fromSecurityGroupId(this, `ExistingSG-${sgId}`, sgId)
         );
@@ -140,10 +147,9 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       multiAz: highAvailability,
       storageEncrypted: true,
       // CRITICAL: Use statefulness policy for backup retention
-      backupRetention: Duration.days(Math.max(
-        backupRetention,
-        statefulnessPolicy.getBackupRetentionDays()
-      )),
+      backupRetention: Duration.days(
+        Math.max(backupRetention, statefulnessPolicy.getBackupRetentionDays())
+      ),
       // CRITICAL: Use statefulness policy for deletion protection
       deletionProtection: statefulnessPolicy.shouldEnableDeletionProtection(),
       enablePerformanceInsights: performanceInsights,
@@ -164,10 +170,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
 
     // Add database to backup plan if backup manager exists
     if (this.backupManager) {
-      this.backupManager.addResource(
-        this.database.instanceArn,
-        `rds-${engine}`
-      );
+      this.backupManager.addResource(this.database.instanceArn, `rds-${engine}`);
     }
 
     // Add observability after database creation
@@ -190,15 +193,11 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     }
 
     // Create observability resources using static name for alarm naming
-    const observability = this.observabilityManager.addDatabaseObservability(
+    const observability = this.observabilityManager.addDatabaseObservability(databaseName, engine, {
       databaseName,
       engine,
-      {
-        databaseName,
-        engine,
-        actualInstanceId: this.database.instanceIdentifier, // Pass actual instance ID for metrics
-      }
-    );
+      actualInstanceId: this.database.instanceIdentifier, // Pass actual instance ID for metrics
+    });
 
     // Store alarms for external access
     this.alarms.push(...observability.alarms);
@@ -295,9 +294,9 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
             version: rds.PostgresEngineVersion.VER_15_4,
           }),
           parameters: {
-            'shared_preload_libraries': 'pg_stat_statements',
-            'log_statement': 'all',
-            'log_min_duration_statement': '1000',
+            shared_preload_libraries: 'pg_stat_statements',
+            log_statement: 'all',
+            log_min_duration_statement: '1000',
           },
         });
       case 'mysql':
@@ -306,8 +305,8 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
             version: rds.MysqlEngineVersion.VER_8_0_35,
           }),
           parameters: {
-            'slow_query_log': '1',
-            'long_query_time': '2',
+            slow_query_log: '1',
+            long_query_time: '2',
           },
         });
       default:

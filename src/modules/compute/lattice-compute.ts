@@ -16,11 +16,16 @@ import { logger, logExecutionTime } from '../../utils/logger';
  */
 export class LatticeCompute extends Construct implements LatticeComputeConstruct {
   public readonly output: ComputeOutput;
-  
+
   // Escape hatch: Direct access to underlying AWS CDK constructs
   // The actual type depends on the compute type (EC2, ECS, Lambda)
-  public readonly instance: ec2.Instance | autoscaling.AutoScalingGroup | ecs.FargateService | lambda.Function | undefined;
-  
+  public readonly instance:
+    | ec2.Instance
+    | autoscaling.AutoScalingGroup
+    | ecs.FargateService
+    | lambda.Function
+    | undefined;
+
   // Observability: Alarms and dashboards for monitoring
   public readonly alarms: cloudwatch.Alarm[] = [];
   private readonly observabilityManager?: LatticeObservabilityManager;
@@ -48,20 +53,22 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       operation: 'compute-creation',
       resourceType: 'compute',
       resourceId: name,
-      environment
+      environment,
     });
 
     logger.info(`Creating Lattice compute resource: ${name}`, {
       type,
       size,
       autoScaling,
-      runtime: type === 'serverless' ? runtime : undefined
+      runtime: type === 'serverless' ? runtime : undefined,
     });
 
     // Validate compute type
     const validTypes: ComputeType[] = ['vm', 'container', 'serverless'];
     if (!validTypes.includes(type)) {
-      const error = new Error(`Unsupported compute type: ${type}. Valid types: ${validTypes.join(', ')}`);
+      const error = new Error(
+        `Unsupported compute type: ${type}. Valid types: ${validTypes.join(', ')}`
+      );
       logger.error('Invalid compute type specified', error, { validTypes, providedType: type });
       throw error;
     }
@@ -80,19 +87,50 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     switch (type) {
       case 'vm':
         logger.info('Creating VM compute instance', { size, autoScaling });
-        const vmResult = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData, vpc);
+        const vmResult = this.createVmCompute(
+          name,
+          environment,
+          size,
+          autoScaling,
+          network,
+          identity,
+          userData,
+          vpc
+        );
         this.output = vmResult.output;
         this.instance = vmResult.instance;
         break;
       case 'container':
         logger.info('Creating container compute service', { size, autoScaling, containerImage });
-        const containerResult = this.createContainerCompute(name, environment, size, autoScaling, network, identity, containerImage, vpc);
+        const containerResult = this.createContainerCompute(
+          name,
+          environment,
+          size,
+          autoScaling,
+          network,
+          identity,
+          containerImage,
+          vpc
+        );
         this.output = containerResult.output;
         this.instance = containerResult.instance;
         break;
       case 'serverless':
-        logger.info('Creating serverless function', { size, runtime, functionCode: !!functionCode });
-        const serverlessResult = this.createServerlessCompute(name, environment, size, network, identity, functionCode, runtime, vpc);
+        logger.info('Creating serverless function', {
+          size,
+          runtime,
+          functionCode: !!functionCode,
+        });
+        const serverlessResult = this.createServerlessCompute(
+          name,
+          environment,
+          size,
+          network,
+          identity,
+          functionCode,
+          runtime,
+          vpc
+        );
         this.output = serverlessResult.output;
         this.instance = serverlessResult.instance;
         break;
@@ -104,13 +142,17 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
 
     // Add observability after resource creation
     this.addObservability(type, name);
-    
-    const resourceId = this.output.instanceIds?.[0] || this.output.clusterArn || this.output.functionArn || 'unknown';
+
+    const resourceId =
+      this.output.instanceIds?.[0] ||
+      this.output.clusterArn ||
+      this.output.functionArn ||
+      'unknown';
     logger.logResourceCreation('compute', resourceId, {
       type,
       size,
       autoScaling,
-      runtime: type === 'serverless' ? runtime : undefined
+      runtime: type === 'serverless' ? runtime : undefined,
     });
   }
 
@@ -176,9 +218,11 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     userData?: string,
     existingVpc?: ec2.IVpc
   ): { output: ComputeOutput; instance: ec2.Instance | autoscaling.AutoScalingGroup } {
-    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
-      vpcId: network.vpcId,
-    });
+    const vpc =
+      existingVpc ||
+      ec2.Vpc.fromLookup(this, 'Vpc', {
+        vpcId: network.vpcId,
+      });
 
     const securityGroup = new ec2.SecurityGroup(this, 'VmSecurityGroup', {
       vpc,
@@ -256,9 +300,11 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     containerImage?: string,
     existingVpc?: ec2.IVpc
   ): { output: ComputeOutput; instance: ecs.FargateService } {
-    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
-      vpcId: network.vpcId,
-    });
+    const vpc =
+      existingVpc ||
+      ec2.Vpc.fromLookup(this, 'Vpc', {
+        vpcId: network.vpcId,
+      });
 
     const cluster = new ecs.Cluster(this, 'Cluster', {
       vpc,
@@ -272,9 +318,9 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     });
 
     const container = taskDefinition.addContainer('Container', {
-      image: containerImage ?
-        ecs.ContainerImage.fromRegistry(containerImage) :
-        ecs.ContainerImage.fromRegistry('nginx:latest'),
+      image: containerImage
+        ? ecs.ContainerImage.fromRegistry(containerImage)
+        : ecs.ContainerImage.fromRegistry('nginx:latest'),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: `${name}-${environment}`,
       }),
@@ -323,17 +369,19 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
     runtime?: string,
     existingVpc?: ec2.IVpc
   ): { output: ComputeOutput; instance: lambda.Function } {
-    const vpc = existingVpc || ec2.Vpc.fromLookup(this, 'Vpc', {
-      vpcId: network.vpcId,
-    });
+    const vpc =
+      existingVpc ||
+      ec2.Vpc.fromLookup(this, 'Vpc', {
+        vpcId: network.vpcId,
+      });
 
     const lambdaFunction = new lambda.Function(this, 'Function', {
       functionName: `${name}-${environment}`,
       runtime: this.getLambdaRuntime(runtime || 'nodejs18.x'),
       handler: 'index.handler',
-      code: functionCode ?
-        lambda.Code.fromInline(functionCode) :
-        lambda.Code.fromInline(`
+      code: functionCode
+        ? lambda.Code.fromInline(functionCode)
+        : lambda.Code.fromInline(`
           exports.handler = async (event) => {
             return {
               statusCode: 200,
@@ -405,9 +453,9 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       'python3.9': lambda.Runtime.PYTHON_3_9,
       'python3.10': lambda.Runtime.PYTHON_3_10,
       'python3.11': lambda.Runtime.PYTHON_3_11,
-      'java11': lambda.Runtime.JAVA_11,
-      'java17': lambda.Runtime.JAVA_17,
-      'dotnet6': lambda.Runtime.DOTNET_6,
+      java11: lambda.Runtime.JAVA_11,
+      java17: lambda.Runtime.JAVA_17,
+      dotnet6: lambda.Runtime.DOTNET_6,
     };
     return runtimes[runtime] || lambda.Runtime.NODEJS_18_X;
   }

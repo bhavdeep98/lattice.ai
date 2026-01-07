@@ -65,16 +65,18 @@ describe('Escape Hatch Pattern', () => {
     expect(latticeIdentity.instance).toBeInstanceOf(iam.Role);
 
     // Verify we can use escape hatch for advanced IAM policies
-    latticeIdentity.instance.addToPolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['s3:GetObject'],
-      resources: ['arn:aws:s3:::example-bucket/*'],
-      conditions: {
-        'StringEquals': {
-          's3:x-amz-server-side-encryption': 'AES256',
+    latticeIdentity.instance.addToPolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['s3:GetObject'],
+        resources: ['arn:aws:s3:::example-bucket/*'],
+        conditions: {
+          StringEquals: {
+            's3:x-amz-server-side-encryption': 'AES256',
+          },
         },
-      },
-    }));
+      })
+    );
 
     // Verify the role was created and we can access its properties
     const template = Template.fromStack(stack);
@@ -82,7 +84,7 @@ describe('Escape Hatch Pattern', () => {
       RoleName: 'test-role-dev-role',
       Description: 'Lattice application role for test-role in dev',
     });
-    
+
     // Verify that a policy was created (the exact content may vary due to merging)
     template.resourceCountIs('AWS::IAM::Policy', 1);
   });

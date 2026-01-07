@@ -21,9 +21,9 @@ export interface LatticeAspectsConfig {
   enableMonitoring?: boolean;
   threatModel?: {
     enabled: boolean;
-    outputDir?: string;        // default: cdk.out
-    formats?: ("md" | "json")[]; // default: ["md"]
-    projectName?: string;      // optional title
+    outputDir?: string; // default: cdk.out
+    formats?: ('md' | 'json')[]; // default: ["md"]
+    projectName?: string; // optional title
   };
 }
 
