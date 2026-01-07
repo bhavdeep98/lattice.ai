@@ -4,7 +4,7 @@
  */
 
 import { logger, withLogging } from '../src/utils/logger';
-import { performanceMonitor, monitorPerformance, withPerformanceMonitoring } from '../src/utils/performance-monitor';
+import { performanceMonitor, withPerformanceMonitoring } from '../src/utils/performance-monitor';
 import { getLoggingConfig } from '../src/config/logging';
 
 // Example: Infrastructure deployment with logging
@@ -13,13 +13,13 @@ async function deployInfrastructure() {
   logger.setContext({
     operation: 'infrastructure-deployment',
     environment: 'production',
-    deploymentId: 'deploy-2024-001'
+    deploymentId: 'deploy-2024-001',
   });
 
   logger.audit('Starting infrastructure deployment', {
     timestamp: new Date().toISOString(),
     initiatedBy: 'ci-cd-pipeline',
-    targetEnvironment: 'production'
+    targetEnvironment: 'production',
   });
 
   try {
@@ -38,13 +38,12 @@ async function deployInfrastructure() {
     logger.audit('Infrastructure deployment completed successfully', {
       duration: '5m 30s',
       resourcesCreated: 15,
-      estimatedMonthlyCost: 450.00
+      estimatedMonthlyCost: 450.0,
     });
-
   } catch (error) {
     logger.error('Infrastructure deployment failed', error as Error, {
       failurePoint: 'database-creation',
-      rollbackRequired: true
+      rollbackRequired: true,
     });
     throw error;
   } finally {
@@ -53,42 +52,41 @@ async function deployInfrastructure() {
 }
 
 // Example: Network creation with performance monitoring
-@monitorPerformance('network-creation')
 async function simulateNetworkCreation(): Promise<void> {
   logger.info('Validating network configuration');
-  
+
   // Simulate validation
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
   logger.info('Creating VPC and subnets');
-  
+
   // Simulate VPC creation
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   logger.logResourceCreation('vpc', 'vpc-12345', {
     cidr: '10.0.0.0/16',
     availabilityZones: 3,
     publicSubnets: 3,
-    privateSubnets: 3
+    privateSubnets: 3,
   });
 
   logger.info('Configuring security groups');
-  
+
   // Simulate security group creation
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   logger.logResourceCreation('security-group', 'sg-67890', {
     name: 'default-sg',
     rules: [
       { type: 'ingress', port: 443, protocol: 'tcp', source: '0.0.0.0/0' },
-      { type: 'ingress', port: 80, protocol: 'tcp', source: '0.0.0.0/0' }
-    ]
+      { type: 'ingress', port: 80, protocol: 'tcp', source: '0.0.0.0/0' },
+    ],
   });
 
   logger.logSecurityEvent('Security group created with public access', 'low', {
     securityGroupId: 'sg-67890',
     publicPorts: [80, 443],
-    justification: 'Web application requires public access'
+    justification: 'Web application requires public access',
   });
 }
 
@@ -97,30 +95,30 @@ async function simulateDatabaseCreation(): Promise<void> {
   const operationId = logger.startOperation('database-creation', {
     engine: 'postgresql',
     version: '14.9',
-    instanceClass: 'db.r5.large'
+    instanceClass: 'db.r5.large',
   });
 
   try {
     logger.info('Validating database configuration');
-    
+
     // Simulate configuration validation
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     logger.info('Creating database subnet group');
-    
+
     // Simulate subnet group creation
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
     logger.info('Creating database parameter group');
-    
+
     // Simulate parameter group creation
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     logger.info('Creating database instance');
-    
+
     // Simulate database instance creation (longer operation)
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     logger.logResourceCreation('rds-instance', 'prod-db-001', {
       engine: 'postgresql',
       version: '14.9',
@@ -128,7 +126,7 @@ async function simulateDatabaseCreation(): Promise<void> {
       allocatedStorage: 100,
       storageEncrypted: true,
       multiAZ: true,
-      backupRetentionPeriod: 7
+      backupRetentionPeriod: 7,
     });
 
     // Simulate database connection test
@@ -138,12 +136,11 @@ async function simulateDatabaseCreation(): Promise<void> {
     logger.endOperation(operationId, true, {
       instanceId: 'prod-db-001',
       endpoint: 'prod-db-001.cluster-xyz.us-east-1.rds.amazonaws.com',
-      port: 5432
+      port: 5432,
     });
-
   } catch (error) {
     logger.endOperation(operationId, false, {
-      error: (error as Error).message
+      error: (error as Error).message,
     });
     throw error;
   }
@@ -151,17 +148,21 @@ async function simulateDatabaseCreation(): Promise<void> {
 
 // Example: Database operations with performance tracking
 async function simulateDatabaseQuery(): Promise<void> {
-  const result = await withPerformanceMonitoring('database-connectivity-test', async () => {
-    // Simulate database connection and query
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    logger.logDatabaseOperation('SELECT', 'SELECT 1', 45, 1);
-    
-    return { connected: true, latency: 45 };
-  }, {
-    host: 'prod-db-001.cluster-xyz.us-east-1.rds.amazonaws.com',
-    database: 'production'
-  });
+  const result = await withPerformanceMonitoring(
+    'database-connectivity-test',
+    async () => {
+      // Simulate database connection and query
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      logger.logDatabaseOperation('SELECT', 'SELECT 1', 45, 1);
+
+      return { connected: true, latency: 45 };
+    },
+    {
+      host: 'prod-db-001.cluster-xyz.us-east-1.rds.amazonaws.com',
+      database: 'production',
+    }
+  );
 
   logger.info('Database connectivity test completed', result);
 }
@@ -172,39 +173,46 @@ async function simulateComputeCreation(): Promise<void> {
 
   try {
     // Simulate Lambda function creation
-    await withLogging('lambda-creation', async () => {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      logger.logResourceCreation('lambda-function', 'api-handler', {
+    await withLogging(
+      'lambda-creation',
+      async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        logger.logResourceCreation('lambda-function', 'api-handler', {
+          runtime: 'nodejs18.x',
+          memorySize: 512,
+          timeout: 30,
+          environment: 'production',
+        });
+      },
+      {
+        functionName: 'api-handler',
         runtime: 'nodejs18.x',
-        memorySize: 512,
-        timeout: 30,
-        environment: 'production'
-      });
-    }, {
-      functionName: 'api-handler',
-      runtime: 'nodejs18.x'
-    });
+      }
+    );
 
     // Simulate ECS service creation
-    await withLogging('ecs-service-creation', async () => {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      logger.logResourceCreation('ecs-service', 'web-service', {
-        cluster: 'production-cluster',
-        taskDefinition: 'web-app:1',
-        desiredCount: 3,
-        launchType: 'FARGATE'
-      });
-    }, {
-      serviceName: 'web-service',
-      cluster: 'production-cluster'
-    });
+    await withLogging(
+      'ecs-service-creation',
+      async () => {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
+        logger.logResourceCreation('ecs-service', 'web-service', {
+          cluster: 'production-cluster',
+          taskDefinition: 'web-app:1',
+          desiredCount: 3,
+          launchType: 'FARGATE',
+        });
+      },
+      {
+        serviceName: 'web-service',
+        cluster: 'production-cluster',
+      }
+    );
   } catch (error) {
     logger.error('Compute creation failed', error as Error, {
       step: 'ecs-service-creation',
-      rollbackRequired: true
+      rollbackRequired: true,
     });
     throw error;
   }
@@ -220,20 +228,20 @@ async function simulateApiRequests(): Promise<void> {
     logger.setContext({ correlationId, operation: 'api-request' });
 
     const startTime = Date.now();
-    
+
     // Simulate API processing
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 500 + 100));
+
     const duration = Date.now() - startTime;
     const statusCode = Math.random() > 0.1 ? 200 : 500; // 90% success rate
-    
+
     logger.logApiRequest('GET', `/api/users/${i}`, statusCode, duration, `user-${i}`);
-    
+
     if (statusCode === 500) {
       logger.error('API request failed', new Error('Internal server error'), {
         endpoint: `/api/users/${i}`,
         statusCode,
-        duration
+        duration,
       });
     }
 
@@ -250,7 +258,7 @@ async function simulateSecurityEvents(): Promise<void> {
     sourceIP: '192.168.1.100',
     username: 'admin',
     attemptCount: 3,
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
   });
 
   logger.logSecurityEvent('Suspicious API access pattern', 'high', {
@@ -258,7 +266,7 @@ async function simulateSecurityEvents(): Promise<void> {
     endpoint: '/api/admin/users',
     requestCount: 100,
     timeWindow: '5 minutes',
-    rateLimitExceeded: true
+    rateLimitExceeded: true,
   });
 
   logger.logSecurityEvent('Unauthorized resource access attempt', 'critical', {
@@ -266,7 +274,7 @@ async function simulateSecurityEvents(): Promise<void> {
     resource: '/admin/system-config',
     action: 'READ',
     denied: true,
-    reason: 'Insufficient permissions'
+    reason: 'Insufficient permissions',
   });
 }
 
@@ -282,20 +290,24 @@ async function demonstratePerformanceMonitoring(): Promise<void> {
     { name: 'fast-operation', duration: 50 },
     { name: 'medium-operation', duration: 200 },
     { name: 'slow-operation', duration: 1000 },
-    { name: 'variable-operation', duration: Math.random() * 500 + 100 }
+    { name: 'variable-operation', duration: Math.random() * 500 + 100 },
   ];
 
   for (const op of operations) {
-    await withPerformanceMonitoring(op.name, async () => {
-      await new Promise(resolve => setTimeout(resolve, op.duration));
-      
-      // Simulate some memory allocation
-      const data = new Array(1000).fill('test data');
-      return data.length;
-    }, {
-      expectedDuration: op.duration,
-      operationType: 'simulation'
-    });
+    await withPerformanceMonitoring(
+      op.name,
+      async () => {
+        await new Promise((resolve) => setTimeout(resolve, op.duration));
+
+        // Simulate some memory allocation
+        const data = new Array(1000).fill('test data');
+        return data.length;
+      },
+      {
+        expectedDuration: op.duration,
+        operationType: 'simulation',
+      }
+    );
   }
 
   // Get and log performance statistics
@@ -318,8 +330,8 @@ async function runLoggingDemo(): Promise<void> {
     config: {
       level: config.level,
       enableStructuredLogging: config.enableStructuredLogging,
-      enablePerformanceMetrics: config.enablePerformanceMetrics
-    }
+      enablePerformanceMetrics: config.enablePerformanceMetrics,
+    },
   });
 
   try {
@@ -346,17 +358,18 @@ async function runLoggingDemo(): Promise<void> {
     // 5. Show final statistics
     const activeOps = performanceMonitor.getActiveOperations();
     const completedOps = performanceMonitor.getCompletedOperations(10);
-    
+
     logger.info('Logging demonstration completed', {
       activeOperations: activeOps.length,
       completedOperations: completedOps.length,
-      totalDuration: completedOps.reduce((sum, op) => sum + (op.duration || 0), 0)
+      totalDuration: completedOps.reduce((sum, op) => sum + (op.duration || 0), 0),
     });
 
     console.log('🎉 Lattice Framework Logging Demonstration completed successfully!');
     console.log(`📈 Completed ${completedOps.length} operations`);
-    console.log(`⏱️  Total processing time: ${completedOps.reduce((sum, op) => sum + (op.duration || 0), 0)}ms`);
-
+    console.log(
+      `⏱️  Total processing time: ${completedOps.reduce((sum, op) => sum + (op.duration || 0), 0)}ms`
+    );
   } catch (error) {
     logger.error('Logging demonstration failed', error as Error);
     console.error('❌ Demonstration failed:', (error as Error).message);
@@ -374,5 +387,5 @@ export {
   simulateApiRequests,
   simulateSecurityEvents,
   demonstratePerformanceMonitoring,
-  runLoggingDemo
+  runLoggingDemo,
 };
