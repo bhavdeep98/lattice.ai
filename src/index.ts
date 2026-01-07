@@ -15,6 +15,12 @@ export * from './modules/queue/lattice-queue';
 // Utility exports
 export * from './utils/tags';
 export * from './utils/validation';
+export * from './utils/logger';
+export * from './utils/performance-monitor';
+export * from './utils/cloudwatch-logger';
+
+// Configuration exports
+export * from './config/logging';
 
 // Threat modeling exports
 export * from './threat-model';

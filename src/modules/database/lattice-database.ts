@@ -9,6 +9,7 @@ import { DatabaseOutput } from '../../core/types';
 import { createStatefulnessPolicy } from '../../core/statefulness';
 import { LatticeBackupManager } from '../../core/backup-manager';
 import { LatticeObservabilityManager } from '../../core/observability';
+import { logger, logExecutionTime } from '../../utils/logger';
 
 /**
  * LatticeDatabase - RDS abstraction with security and high availability best practices
@@ -45,6 +46,8 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
       vpc: existingVpc,
     } = props;
 
+    logger.info(`Creating ${engine} database: ${name}`);
+
     // Create statefulness policy for proper operations management
     const statefulnessPolicy = createStatefulnessPolicy({
       environment,
@@ -65,6 +68,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
 
     // Create backup manager if backups are enabled
     if (statefulnessPolicy.shouldEnableBackups()) {
+      logger.info(`Enabling backups with ${backupRetention} day retention`);
       this.backupManager = new LatticeBackupManager(this, 'BackupManager', {
         policy: statefulnessPolicy,
         backupVaultName: `${name}-${environment}-db-backup-vault`,
@@ -114,6 +118,7 @@ export class LatticeDatabase extends Construct implements LatticeDatabaseConstru
     }
 
     // Create database credentials secret
+    logger.info('Creating database credentials');
     const credentials = new secretsmanager.Secret(this, 'DatabaseCredentials', {
       secretName: `${name}-${environment}-db-credentials`,
       generateSecretString: {

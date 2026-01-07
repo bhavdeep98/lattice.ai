@@ -9,6 +9,7 @@ import { LatticeBucket } from '../modules/storage/lattice-bucket';
 import { LatticeWebsite } from '../modules/website/lattice-website';
 import { LatticeQueue } from '../modules/queue/lattice-queue';
 import { NetworkOutput, DatabaseOutput, ComputeOutput } from './types';
+import { logger, withLogging } from '../utils/logger';
 
 /**
  * LatticeStack - The AI-Driven Orchestrator
@@ -26,27 +27,27 @@ export class LatticeStack extends Stack {
 
         const { appName, environment, capabilities, threatModel } = manifest;
 
+        logger.start(`Deploying ${appName}`, 5);
+
         // 1. Apply Guardrails & Threat Modeling
+        logger.step('Applying security aspects and guardrails');
         applyLatticeAspects(this, {
             environment,
             projectName: appName,
-            owner: 'AI-Agent', // Default owner for AI gen
+            owner: 'AI-Agent',
             threatModel: threatModel ? {
                 enabled: threatModel.enabled,
                 projectName: threatModel.projectName ?? appName,
             } : undefined
         });
 
-        // 2. Foundation: Network (Always needed if Compute or DB is present)
-        // We auto-create a standard network if not explicitly requested but needed
+        // 2. Foundation: Network
         let networkOutput: NetworkOutput | undefined;
         let networkInstance: LatticeNetwork | undefined;
-
-        // Check if network is needed
         const needsNetwork = !!capabilities.api || !!capabilities.database;
 
         if (needsNetwork) {
-            // TODO: Allow network config in manifest? For now use defaults.
+            logger.step('Creating network infrastructure');
             networkInstance = new LatticeNetwork(this, 'Network', {
                 name: `${appName}-net`,
                 environment,
@@ -54,14 +55,16 @@ export class LatticeStack extends Stack {
             });
             networkOutput = networkInstance.output;
             this.outputs.network = networkOutput;
+            logger.resource('VPC', networkOutput.vpcId);
         }
 
         // 3. Database
         let dbOutput: DatabaseOutput | undefined;
         if (capabilities.database && networkOutput && networkInstance) {
+            logger.step('Creating database infrastructure');
             const db = new LatticeDatabase(this, 'Database', {
                 ...capabilities.database,
-                environment, // Enforce consistent env
+                environment,
                 network: {
                     vpcId: networkOutput.vpcId,
                     subnetIds: networkOutput.privateSubnetIds,
@@ -71,11 +74,13 @@ export class LatticeStack extends Stack {
             });
             dbOutput = db.output;
             this.outputs.database = dbOutput;
+            logger.resource('Database', dbOutput.instanceId);
         }
 
         // 4. API / Compute
         let computeOutput: ComputeOutput | undefined;
         if (capabilities.api && networkOutput && networkInstance) {
+            logger.step('Creating compute infrastructure');
             // Inject dependency: DB connection string if available
             const envVars = capabilities.api.functionCode || capabilities.api.userData
                 ? undefined // Don't overwrite if manual

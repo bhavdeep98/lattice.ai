@@ -10,6 +10,7 @@ import { LatticeBucketProps, LatticeBucketConstruct } from './types';
 import { StorageOutput } from '../../core/types';
 import { createStatefulnessPolicy } from '../../core/statefulness';
 import { LatticeObservabilityManager } from '../../core/observability';
+import { logger, logExecutionTime } from '../../utils/logger';
 
 /**
  * LatticeBucket - S3 bucket abstraction with security and lifecycle best practices
@@ -26,6 +27,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
   private readonly bucket: s3.Bucket;
   private readonly observabilityManager?: LatticeObservabilityManager;
 
+  @logExecutionTime
   constructor(scope: Construct, id: string, props: LatticeBucketProps) {
     super(scope, id);
 
@@ -40,6 +42,23 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       notifications,
     } = props;
 
+    // Set logging context for storage operations
+    logger.setContext({
+      operation: 'storage-creation',
+      resourceType: 'storage',
+      resourceId: name,
+      environment
+    });
+
+    logger.info(`Creating Lattice bucket: ${name}`, {
+      encryption,
+      versioning,
+      publicRead,
+      hasCors: !!cors,
+      hasLifecycle: !!lifecycle,
+      hasNotifications: !!notifications
+    });
+
     // Create statefulness policy for proper operations management
     const statefulnessPolicy = createStatefulnessPolicy({
       environment,
@@ -48,8 +67,14 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       backupRetentionDays: props.backupRetentionDays,
     });
 
+    logger.info('Applied statefulness policy for bucket', {
+      removalPolicy: statefulnessPolicy.getRemovalPolicy(),
+      shouldAutoDeleteObjects: statefulnessPolicy.shouldAutoDeleteObjects()
+    });
+
     // Create observability manager if monitoring is enabled
     if (props.enableObservability !== false) {
+      logger.info('Enabling bucket observability');
       this.observabilityManager = LatticeObservabilityManager.create(this, 'Observability', {
         environment,
         enableAlarms: props.enableAlarms,
@@ -59,6 +84,7 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
     }
 
     // Create S3 bucket with security and operations best practices
+    logger.info('Creating S3 bucket with security best practices');
     this.bucket = new s3.Bucket(this, 'Bucket', {
       bucketName: `${name}-${environment}`,
       encryption: encryption ? s3.BucketEncryption.S3_MANAGED : undefined,
@@ -78,14 +104,34 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
       enforceSSL: true,
     });
 
+    // Log security configuration
+    if (publicRead) {
+      logger.logSecurityEvent('Public read access enabled for bucket', 'medium', {
+        bucketName: `${name}-${environment}`,
+        reason: 'Explicitly configured for public access'
+      });
+    }
+
     // Expose underlying construct for escape hatch scenarios
     this.instance = this.bucket;
 
     // Add observability after bucket creation
     this.addObservability(name);
 
+    logger.logResourceCreation('s3-bucket', this.bucket.bucketName, {
+      encryption,
+      versioning,
+      publicRead,
+      enforceSSL: true
+    });
+
     // Configure CORS if specified
     if (cors) {
+      logger.info('Configuring CORS for bucket', {
+        allowedOrigins: cors.allowedOrigins?.length || 0,
+        allowedMethods: cors.allowedMethods?.length || 0
+      });
+      
       this.bucket.addCorsRule({
         allowedOrigins: cors.allowedOrigins,
         allowedMethods: cors.allowedMethods.map(method =>
@@ -97,6 +143,10 @@ export class LatticeBucket extends Construct implements LatticeBucketConstruct {
 
     // Configure lifecycle rules if specified
     if (lifecycle) {
+      logger.info('Configuring lifecycle rules for bucket', {
+        rulesCount: lifecycle.length
+      });
+      
       const lifecycleRules: s3.LifecycleRule[] = [];
 
       if (lifecycle.archiveAfterDays) {

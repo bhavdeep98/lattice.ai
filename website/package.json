@@ -1,0 +1,28 @@
+{
+  "name": "lattice-real-demo",
+  "version": "1.0.0",
+  "description": "Real Lattice Framework Demo Backend",
+  "main": "lattice-demo-backend.js",
+  "scripts": {
+    "start": "node lattice-demo-backend.js",
+    "dev": "nodemon lattice-demo-backend.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "openai": "^6.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "lattice",
+    "aws",
+    "cdk",
+    "infrastructure",
+    "demo"
+  ],
+  "author": "Lattice Team",
+  "license": "MIT"
+}

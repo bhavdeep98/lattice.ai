@@ -9,6 +9,7 @@ import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import { LatticeComputeProps, LatticeComputeConstruct, ComputeType, ComputeSize } from './types';
 import { ComputeOutput } from '../../core/types';
 import { LatticeObservabilityManager } from '../../core/observability';
+import { logger, logExecutionTime } from '../../utils/logger';
 
 /**
  * LatticeCompute - Multi-type compute abstraction (EC2, ECS, Lambda)
@@ -24,6 +25,7 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
   public readonly alarms: cloudwatch.Alarm[] = [];
   private readonly observabilityManager?: LatticeObservabilityManager;
 
+  @logExecutionTime
   constructor(scope: Construct, id: string, props: LatticeComputeProps) {
     super(scope, id);
 
@@ -42,14 +44,32 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
       vpc,
     } = props;
 
+    // Set logging context for compute operations
+    logger.setContext({
+      operation: 'compute-creation',
+      resourceType: 'compute',
+      resourceId: name,
+      environment
+    });
+
+    logger.info(`Creating Lattice compute resource: ${name}`, {
+      type,
+      size,
+      autoScaling,
+      runtime: type === 'serverless' ? runtime : undefined
+    });
+
     // Validate compute type
     const validTypes: ComputeType[] = ['vm', 'container', 'serverless'];
     if (!validTypes.includes(type)) {
-      throw new Error(`Unsupported compute type: ${type}. Valid types: ${validTypes.join(', ')}`);
+      const error = new Error(`Unsupported compute type: ${type}. Valid types: ${validTypes.join(', ')}`);
+      logger.error('Invalid compute type specified', error, { validTypes, providedType: type });
+      throw error;
     }
 
     // Create observability manager if monitoring is enabled
     if (props.enableObservability !== false) {
+      logger.info('Enabling compute observability');
       this.observabilityManager = LatticeObservabilityManager.create(this, 'Observability', {
         environment,
         enableAlarms: props.enableAlarms,
@@ -60,26 +80,38 @@ export class LatticeCompute extends Construct implements LatticeComputeConstruct
 
     switch (type) {
       case 'vm':
+        logger.info('Creating VM compute instance', { size, autoScaling });
         const vmResult = this.createVmCompute(name, environment, size, autoScaling, network, identity, userData, vpc);
         this.output = vmResult.output;
         this.instance = vmResult.instance;
         break;
       case 'container':
+        logger.info('Creating container compute service', { size, autoScaling, containerImage });
         const containerResult = this.createContainerCompute(name, environment, size, autoScaling, network, identity, containerImage, vpc);
         this.output = containerResult.output;
         this.instance = containerResult.instance;
         break;
       case 'serverless':
+        logger.info('Creating serverless function', { size, runtime, functionCode: !!functionCode });
         const serverlessResult = this.createServerlessCompute(name, environment, size, network, identity, functionCode, runtime, vpc);
         this.output = serverlessResult.output;
         this.instance = serverlessResult.instance;
         break;
       default:
-        throw new Error(`Unsupported compute type: ${type}`);
+        const error = new Error(`Unsupported compute type: ${type}`);
+        logger.error('Unsupported compute type in switch statement', error, { type });
+        throw error;
     }
 
     // Add observability after resource creation
     this.addObservability(type, name);
+    
+    logger.logResourceCreation('compute', this.output.resourceId, {
+      type,
+      size,
+      autoScaling,
+      runtime: type === 'serverless' ? runtime : undefined
+    });
   }
 
   /**

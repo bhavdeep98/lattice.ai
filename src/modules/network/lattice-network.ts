@@ -4,6 +4,7 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { LatticeNetworkProps, LatticeNetworkConstruct } from './types';
 import { NetworkOutput } from '../../core/types';
+import { logger, logExecutionTime } from '../../utils/logger';
 
 /**
  * LatticeNetwork - Multi-AZ VPC abstraction with security best practices
@@ -26,12 +27,18 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
       enableVpcFlowLogs = true,
     } = props;
 
+    logger.info(`Creating VPC with CIDR ${cidr}`);
+
     // Validate subnet configuration
     if (publicSubnets < 1 || publicSubnets > 6) {
-      throw new Error(`Public subnets must be between 1 and 6, got: ${publicSubnets}`);
+      const error = new Error(`Public subnets must be between 1 and 6, got: ${publicSubnets}`);
+      logger.error('Invalid subnet configuration', error);
+      throw error;
     }
     if (privateSubnets < 1 || privateSubnets > 6) {
-      throw new Error(`Private subnets must be between 1 and 6, got: ${privateSubnets}`);
+      const error = new Error(`Private subnets must be between 1 and 6, got: ${privateSubnets}`);
+      logger.error('Invalid subnet configuration', error);
+      throw error;
     }
 
     // Create VPC with best practices
@@ -55,15 +62,16 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
       enableDnsSupport: true,
     });
 
+    logger.resource('VPC', this.vpc.vpcId);
+
     // Create default security group with enhanced security
     this.securityGroup = new ec2.SecurityGroup(this, 'DefaultSecurityGroup', {
       vpc: this.vpc,
       description: 'Default security group for Lattice resources',
-      allowAllOutbound: !enhancedSecurity, // Restrict outbound in enhanced mode
+      allowAllOutbound: !enhancedSecurity,
     });
 
     if (enhancedSecurity) {
-      // Add specific outbound rules for enhanced security
       this.securityGroup.addEgressRule(
         ec2.Peer.anyIpv4(),
         ec2.Port.tcp(443),
@@ -74,10 +82,12 @@ export class LatticeNetwork extends Construct implements LatticeNetworkConstruct
         ec2.Port.tcp(80),
         'HTTP outbound'
       );
+      logger.info('Applied enhanced security rules');
     }
 
     // Enable VPC Flow Logs if requested
     if (enableVpcFlowLogs) {
+      logger.info('Enabling VPC Flow Logs');
       const logGroup = new logs.LogGroup(this, 'VpcFlowLogsGroup', {
         retention: logs.RetentionDays.ONE_WEEK,
       });

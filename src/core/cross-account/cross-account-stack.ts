@@ -112,7 +112,7 @@ export class CrossAccountStack extends Stack {
    */
   private createArtifactBucket(environment: string): s3.Bucket {
     return new s3.Bucket(this, 'ArtifactBucket', {
-      bucketName: `lattice-artifacts-${environment}-${this.account}-${this.region}`,
+      bucketName: `lattice-artifacts-${environment}-${this.account?.replace(/[^a-z0-9-]/g, '-')}-${this.region}`,
       encryption: s3.BucketEncryption.KMS,
       encryptionKey: this.kmsKey,
       versioned: true,

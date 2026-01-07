@@ -171,7 +171,7 @@ export class EscapeHatchExampleStack extends cdk.Stack {
     }));
 
     // Example: Add assume role policy for cross-account access
-    const crossAccountPrincipal = new iam.AccountPrincipal('YOUR_TRUSTED_ACCOUNT_ID');
+    const crossAccountPrincipal = new iam.AccountPrincipal('123456789012');
     appRole.instance.assumeRolePolicy?.addStatements(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       principals: [crossAccountPrincipal],

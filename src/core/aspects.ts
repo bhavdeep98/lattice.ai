@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { LatticeAspectsConfig } from './types';
 import { ThreatFactsCollector, ThreatModelAspect, buildThreatModel, renderThreatModelMd, renderThreatModelJson } from '../threat-model';
+import { logger } from '../utils/logger';
 /**
  * Security Aspect - The "Compliance Guard"
  * Automatically enforces security best practices
@@ -16,11 +17,28 @@ export class SecurityAspect implements IAspect {
   constructor(private config: LatticeAspectsConfig) { }
 
   visit(node: IConstruct): void {
+    // Set logging context for security aspect
+    logger.setContext({
+      operation: 'security-aspect-validation',
+      resourceType: 'aspect',
+      environment: this.config.environment
+    });
+
     // Enforce S3 bucket encryption
     if (node instanceof s3.Bucket) {
       const cfnBucket = node.node.defaultChild as s3.CfnBucket;
       if (cfnBucket && !cfnBucket.bucketEncryption) {
-        throw new Error(`S3 bucket ${node.node.id} must have encryption enabled`);
+        const error = new Error(`S3 bucket ${node.node.id} must have encryption enabled`);
+        logger.logSecurityEvent('S3 bucket encryption validation failed', 'critical', {
+          bucketId: node.node.id,
+          violation: 'missing_encryption'
+        });
+        throw error;
+      } else {
+        logger.logSecurityEvent('S3 bucket encryption validated', 'low', {
+          bucketId: node.node.id,
+          compliance: 'encryption_enabled'
+        });
       }
     }
 
@@ -29,7 +47,17 @@ export class SecurityAspect implements IAspect {
       // Check the underlying CloudFormation resource
       const cfnDb = node.node.defaultChild as rds.CfnDBInstance;
       if (cfnDb && !cfnDb.storageEncrypted) {
-        throw new Error(`RDS instance ${node.node.id} must have storage encryption enabled`);
+        const error = new Error(`RDS instance ${node.node.id} must have storage encryption enabled`);
+        logger.logSecurityEvent('RDS encryption validation failed', 'critical', {
+          instanceId: node.node.id,
+          violation: 'missing_storage_encryption'
+        });
+        throw error;
+      } else {
+        logger.logSecurityEvent('RDS encryption validated', 'low', {
+          instanceId: node.node.id,
+          compliance: 'storage_encryption_enabled'
+        });
       }
     }
 
@@ -40,6 +68,10 @@ export class SecurityAspect implements IAspect {
         child.constructor.name.includes('SecurityGroupRule')
       );
 
+      logger.info(`Validating security group rules for ${node.node.id}`, {
+        rulesCount: rules.length
+      });
+
       // Check for overly permissive rules
       rules.forEach(rule => {
         // Check for overly permissive CIDR blocks
@@ -47,6 +79,12 @@ export class SecurityAspect implements IAspect {
         if (ruleNode.tryFindChild('CidrIp')) {
           const cidrIp = (ruleNode.tryFindChild('CidrIp') as any)?.value;
           if (cidrIp === '0.0.0.0/0') {
+            logger.logSecurityEvent('Overly permissive security group rule detected', 'medium', {
+              securityGroupId: node.node.id,
+              ruleId: rule.node.id,
+              cidr: cidrIp,
+              violation: 'open_to_world'
+            });
             console.warn(`⚠️ Security warning: Rule ${rule.node.id} allows access from anywhere (0.0.0.0/0)`);
           }
         }
@@ -65,16 +103,38 @@ export class CostAspect implements IAspect {
   visit(node: IConstruct): void {
     const { environment, costLimits } = this.config;
 
+    // Set logging context for cost aspect
+    logger.setContext({
+      operation: 'cost-aspect-validation',
+      resourceType: 'aspect',
+      environment
+    });
+
     // Validate EC2 instance sizes
     if (node instanceof ec2.Instance) {
       const instanceType = (node as any).instanceType?.toString();
 
+      logger.info(`Validating EC2 instance size: ${instanceType}`, {
+        instanceId: node.node.id,
+        environment
+      });
+
       if (environment === 'dev' && instanceType && instanceType.includes('large')) {
-        throw new Error(`Large instances not allowed in dev environment: ${instanceType}`);
+        const error = new Error(`Large instances not allowed in dev environment: ${instanceType}`);
+        logger.logSecurityEvent('Cost validation failed for EC2 instance', 'medium', {
+          instanceId: node.node.id,
+          instanceType,
+          environment,
+          violation: 'oversized_for_environment'
+        });
+        throw error;
       }
 
       if (costLimits?.maxInstanceSize && instanceType && instanceType.includes(costLimits.maxInstanceSize)) {
-        // Validate against cost limits
+        logger.info('Instance size validated against cost limits', {
+          instanceType,
+          maxAllowed: costLimits.maxInstanceSize
+        });
       }
     }
 
@@ -82,8 +142,20 @@ export class CostAspect implements IAspect {
     if (node instanceof rds.DatabaseInstance) {
       const instanceClass = (node as any).instanceType?.toString();
 
+      logger.info(`Validating RDS instance size: ${instanceClass}`, {
+        instanceId: node.node.id,
+        environment
+      });
+
       if (environment === 'dev' && instanceClass && instanceClass.includes('large')) {
-        throw new Error(`Large RDS instances not allowed in dev environment: ${instanceClass}`);
+        const error = new Error(`Large RDS instances not allowed in dev environment: ${instanceClass}`);
+        logger.logSecurityEvent('Cost validation failed for RDS instance', 'medium', {
+          instanceId: node.node.id,
+          instanceClass,
+          environment,
+          violation: 'oversized_for_environment'
+        });
+        throw error;
       }
     }
   }
@@ -98,6 +170,40 @@ export class TaggingAspect implements IAspect {
 
   visit(node: IConstruct): void {
     const { environment, projectName, owner, additionalTags } = this.config;
+
+    // Set logging context for tagging aspect
+    logger.setContext({
+      operation: 'tagging-aspect-application',
+      resourceType: 'aspect',
+      environment
+    });
+
+    // Apply standard tags to all resources
+    const standardTags = {
+      Environment: environment,
+      Project: projectName,
+      Owner: owner || 'Unknown',
+      ManagedBy: 'Lattice-CDK',
+      CreatedAt: new Date().toISOString(),
+      ...additionalTags,
+    };
+
+    logger.info(`Applying standard tags to resource: ${node.node.id}`, {
+      resourceId: node.node.id,
+      tagsCount: Object.keys(standardTags).length,
+      tags: standardTags
+    });
+
+    // Apply tags using CDK Tags utility
+    Object.entries(standardTags).forEach(([key, value]) => {
+      Tags.of(node).add(key, value);
+    });
+
+    logger.audit('Resource tags applied', {
+      resourceId: node.node.id,
+      resourceType: node.constructor.name,
+      appliedTags: standardTags
+    });
 
     // Apply standard tags to all taggable resources
     Tags.of(node).add('Environment', environment);
