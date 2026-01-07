@@ -1,0 +1,9 @@
+{
+  "LatticeBackend-prod": {
+    "ApiUrl": "https://juoxe6h2zg.execute-api.us-east-1.amazonaws.com/prod/",
+    "LatticeBackendApiEndpoint983010BD": "https://juoxe6h2zg.execute-api.us-east-1.amazonaws.com/prod/",
+    "ExportsOutputRefLatticeBackendApiBD5C666C430530D0": "juoxe6h2zg",
+    "ExportsOutputRefLatticeBackendApiDeploymentStageprod3E6BDFE91FDC654F": "prod",
+    "ApiId": "juoxe6h2zg"
+  }
+}

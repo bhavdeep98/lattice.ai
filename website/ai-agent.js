@@ -78,7 +78,7 @@ interface LatticeManifest {
     };
     _analysis?: {
         detectedDomain: string;
-        confidence: number;
+        confidence: number; // MUST be between 0.0 and 1.0 (decimal, not percentage)
         suggestions: string[];
         missingInfo: string[];
     };
@@ -91,6 +91,7 @@ Rules:
 3. Default 'environment' to 'prod' unless specified otherwise.
 4. Populate '_analysis' with your reasoning.
 5. BE SMART about resource sizing and features based on the domain (e.g., Healthcare needs encryption and backups).
+6. CRITICAL: confidence MUST be a decimal between 0.0 and 1.0 (e.g., 0.85 for 85% confidence, NOT 85).
 `,
           },
           {
@@ -105,7 +106,19 @@ Rules:
         throw new Error('No content received from AI');
       }
 
-      return JSON.parse(content);
+      const manifest = JSON.parse(content);
+      
+      // Validate and fix confidence if needed
+      if (manifest._analysis && manifest._analysis.confidence) {
+        // If confidence is > 1, assume it's in percentage form and convert to decimal
+        if (manifest._analysis.confidence > 1) {
+          manifest._analysis.confidence = Math.min(manifest._analysis.confidence / 100, 1.0);
+        }
+        // Ensure it's between 0 and 1
+        manifest._analysis.confidence = Math.max(0, Math.min(1, manifest._analysis.confidence));
+      }
+
+      return manifest;
     } catch (error) {
       console.error('AI Agent Error:', error);
       throw error; // Let the caller handle fallback

@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const contactForm = document.querySelector('.demo-request-form');
 
   if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
+    contactForm.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       // Get form data
@@ -260,42 +260,133 @@ document.addEventListener('DOMContentLoaded', function () {
       submitButton.textContent = 'Sending...';
       submitButton.disabled = true;
 
-      // Simulate form submission (replace with actual endpoint)
-      setTimeout(() => {
-        // Create mailto link with form data
-        const subject = encodeURIComponent(`Lattice Demo Request - ${data.plan} Plan`);
-        const body = encodeURIComponent(`
-Name: ${data.name}
-Email: ${data.email}
-Company: ${data.company}
-Interested Plan: ${data.plan}
+      try {
+        // Send to backend API
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
 
-Message:
-${data.message}
+        const result = await response.json();
 
----
-This is an automated message from the Lattice website contact form.
-                `);
+        if (response.ok) {
+          // Show success message
+          showFormMessage(result.message, 'success');
+          
+          // Reset form
+          contactForm.reset();
 
-        const mailtoLink = `mailto:bhavdeepsachdeva@gmail.com?subject=${subject}&body=${body}`;
+          // If it's a paid plan, offer payment option
+          if (data.plan === 'starter' || data.plan === 'growth') {
+            setTimeout(() => {
+              if (confirm(`Would you like to proceed with payment for the ${data.plan} plan?`)) {
+                initiatePayment(data.plan, data.email, data.name, data.company);
+              }
+            }, 2000);
+          }
+        } else {
+          throw new Error(result.error || 'Failed to send message');
+        }
 
-        // Open email client
-        window.location.href = mailtoLink;
-
-        // Show success message
+      } catch (error) {
+        console.error('Contact form error:', error);
         showFormMessage(
-          "Thank you! Your demo request has been sent. We'll get back to you within 24 hours.",
-          'success'
+          'Sorry, there was an error sending your message. Please try again or contact us directly at bhavdeepsachdeva@gmail.com',
+          'error'
         );
-
-        // Reset form
-        contactForm.reset();
-
+      } finally {
         // Reset button
         submitButton.textContent = originalText;
         submitButton.disabled = false;
-      }, 1000);
+      }
     });
+  }
+
+  // Payment functionality
+  async function initiatePayment(plan, email, name, company) {
+    try {
+      // Create payment intent
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan, email, name, company })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Redirect to payment page or show Stripe Elements
+        // For now, show a simple payment modal
+        showPaymentModal(result.clientSecret, result.amount, plan);
+      } else {
+        throw new Error(result.error || 'Failed to create payment intent');
+      }
+    } catch (error) {
+      console.error('Payment initiation error:', error);
+      alert('Payment setup failed. Please contact us directly for assistance.');
+    }
+  }
+
+  function showPaymentModal(clientSecret, amount, plan) {
+    // Create a simple payment modal
+    const modal = document.createElement('div');
+    modal.className = 'payment-modal';
+    modal.innerHTML = `
+      <div class="payment-modal-content">
+        <div class="payment-modal-header">
+          <h3>Complete Your Subscription</h3>
+          <button class="payment-modal-close">&times;</button>
+        </div>
+        <div class="payment-modal-body">
+          <p><strong>Plan:</strong> ${plan.charAt(0).toUpperCase() + plan.slice(1)}</p>
+          <p><strong>Amount:</strong> $${(amount / 100).toFixed(2)}/month</p>
+          <p>Payment processing will be implemented with Stripe Elements.</p>
+          <p>For now, please contact us directly to complete your subscription.</p>
+          <div class="payment-actions">
+            <button class="btn btn-secondary" onclick="this.closest('.payment-modal').remove()">Cancel</button>
+            <a href="mailto:bhavdeepsachdeva@gmail.com?subject=Subscription%20Payment%20-%20${plan}%20Plan" class="btn btn-primary">Contact for Payment</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add modal styles
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    `;
+
+    const modalContent = modal.querySelector('.payment-modal-content');
+    modalContent.style.cssText = `
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    `;
+
+    // Close modal functionality
+    modal.querySelector('.payment-modal-close').onclick = () => modal.remove();
+    modal.onclick = (e) => {
+      if (e.target === modal) modal.remove();
+    };
+
+    document.body.appendChild(modal);
   }
 
   function showFormMessage(message, type) {

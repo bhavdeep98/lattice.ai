@@ -9,8 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const generateBtn = document.getElementById('generateBtn');
   const outputContent = document.getElementById('outputContent');
 
-  // Backend URL (adjust for your setup)
-  const BACKEND_URL = 'http://localhost:3001';
+  // Get backend URL from configuration
+  const BACKEND_URL = window.LatticeConfig ? window.LatticeConfig.backendUrl : 'http://localhost:3001';
+  
+  console.log('Backend URL configured as:', BACKEND_URL);
 
   // Handle form submission
   form.addEventListener('submit', async function (e) {
@@ -51,7 +53,17 @@ document.addEventListener('DOMContentLoaded', function () {
       showResult(result);
     } catch (error) {
       console.error('Generation error:', error);
-      showError(`Failed to generate infrastructure: ${error.message}`);
+      
+      // Provide helpful error messages based on the error type
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (BACKEND_URL.includes('localhost')) {
+          showError('Cannot connect to local backend.\n\nMake sure the Lattice demo backend is running:\n1. cd website\n2. npm start\n\nOr deploy the complete platform: npm run deploy:complete');
+        } else {
+          showError('Cannot connect to backend API.\n\nThe backend may not be deployed yet.\nTo deploy the complete platform:\n1. Set your OpenAI API key in .env\n2. Run: npm run deploy:complete');
+        }
+      } else {
+        showError(`Failed to generate infrastructure: ${error.message}`);
+      }
     } finally {
       generateBtn.disabled = false;
     }
@@ -292,10 +304,14 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('✅ Lattice demo backend is running');
       }
     } catch (error) {
-      console.warn(
-        '⚠️ Lattice demo backend not available. Make sure to run: node lattice-demo-backend.js'
-      );
-      showError('Demo backend not available. Please start the Lattice demo backend first.');
+      console.warn('⚠️ Lattice demo backend not available at:', BACKEND_URL);
+      
+      // Show different messages based on environment
+      if (BACKEND_URL.includes('localhost')) {
+        showError('Demo backend not available. Please start the Lattice demo backend first.\nMake sure the Lattice demo backend is running on port 3001');
+      } else {
+        showError('Backend API not available. The Lattice backend may not be deployed yet.\n\nTo deploy the complete platform with backend:\n1. Set your OpenAI API key in .env\n2. Run: npm run deploy:complete');
+      }
     }
   }
 });

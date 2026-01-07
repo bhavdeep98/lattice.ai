@@ -1,0 +1,8 @@
+{
+  "environment": "prod",
+  "region": "us-east-1",
+  "stackName": "LatticeWebsite-prod",
+  "websiteUrl": "https://d3hnos3jjdjgs.cloudfront.net",
+  "distributionId": "EO83L4E91JWQJ",
+  "deployedAt": "2026-01-07T17:08:18Z"
+}

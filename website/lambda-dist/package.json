@@ -1,0 +1,12 @@
+{
+  "name": "lattice-backend-lambda",
+  "version": "1.0.0",
+  "description": "Lattice Demo Backend for AWS Lambda",
+  "main": "index.js",
+  "dependencies": {
+    "openai": "^4.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

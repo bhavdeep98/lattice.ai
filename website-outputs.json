@@ -1,0 +1,7 @@
+{
+  "LatticeWebsite-prod": {
+    "WebsiteURL": "https://d3hnos3jjdjgs.cloudfront.net",
+    "DistributionId": "EO83L4E91JWQJ",
+    "S3BucketName": "lattice-website-618351925005-us-east-1"
+  }
+}

@@ -4,14 +4,17 @@
   "description": "Real Lattice Framework Demo Backend",
   "main": "lattice-demo-backend.js",
   "scripts": {
-    "start": "node lattice-demo-backend.js",
-    "dev": "nodemon lattice-demo-backend.js"
+    "start": "node lattice-real-backend.js",
+    "dev": "nodemon lattice-real-backend.js",
+    "start:old": "node lattice-demo-backend.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
-    "openai": "^6.15.0"
+    "nodemailer": "^6.10.1",
+    "openai": "^6.15.0",
+    "stripe": "^14.25.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

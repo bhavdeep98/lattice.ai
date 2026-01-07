@@ -1,0 +1,19 @@
+{
+  "environment": "prod",
+  "region": "us-east-1",
+  "frontendStack": "LatticeWebsite-prod",
+  "backendStack": "LatticeBackend-prod",
+  "frontendUrl": "https://d3hnos3jjdjgs.cloudfront.net",
+  "backendUrl": "https://juoxe6h2zg.execute-api.us-east-1.amazonaws.com/prod/",
+  "distributionId": "EO83L4E91JWQJ",
+  "deployedAt": "2026-01-07T17:09:00Z",
+  "openaiConfigured": true,
+  "status": "fully-operational",
+  "features": {
+    "aiGeneration": true,
+    "realTimeDemo": true,
+    "globalCDN": true,
+    "httpsEnabled": true,
+    "serverlessBackend": true
+  }
+}
