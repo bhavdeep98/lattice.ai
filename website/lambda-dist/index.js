@@ -1,6 +1,6 @@
 /**
  * Lattice Demo Backend - AWS Lambda Version
- * Serverless backend that uses the real Lattice framework concepts
+ * Serverless backend that mirrors the real Lattice backend behavior
  */
 
 const { OpenAI } = require('openai');
@@ -17,7 +17,7 @@ if (process.env.OPENAI_API_KEY) {
 const demoManifests = new Map();
 
 /**
- * AI Agent for generating Lattice manifests
+ * AI Agent for generating Lattice manifests - IDENTICAL to real backend
  */
 class LatticeAIAgent {
   constructor(apiKey) {
@@ -28,7 +28,7 @@ class LatticeAIAgent {
 
   async generateManifest(userInput) {
     if (!this.openai) {
-      throw new Error('OpenAI client not initialized');
+      throw new Error('OpenAI client not initialized. Please provide a valid API key.');
     }
 
     const completion = await this.openai.chat.completions.create({
@@ -38,39 +38,41 @@ class LatticeAIAgent {
         {
           role: 'system',
           content: `You are an expert Cloud Architect AI for the "Lattice" framework. 
-Generate a Lattice manifest JSON for infrastructure requirements.
+Your goal is to translate natural language requirements into a valid "Lattice Manifest" JSON object.
 
-CRITICAL: Use EXACT schema - do NOT add properties not listed below.
+The Lattice Manifest Schema (MUST match exactly):
 
-Schema:
 {
-  "appName": "string", // kebab-case
+  "appName": "string", // Kebab-case name, e.g., "my-app"
   "environment": "dev" | "prod",
-  "threatModel": { "enabled": boolean, "projectName": "string" },
+  "threatModel": {
+    "enabled": boolean,
+    "projectName": "string"
+  },
   "capabilities": {
-    "website": { 
-      "name": "string", 
+    "website": {
+      "name": "string",
       "environment": "string", 
       "sourcePath": "string", // e.g., "./dist"
       "domainName": "string", // optional
       "errorPage": "string" // optional, default "index.html"
     },
-    "api": { 
-      "name": "string", 
-      "environment": "string", 
-      "type": "vm"|"container"|"serverless", 
-      "size": "small"|"medium"|"large"|"xlarge", 
+    "api": {
+      "name": "string",
+      "environment": "string",
+      "type": "vm" | "container" | "serverless",
+      "size": "small" | "medium" | "large" | "xlarge", 
       "runtime": "string", // optional
       "autoScaling": boolean, // optional
       "enableObservability": boolean, // optional, default true
       "enableAlarms": boolean, // optional, default true
       "enableDashboards": boolean // optional, default true
     },
-    "database": { 
-      "name": "string", 
-      "environment": "string", 
-      "engine": "postgres"|"mysql"|"mariadb"|"oracle"|"sqlserver", 
-      "size": "small"|"medium"|"large"|"xlarge", 
+    "database": {
+      "name": "string",
+      "environment": "string",
+      "engine": "postgres" | "mysql" | "mariadb" | "oracle" | "sqlserver",
+      "size": "small" | "medium" | "large" | "xlarge",
       "highAvailability": boolean, // optional
       "backupRetention": number, // optional
       "deletionProtection": boolean, // optional
@@ -80,9 +82,9 @@ Schema:
       "enableAlarms": boolean, // optional, default true
       "enableDashboards": boolean // optional, default true
     },
-    "storage": { 
+    "storage": {
       "name": "string", 
-      "environment": "string", 
+      "environment": "string",
       "encryption": boolean, // optional
       "versioning": boolean, // optional
       "publicRead": boolean, // optional
@@ -91,22 +93,23 @@ Schema:
         "deleteAfterDays": number
       } // optional
     },
-    "queue": { 
-      "name": "string", 
+    "queue": {
+      "name": "string",
       "environment": "string", 
-      "type": "standard"|"fifo", 
+      "type": "standard" | "fifo",
       "dlq": boolean // optional
     }
   }
 }
 
-Rules:
-1. Return valid JSON only
-2. Infer appName from input
-3. Default environment to "prod"
-4. Only include needed capabilities
-5. Be domain-agnostic - no hardcoded patterns
-6. DO NOT add "description" or other unlisted properties
+CRITICAL RULES:
+1. ALWAYS return valid JSON matching this EXACT schema
+2. Do NOT add properties not listed above (like "description")
+3. Infer appName from input, use kebab-case
+4. Default environment to "prod" 
+5. Only include capabilities that are actually needed
+6. Be smart about sizing and features based on requirements
+7. Do not include domain-specific assumptions - be generic and flexible
 
 Respond with ONLY the JSON manifest.`,
         },
@@ -122,12 +125,22 @@ Respond with ONLY the JSON manifest.`,
       throw new Error('No content received from AI');
     }
 
-    return JSON.parse(content);
+    const manifest = JSON.parse(content);
+    
+    // Validate and fix confidence if needed (same as real backend)
+    if (manifest._analysis && manifest._analysis.confidence) {
+      if (manifest._analysis.confidence > 1) {
+        manifest._analysis.confidence = Math.min(manifest._analysis.confidence / 100, 1.0);
+      }
+      manifest._analysis.confidence = Math.max(0, Math.min(1, manifest._analysis.confidence));
+    }
+
+    return manifest;
   }
 }
 
 /**
- * Generate CDK code from manifest
+ * Generate CDK code from manifest - IDENTICAL to real backend
  */
 function generateCDKCode(manifest) {
   return `import { App } from 'aws-cdk-lib';
@@ -142,17 +155,21 @@ const app = new App();
 const manifest: LatticeManifest = ${JSON.stringify(manifest, null, 2)};
 
 /**
- * Create the Lattice Stack with built-in security and monitoring
+ * Create the Lattice Stack
+ * This uses the real Lattice framework with built-in:
+ * - Security aspects and threat modeling
+ * - Automatic monitoring and dashboards  
+ * - Production-ready configurations
+ * - Cross-capability dependencies
  */
 const stack = new LatticeStack(app, '${manifest.appName.charAt(0).toUpperCase() + manifest.appName.slice(1)}Stack', manifest);
 
 console.log('🚀 Lattice Stack Created Successfully!');
 console.log('Stack Name:', stack.stackName);
 console.log('Capabilities:', Object.keys(manifest.capabilities));
-console.log('Security: Threat modeling enabled');
-console.log('Monitoring: Auto-dashboards and alarms configured');
 
 export { stack };`;
+}
 }
 
 /**
@@ -393,33 +410,44 @@ exports.handler = async (event) => {
 
       let manifest;
       
-      // Try AI generation first, fallback to pattern matching
+      // Try AI generation
       if (openai) {
         try {
           const aiAgent = new LatticeAIAgent(process.env.OPENAI_API_KEY);
           manifest = await aiAgent.generateManifest(userInput);
           console.log('Used AI generation');
         } catch (error) {
-          console.error('AI generation failed, using fallback:', error);
-          const aiAgent = new LatticeAIAgent();
-          manifest = aiAgent.generateFallbackManifest(userInput);
+          console.error('AI generation failed:', error);
+          return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+              error: 'AI manifest generation failed',
+              details: error.message
+            })
+          };
         }
       } else {
-        console.log('No OpenAI key, using pattern matching');
-        const aiAgent = new LatticeAIAgent();
-        manifest = aiAgent.generateFallbackManifest(userInput);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({
+            error: 'OpenAI API key not configured',
+            details: 'Please set OPENAI_API_KEY environment variable'
+          })
+        };
       }
 
       // Generate CDK code
       const cdkCode = generateCDKCode(manifest);
       
-      // Generate CloudFormation template
+      // Generate CloudFormation template - simulate real backend behavior
       const cloudFormation = generateCloudFormation(manifest);
       
       const synthesisResult = {
-        success: true,
+        success: false, // Lambda can't do real synthesis like local backend
         cloudFormation: JSON.stringify(cloudFormation, null, 2),
-        message: 'Successfully synthesized using Lattice framework'
+        message: 'Synthesis failed - this is expected in demo environment. The Lattice framework requires proper AWS setup and dependencies.'
       };
 
       const demoId = Date.now().toString();
