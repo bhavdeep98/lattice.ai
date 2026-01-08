@@ -3,14 +3,17 @@
  * Serverless backend that mirrors the real Lattice backend behavior
  */
 
-const { OpenAI } = require('openai');
-
 // Initialize OpenAI client
 let openai = null;
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+try {
+  const { OpenAI } = require('openai');
+  if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+} catch (error) {
+  console.error('Failed to initialize OpenAI:', error);
 }
 
 // In-memory storage for demo (in production, use DynamoDB)
@@ -367,7 +370,10 @@ exports.handler = async (event) => {
 
   try {
     const { httpMethod, path, body } = event;
+    console.log('Method:', httpMethod, 'Path:', path);
+    
     const pathParts = path.split('/').filter(p => p);
+    console.log('Path parts:', pathParts);
 
     // Handle CORS preflight
     if (httpMethod === 'OPTIONS') {
@@ -380,6 +386,7 @@ exports.handler = async (event) => {
 
     // Health check
     if (httpMethod === 'GET' && pathParts[1] === 'health') {
+      console.log('Health check requested');
       return {
         statusCode: 200,
         headers,
@@ -388,7 +395,8 @@ exports.handler = async (event) => {
           timestamp: new Date().toISOString(),
           version: '1.0.0',
           environment: process.env.NODE_ENV || 'production',
-          openaiConfigured: !!process.env.OPENAI_API_KEY
+          openaiConfigured: !!process.env.OPENAI_API_KEY,
+          pathParts: pathParts // Debug info
         })
       };
     }
